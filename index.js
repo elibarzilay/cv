@@ -1,11 +1,7 @@
 "use strict";
 
 const texts = {};
-const formats = [
-  { name: "PDF",  ext: "pdf"  },
-  { name: "Word", ext: "docx" },
-  { name: "Text", ext: "txt"  },
-];
+const formats = { pdf: "PDF", docx: "Word", txt: "Text" };
 let curVersion = "";
 
 const show = what => {
@@ -127,19 +123,34 @@ const init = ()=>{
   }
   { const fs = document.getElementById("formats");
     fs.innerHTML = `Download <span class="what"></span> version: `
-      + formats.map(f => [
-        `<button data-file="Eli_Barzilay-VER.${f.ext}"`,
-        ` title="Click to download this version in ${f.name} format\n`,
-        `Shift-click to view\nSwitch versions on the left">`,
-        `${f.name}⭳</button>`,
-      ].join("")).join("\n");
+      + (Object.entries(formats)).map(([ext, name]) =>
+          `<button data-file="Eli_Barzilay-VER.${ext}" data-name="${name}">`
+          + `${name}⭳</button>`)
+        .join("\n");
     const a = document.createElement("a");
-    for (const b of fs.getElementsByTagName("button"))
+    const popup = document.getElementById("popup");
+    popup.innerHTML = [
+      `Click to download the <span class="what"></span> version in`,
+      ` <span class="format"></span> format`,
+      `<br>Shift+click to view; switch version on the left`,
+    ].join("");
+    popup.addEventListener("transitionend", ()=> {
+      if (!popup.classList.contains("active")) popup.style.display = "none"; });
+    for (const b of fs.getElementsByTagName("button")) {
       b.addEventListener("click", ({target: {dataset: {file}}, shiftKey}) => {
         a.href = a.download = file.replace(/\bVER\b/, curVersion);
         document.getElementById("text").focus();
         if (shiftKey) location = a.href; else a.click();
       });
+      b.addEventListener("mouseenter", ({target: {dataset: {name}}}) => {
+        popup.querySelector("span.format").textContent = name.toLowerCase();
+        popup.style.top = (b.offsetTop + b.offsetHeight + 1) + "px";
+        popup.style.left = b.offsetLeft + "px";
+        popup.style.display = "block";
+        popup.classList.add("active");
+      });
+      b.addEventListener("mouseleave", ()=> popup.classList.remove("active"));
+    }
   }
   show(0);
 };

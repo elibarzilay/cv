@@ -77,6 +77,20 @@ p:first-child { margin-bottom: 0.5ex; }
 #toc h5 { padding-left: 30px; }
 #toc h6 { padding-left: 40px; }
 
+#popup {
+  display: none; position: absolute; top: 0; left: 0;
+  padding: 0.5ex 1ex; width: fit-content;
+  font-size: 50%; background: #222; border: #444 solid 2px; border-radius: 5px;
+  opacity: 0; transition: opacity 0.3s ease-in-out, top, left;
+}
+#popup.active { opacity: 0.95; transition-duration: 0.2s; }
+/* Triangle: http://nicolasgallagher.com/pure-css-speech-bubbles/demo/ */
+#popup { margin-top: 18px; }
+#popup:before { content: ""; position: absolute; top: -11px; left: 10px;
+  border: solid; border-width: 0 10px 10px; border-color: #444 transparent; }
+#popup:after { content: ""; position: absolute; top: -8px; left: 12px;
+  border: solid; border-width: 0 8px 8px; border-color: #222 transparent; }
+
 .anychart-credits { opacity: 0.25; transition: all 0.3s ease-in-out; }
 .anychart-credits:hover { opacity: 0.75; }
 
