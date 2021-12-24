@@ -41,6 +41,12 @@ p:first-child { margin-bottom: 0.5ex; }
   color: #888; background: #222;
 }
 
+.faded {
+  opacity: 0.625; filter: saturate(0.625);
+  transition: opacity 0.3s ease-in-out, filter;
+}
+.faded:hover { opacity: 1; filter: saturate(1); }
+
 #timeline { width: 100%; height: calc(var(--top-height) - 30px); }
 
 #controls {

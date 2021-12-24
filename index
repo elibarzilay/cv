@@ -25,12 +25,13 @@ short
 </script></head>
 <body>
   <div id="topstuff">
-    <div id="timeline"></div>
-    <div id="controls">
+    <div id="timeline" class="faded"></div>
+    <div id="controls" class="faded">
       <div id="versions"></div>
       <div id="formats"></div>
+      <div id="popup"></div>
     </div>
   </div>
-  <div id="toc"></div>
+  <div id="toc" class="faded"></div>
   <div id="text"></div>
 </body></html>
