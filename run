@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")"
+
+printf -v rx "|%s" \
+       "Jan" "January" \
+       "Feb" "February" \
+       "Mar" "March" \
+       "Apr" "April" \
+       "May" \
+       "Jun" "June" \
+       "Jul" "July" \
+       "Aug" "August" \
+       "Sep" "September" \
+       "Oct" "October" \
+       "Nov" "November" \
+       "Dec" "December" \
+       "Mid" "Fall" "Spring"
+
+rx="(((${rx:1}) )?(19[89]|2[0-2][0-2])[0-9]|Present)"
+rx="$rx( ?[-–—]+ ?$rx)?"
+extract_dates() {
+  grep -woE "$rx" "$1"
+}
+
+md_to_text() {
+  I="$1" O="$2" node -e '
+    fs.writeFileSync(process.env.O,
+      fs.readFileSync(process.env.I).toString()
+        .replaceAll(/(?<=^|\n\n)(#+) +(.*)(?=\n)/g, (_, h, s) =>
+          s+"\n"+(h.length <= 2 ? "=" : "-").repeat(s.length))
+        .replaceAll(/ +\\\n/g, "\n")
+        .replaceAll(/<(https?:\/\/[^<>]+|[^<>@]+@[^<>@]+)>/g, "$1")
+        .replaceAll(/\*("[^"]+")\*/g, "$1"));
+  '
+}
+
+cat > "build/latex-tweaks.sty" <<EOF
+\urlstyle{tt}
+\usepackage{inconsolata}
+EOF
+
+for what in "long" "short"; do
+  echo "$what..."
+  in="eli-$what.md"
+  extract_dates "$in" > "build/dates-$what.new"
+  if ! diff "build/dates-$what"{,".new"}; then
+    echo ""
+    echo "Date changes in $in"
+    echo "* Update the data in \"dates.js\""
+    echo "* Update \"build/dates-$what\" from \"build/dates-$what.new\""
+    echo "* Re-run"
+    exit 1
+  fi
+  rm "build/dates-$what.new"
+  args=(-f commonmark+smart "$in")
+  args+=(-M author="Eli Barzilay")
+  args+=(-M title="Eli Barzilay: Curriculum Vitae")
+  args+=(-M date="$(date --iso-8601)")
+  args+=(-M papersize="letter")
+  args+=(-M fontfamily="FiraSans")
+  args+=(-M fontfamilyoptions="sfdefault")
+  args+=(-H "build/latex-tweaks.sty")
+  out="Eli_Barzilay-$what"
+  # pandoc -s "${args[@]}" -o "$out.tex"
+  pandoc --pdf-engine=pdflatex "${args[@]}" -o "$out.pdf"
+  pandoc "${args[@]}" -o "$out.docx"
+  md_to_text "$in" "$out.txt"
+done
+
+echo "done"

@@ -1,0 +1,11 @@
+Options -Indexes +FollowSymLinks +Includes
+DirectoryIndex index
+
+<Files "index">
+  ForceType text/html
+  SetOutputFilter INCLUDES
+</Files>
+
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,QSA,L,NC]
