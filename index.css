@@ -73,9 +73,13 @@ html { --scrollbarBG: #111; --thumbBG: #444; }
 
 #versions, #formats { white-space: nowrap; }
 
-#text { line-height: 1.5; padding: 0 3ex 0 2ex; }
-
 #text-row { position: relative; }
+
+#text { line-height: 1.5; padding: 0 3ex 0 2ex; }
+#text h1, #text h2, #text h3, #text h4, #text h5, #text h6 {
+  position: sticky; top: -1px;
+  background-image: linear-gradient(180deg, #111f, #111f 62.5%, #1110);
+}
 
 #toc {
   position: fixed; right: 0; margin: 10px; overflow: hidden; min-height: 8em;

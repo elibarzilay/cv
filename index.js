@@ -46,7 +46,7 @@ const tocJump = e => {
 
 const setTimelineTargets = ()=> {
   const headers = Object.fromEntries(
-    $$("#text > *").filter(n => n.tagName.startsWith("H"))
+    $$("#text > div > *").filter(n => n.tagName.startsWith("H"))
       .map(h => [h.textContent, h]));
   const blockTags = "P UL OL LI PRE H1 H2 H3 H4 H5 H6".split(/ +/);
   Object.entries(dateInfo).forEach(([sec, xs]) => {
@@ -66,6 +66,8 @@ const setTimelineTargets = ()=> {
       if (text.length) nodes.push([n, text]);
     };
     while ((node = node.nextSibling)
+           // no real need for this, since each section is in its own div,
+           // but keep it anyway
            && !(node instanceof Element && node.tagName.startsWith("H")))
       loop(node);
     xs.forEach(x => {
@@ -106,7 +108,11 @@ const init = ()=>{
     if (!contents.startsWith("#")) return;
     const headers = contents.split("\n").filter(s => s.startsWith("#"));
     const title = headers[0].replace(/^#+ */, "");
-    const HTML = md(contents); // md(contents, name === "long" && tweakPubs);
+    let hNum = 0;
+    const HTML = md(contents) // md(contents, name === "long" && tweakPubs);
+      .replaceAll(/<([hH][1-6])>.*?<\/\1>/g, s =>
+        (hNum++ ? "</div>\n" : "") + "<div>\n" + s)
+      .replace(/$/, "</div>");
     const headersHTML = md("## Intro\n" + headers.slice(1).join("\n"))
       .replace(/<[hH].>/g, "$&<a>").replace(/<\/[hH].>/g, "</a>$&");
     texts[name] = { name, contents, title, headers, HTML, headersHTML };
