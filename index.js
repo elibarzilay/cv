@@ -4,21 +4,23 @@ const texts = {};
 const formats = { pdf: "PDF", docx: "Word", txt: "Text" };
 let curVersion = "";
 
+const $  = x => document.querySelector(x);
+const $$ = x => Array.from(document.querySelectorAll(x));
+
 const show = what => {
   if (typeof what === "number") what = Object.keys(texts)[what];
   curVersion = what;
   const text = texts[what];
   document.title = text.title;
-  document.getElementById("text").innerHTML = text.HTML;
-  for (const s of document.querySelectorAll("span.what")) s.textContent = what;
-  for (const b of document.getElementById("versions")
-                          .getElementsByTagName("button"))
-    b.classList.toggle("selected", b.textContent === what);
-  document.getElementById("toc-links").innerHTML = text.headersHTML;
-  for (const h of document.getElementById("toc-links").children)
-    h.addEventListener("click", tocJump);
+  $("#text").innerHTML = text.HTML;
+  $$("span.what").forEach(s => s.textContent = what);
+  $$("#versions button").forEach(b =>
+    b.classList.toggle("selected", b.textContent === what));
+  $("#toc-links").innerHTML = text.headersHTML;
+  $$("#toc-links a").forEach(a => a.addEventListener("click", tocJump));
   setTimelineTargets();
-  document.documentElement.scrollTo(0, 0);
+  $("#text").focus();
+  $("#text-row").scrollTo(0, 0);
 };
 
 const jumpTo = elt => {
@@ -35,17 +37,16 @@ const jumpTo = elt => {
 
 const switchTo = e => show(e.target.textContent);
 const tocJump = e => {
-  const text = document.getElementById("text");
+  const text = $("#text");
   const hdr = e.target.textContent;
-  jumpTo(hdr === "Intro" ? text.getElementsByTagName("H1")[0]
-         : [...text.getElementsByTagName(e.target.parentElement.tagName)]
-         .find(h => h.textContent === hdr));
+  jumpTo(hdr === "Intro" ? $("#text h1")
+         : $$(`#text ${e.target.parentElement.tagName}`)
+             .find(h => h.textContent === hdr));
 };
 
 const setTimelineTargets = ()=> {
   const headers = Object.fromEntries(
-    [...document.getElementById("text").children]
-      .filter(n => n.tagName.startsWith("H"))
+    $$("#text > *").filter(n => n.tagName.startsWith("H"))
       .map(h => [h.textContent, h]));
   const blockTags = "P UL OL LI PRE H1 H2 H3 H4 H5 H6".split(/ +/);
   Object.entries(dateInfo).forEach(([sec, xs]) => {
@@ -115,20 +116,17 @@ const init = ()=>{
       document.head, NodeFilter.SHOW_COMMENT, ()=> NodeFilter.FILTER_ACCEPT);
     while (addText(n.nextNode())) { }
   }
-  { const vs = document.getElementById("versions");
-    vs.innerHTML = "Version: "
+  { $("#versions").innerHTML = "Version: "
       + Object.keys(texts).map(what => `<button>${what}</button>`).join("\n");
-    for (const b of vs.getElementsByTagName("button"))
-      b.addEventListener("click", switchTo);
+    $$("#versions button").forEach(b => b.addEventListener("click", switchTo));
   }
-  { const fs = document.getElementById("formats");
-    fs.innerHTML = `Download <span class="what"></span> version: `
+  { $("#formats").innerHTML = `Download <span class="what"></span> version: `
       + (Object.entries(formats)).map(([ext, name]) =>
           `<button data-file="Eli_Barzilay-VER.${ext}" data-name="${name}">`
           + `${name}⭳</button>`)
         .join("\n");
     const a = document.createElement("a");
-    const popup = document.getElementById("popup");
+    const popup = $("#popup");
     popup.innerHTML = [
       `Click to download the <span class="what"></span> version in`,
       ` <span class="format"></span> format`,
@@ -136,10 +134,10 @@ const init = ()=>{
     ].join("");
     popup.addEventListener("transitionend", ()=> {
       if (!popup.classList.contains("active")) popup.style.display = "none"; });
-    for (const b of fs.getElementsByTagName("button")) {
+    $$("#formats button").forEach(b => {
       b.addEventListener("click", ({target: {dataset: {file}}, shiftKey}) => {
         a.href = a.download = file.replace(/\bVER\b/, curVersion);
-        document.getElementById("text").focus();
+        $("#text").focus();
         if (shiftKey) location = a.href; else a.click();
       });
       b.addEventListener("mouseenter", ({target: {dataset: {name}}}) => {
@@ -150,7 +148,7 @@ const init = ()=>{
         popup.classList.add("active");
       });
       b.addEventListener("mouseleave", ()=> popup.classList.remove("active"));
-    }
+    });
   }
   show(0);
 };
@@ -159,8 +157,8 @@ const init = ()=>{
 const focusHack = ()=> {
   const css = document.head.appendChild(document.createElement("style"));
   css.innerHTML = "#text:focus { outline:none; }";
-  document.getElementById("text").tabIndex = 0;
-  document.getElementById("text").focus();
+  $("#text").tabIndex = 0;
+  $("#text").focus();
 };
 
 window.addEventListener("load", ()=> { init(); renderTimeline(); focusHack(); });
