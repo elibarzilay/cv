@@ -14,8 +14,8 @@ const show = what => {
   for (const b of document.getElementById("versions")
                           .getElementsByTagName("button"))
     b.classList.toggle("selected", b.textContent === what);
-  document.getElementById("toc").innerHTML = text.headersHTML;
-  for (const h of document.getElementById("toc").children)
+  document.getElementById("toc-links").innerHTML = text.headersHTML;
+  for (const h of document.getElementById("toc-links").children)
     h.addEventListener("click", tocJump);
   setTimelineTargets();
   document.documentElement.scrollTo(0, 0);
@@ -144,9 +144,9 @@ const init = ()=>{
       });
       b.addEventListener("mouseenter", ({target: {dataset: {name}}}) => {
         popup.querySelector("span.format").textContent = name.toLowerCase();
-        popup.style.top = (b.offsetTop + b.offsetHeight + 1) + "px";
-        popup.style.left = b.offsetLeft + "px";
         popup.style.display = "block";
+        popup.style.top = b.getBoundingClientRect().bottom + "px";
+        popup.style.left = (b.offsetLeft - popup.offsetWidth + b.offsetWidth) + "px";
         popup.classList.add("active");
       });
       b.addEventListener("mouseleave", ()=> popup.classList.remove("active"));

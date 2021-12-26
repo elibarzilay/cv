@@ -24,14 +24,19 @@ short
   <!--#include file="index.js" -->
 </script></head>
 <body>
-  <div id="topstuff">
-    <div id="timeline" class="faded"></div>
-    <div id="controls" class="faded">
+  <div id="timeline" class="faded"></div>
+  <div id="controls-row" class="faded">
+    <div id="controls">
       <div id="versions"></div>
       <div id="formats"></div>
-      <div id="popup"></div>
     </div>
   </div>
-  <div id="toc" class="faded"></div>
-  <div id="text"></div>
+  <div id="text-row">
+    <div id="toc" class="faded">
+      <div id="toc-header">Contents</div>
+      <div id="toc-links"></div>
+    </div>
+    <div id="text"></div>
+  </div>
+  <div id="popup"></div>
 </body></html>
