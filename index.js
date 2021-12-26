@@ -155,4 +155,12 @@ const init = ()=>{
   show(0);
 };
 
-window.addEventListener("load", ()=> { init(); renderTimeline(); });
+// hack around chrome/edge bug
+const focusHack = ()=> {
+  const css = document.head.appendChild(document.createElement("style"));
+  css.innerHTML = "#text:focus { outline:none; }";
+  document.getElementById("text").tabIndex = 0;
+  document.getElementById("text").focus();
+};
+
+window.addEventListener("load", ()=> { init(); renderTimeline(); focusHack(); });
