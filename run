@@ -2,6 +2,8 @@
 
 cd "$(dirname "$0")"
 
+mkdir -p "build" "download"
+
 printf -v rx "|%s" \
        "Jan" "January" \
        "Feb" "February" \
@@ -42,18 +44,42 @@ EOF
 
 for what in "long" "short"; do
   echo "$what..."
-  in="eli-$what.md"
-  extract_dates "$in" > "build/dates-$what.new"
-  if ! diff "build/dates-$what"{,".new"}; then
+  ####
+  md="build/$what.md"
+  ./cv.rkt "$what" > "$md.new" || exit 1
+  if grep -qE ".{80}" "$md.new"; then
+    echo "Error: got lines over 80 chars in $md.new" 1>&2; exit 1
+  fi
+  if [[ ! -e "$md" ]]; then
+    echo "Created $md"
+    mv "$md.new" "$md"
+  elif ! diff "$md" "$md.new"; then
     echo ""
-    echo "Date changes in $in"
-    echo "* Update the data in \"dates.js\""
-    echo "* Update \"build/dates-$what\" from \"build/dates-$what.new\""
+    echo "Markdown changes in $md.new"
+    echo "* Remove \"$md\" or update from \"$md.new\""
     echo "* Re-run"
     exit 1
+  else
+    rm "$md.new"
   fi
-  rm "build/dates-$what.new"
-  args=(-f commonmark+smart "$in")
+  ####
+  dates="build/dates-$what"
+  extract_dates "$md" > "$dates.new" || exit 1
+  if [[ ! -e "$dates" ]]; then
+    echo "Created $dates"
+    mv "$dates.new" "$dates"
+  elif ! diff "$dates" "$dates.new"; then
+    echo ""
+    echo "Date changes in $md"
+    echo "* Update the data in \"dates.js\""
+    echo "* Remove \"$dates\" or update from \"$dates.new\""
+    echo "* Re-run"
+    exit 1
+  else
+    rm "$dates.new"
+  fi
+  ####
+  args=(-f commonmark+smart "$md")
   args+=(-M author="Eli Barzilay")
   args+=(-M title="Eli Barzilay: Curriculum Vitae")
   args+=(-M date="$(date --iso-8601)")
@@ -61,11 +87,11 @@ for what in "long" "short"; do
   args+=(-M fontfamily="FiraSans")
   args+=(-M fontfamilyoptions="sfdefault")
   args+=(-H "build/latex-tweaks.sty")
-  out="Eli_Barzilay-$what"
+  out="download/Eli_Barzilay-$what"
   # pandoc -s "${args[@]}" -o "$out.tex"
-  pandoc --pdf-engine=pdflatex "${args[@]}" -o "$out.pdf"
-  pandoc "${args[@]}" -o "$out.docx"
-  md_to_text "$in" "$out.txt"
+  pandoc --pdf-engine=pdflatex "${args[@]}" -o "$out.pdf" || exit 1
+  pandoc "${args[@]}" -o "$out.docx" || exit 1
+  md_to_text "$md" "$out.txt" || exit 1
 done
 
 echo "done"

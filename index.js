@@ -128,8 +128,8 @@ const init = ()=>{
   }
   { $("#formats").innerHTML = `Download <span class="what"></span> version: `
       + (Object.entries(formats)).map(([ext, name]) =>
-          `<button data-file="Eli_Barzilay-VER.${ext}" data-name="${name}">`
-          + `${name}⭳</button>`)
+          `<button data-file="download/Eli_Barzilay-VER.${ext}"`
+          + ` data-name="${name}">${name}⭳</button>`)
         .join("\n");
     const a = document.createElement("a");
     const popup = $("#popup");
@@ -142,7 +142,8 @@ const init = ()=>{
       if (!popup.classList.contains("active")) popup.style.display = "none"; });
     $$("#formats button").forEach(b => {
       b.addEventListener("click", ({target: {dataset: {file}}, shiftKey}) => {
-        a.href = a.download = file.replace(/\bVER\b/, curVersion);
+        a.href = file.replace(/\bVER\b/, curVersion);
+        a.download = a.href.replace(/^.*\//, "");
         $("#text").focus();
         if (shiftKey) location = a.href; else a.click();
       });

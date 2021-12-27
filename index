@@ -2,11 +2,11 @@
 <html><head><meta charset="UTF-8">
 <!------------------------------------
 long
-<!--#include file="eli-long.md" -->
+<!--#include file="build/long.md" -->
 ------------------------------------>
 <!------------------------------------
 short
-<!--#include file="eli-short.md" -->
+<!--#include file="build/short.md" -->
 ------------------------------------>
 <title>???</title>
 <meta content="width=device-width, initial-scale=1" name="viewport">
