@@ -44,9 +44,10 @@ EOF
 
 for what in "long" "short"; do
   echo "$what..."
+  out="download/Eli_Barzilay-$what"
   ####
   md="build/$what.md"
-  ./cv.rkt "$what" > "$md.new" || exit 1
+  ./cv.rkt "$what" "md" > "$md.new" || exit 1
   if grep -qE ".{80}" "$md.new"; then
     echo "Error: got lines over 80 chars in $md.new" 1>&2; exit 1
   fi
@@ -87,7 +88,6 @@ for what in "long" "short"; do
   args+=(-M fontfamily="FiraSans")
   args+=(-M fontfamilyoptions="sfdefault")
   args+=(-H "build/latex-tweaks.sty")
-  out="download/Eli_Barzilay-$what"
   # pandoc -s "${args[@]}" -o "$out.tex"
   pandoc --pdf-engine=pdflatex "${args[@]}" -o "$out.pdf" || exit 1
   pandoc "${args[@]}" -o "$out.docx" || exit 1

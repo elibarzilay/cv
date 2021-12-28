@@ -4,11 +4,13 @@
   (: text ...)    -- shorthand for (list text ...), filtering #f/void/null,
                      returning void if none left
   (V: short long) -- short/long alternatives
-  (S: text ...)   -- only-long, same as (V: (: text ...) #f)
+  (S: text ...)   -- only-short, same as (V: (: text ...) #f)
   (L: text ...)   -- only-long, same as (V: #f (: text ...))
+  (F: md tex)     -- md/tex alternatives
+  (M: text ...)   -- only-md, same as (F: (: text ...) #f)
+  (T: text ...)   -- only-tex, same as (F: #f (: text ...))
+  SM:, LM:, ST:, ... -- combinations for both version + format
   (*: item ...)   -- itemize list
-  (S*: item ...)  -- (S: (*: item ...))
-  (L*: item ...)  -- (L: (*: item ...))
   (W text ...)    -- wrap line
   (sec++) (sec--) -- inc/dec header level (starts at level 1)
   (section! title text ...)  -- add section: header + text
@@ -19,21 +21,14 @@
 |#
 ;; -- Public ------------------------------------------------------------------
 
+(define-syntax flags '([V [S short] [L long]] [F [M md] [T tex]]))
+
 (require scribble/text scribble/text/wrap)
 
 (provide (except-out (all-from-out racket) #%module-begin)
          (all-from-out scribble/text)
          (rename-out [mod-beg #%module-begin])
-         W : V: S: L: *: S*: L*: header section! section*! part! sec++ sec--)
-
-;; -- Mode --------------------------------------------------------------------
-
-(define args (current-command-line-arguments))
-(unless (= 1 (vector-length args))
-  (raise-user-error 'cv "expecting a single mode argument"))
-(define mode (string->symbol (vector-ref args 0)))
-(unless (memq mode '(short long))
-  (raise-user-error 'cv "unknown mode: ~s" mode))
+         : *: W header section! section*! part! sec++ sec--)
 
 ;; -- Utilities ---------------------------------------------------------------
 
@@ -56,14 +51,55 @@
   (case-lambda [(obj) obj]
                [(obj k v . more) (apply prop-set! obj k v more) obj]))
 
-;; -- Modes -------------------------------------------------------------------
+;; -- Mode flags --------------------------------------------------------------
 
-(define-syntax-rule (V: -short -long)
-  (case mode [(short) -short] [(long) -long]))
-(define-syntax-rule (S: text ...) (V: (: text ...) #f))
-(define-syntax-rule (L: text ...) (V: #f (: text ...)))
-(define-syntax-rule (S*: x ...) (S: (*: x ...)))
-(define-syntax-rule (L*: x ...) (L: (*: x ...)))
+(define-syntax (-def-flags- _)
+  (define flags (syntax-local-value #'flags))
+  (define (sym . xs)
+    (string->symbol (apply string-append (map (λ(x) (format "~a" x)) xs))))
+  (define (maptree f x)
+    (let loop ([x x])
+      (cond [(null? x) x]
+            [(pair? x) (cons (loop (car x)) (loop (cdr x)))]
+            [else (f x)])))
+  (define (ids sfx [fs flags])
+    (maptree (λ(s) (datum->syntax _ (sym s sfx))) fs))
+  (define (cross opts)
+    (if (null? opts) '(())
+        (let ([rest (cross (cdr opts))])
+          (apply append (map (λ(o) (map (λ(r) (cons o r)) rest)) (car opts))))))
+  (define combos (map (λ(c) (cons (apply sym c) c))
+                      (cross (map (λ(fs) (map car (cdr fs))) flags))))
+  (with-syntax ([([Y  [X  f ] ...] ...) (ids "")]
+                [([Y? [X? f?] ...] ...) (ids '?)]
+                [([Y: [X: f:] ...] ...) (ids ':)]
+                [([Y- [X- f-] ...] ...) (ids '-)]
+                [([C? P? ...] ...) (ids '? combos)]
+                [([C: P: ...] ...) (ids ': combos)])
+    #`(begin
+        (define args
+          (map string->symbol (vector->list (current-command-line-arguments))))
+        (let ([bad (remq* '(f ... ...) args)])
+          (when (pair? bad) (raise-user-error 'cv "unknown flag/s: ~a" bad)))
+        (begin (define X? (and (memq 'f args) #t))
+               (define-syntax-rule (X: text (... ...))
+                 (and X? (: text (... ...))))
+               (provide X:))
+        ... ...
+        (begin (let ([fs (filter values (list (and X? 'f) ...))])
+                 (case (length fs)
+                   [(1) (void)]
+                   [(0) (raise-user-error 'cv "missing one of: ~s" '(f ...))]
+                   [else (raise-user-error 'cv "conflicting flags: ~s" fs)]))
+               (define-syntax-rule (Y: X- ...) (cond [X? X-] ...))
+               (provide Y:))
+        ...
+        (begin (define C? (and P? ...))
+               (define-syntax-rule (C: text (... ...))
+                 (and C? (: text (... ...))))
+               (provide C:))
+        ...)))
+-def-flags-
 
 ;; -- Wrapping ----------------------------------------------------------------
 
@@ -116,7 +152,8 @@
                 [(2) (if (has-items? xs) "+" "-")]
                 [else "-"]))
     (define loose? (ormap should-be-loose? xs))
-    (define is  (map (λ(x) (list * " " (block x))) xs))
+    (define (item x) @block{@* @block{@x}})
+    (define is  (map item xs))
     (define sep (if (or (and (= 1 lvl) (V: #f #t)) loose?) "\n\n" "\n"))
     (with-props (add-between is sep) 'items? #t 'loose? loose?)))
 
@@ -133,12 +170,12 @@
                           (V: "\n\n" "\n\n\n") "\n\n"))
                   ,@parts))))
 
-(define cur-header (make-parameter "# "))
-(define (sec++) (cur-header (string-append "#" (cur-header))))
-(define (sec--) (cur-header (substring (cur-header) 1)))
+(define cur-header (make-parameter 1))
+(define (sec++) (cur-header (add1 (cur-header))))
+(define (sec--) (cur-header (sub1 (cur-header))))
 
 (define (header title)
-  (: (cur-header) title))
+  @:{@(make-string (cur-header) #\#) @title})
 
 (define (section! title . text)
   (define xs (list->: text))
@@ -153,8 +190,8 @@
     [(_ title #:pfx pfx text ...)
      (let ([is (*: text ...)])
        (section! title
-                 pfx (and (is-val? pfx) (if (prop-ref is 'loose?) "\n\n" "\n"))
-                 is))]
+         pfx (and (is-val? pfx) (if (prop-ref is 'loose?) "\n\n" "\n"))
+         is))]
     [(_ title text ...)
      (section! title (*: text ...))]))
 

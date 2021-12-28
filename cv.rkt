@@ -13,34 +13,35 @@
 
 (define (main)
 
-(section! title
-  (S*: @:{<@|email|>@";" <@|web|>}
-       @:{@|phone|@";" @address})
-  (L*: @:{Email:   <@|email|>}
-       @:{Web:     <@|web|>}
-       @:{Phone:   @phones}
-       @:{Address: @address}))
+(section*! title
+  @S:{<@|email|>@";" <@|web|>}
+  @S:{@|phone|@";" @address}
+  ;;
+  @L:{Email:   <@|email|>}
+  @L:{Web:     <@|web|>}
+  @L:{Phone:   @phones}
+  @L:{Address: @address})
 
 (part! (sec++))
 
-(section! "Overview"
-  (L*: @:{Senior Software Developer at Microsoft since December 2015
-          @(*: @:{Azure Machine Learning group in Boston}
-               @:{Python Group}
-               @:{TypeScript Group})}
-       @:{Professional Programmer since 1993
-          @(*: @:{Many languages, focus on functional programming}
-               @:{Many environments, focus on Linux}
-               @:{Preferable focus on full stack work, experience at all levels})}
-       @:{Education:
-          B.Sc., M.Sc., Ph.D. in Computer Science, \
-          1991–2005}
-       @:{Research:
-          Computer Music, Theorem Proving, Programming Languages, \
-          1994–2014}
-       @:{Teaching:
-          Programming Languages, Programming & Fundamentals, \
-          1994–Present}))
+(section*! "Overview"
+  @L:{Senior Software Developer at Microsoft since December 2015
+      @(*: @:{Azure Machine Learning group in Boston}
+           @:{Python Group}
+           @:{TypeScript Group})}
+  @L:{Professional Programmer since 1993
+      @(*: @:{Many languages, focus on functional programming}
+           @:{Many environments, focus on Linux}
+           @:{Preferable focus on full stack work, experience at all levels})}
+  @L:{Education:
+      B.Sc., M.Sc., Ph.D. in Computer Science, \
+      1991–2005}
+  @L:{Research:
+      Computer Music, Theorem Proving, Programming Languages, \
+      1994–2014}
+  @L:{Teaching:
+      Programming Languages, Programming & Fundamentals, \
+      1994–Present})
 
 (section*! "Recent Microsoft Experience"
   @S:{Joined MS as a Senior Software Dev. in December 2015}
