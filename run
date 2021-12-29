@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 cd "$(dirname "$0")"
+here="$PWD"
 
 mkdir -p "build" "download"
 
@@ -37,60 +38,71 @@ md_to_text() {
   '
 }
 
-cat > "build/latex-tweaks.sty" <<EOF
-\urlstyle{tt}
-\usepackage{inconsolata}
-EOF
+run_check() { # output cmd ...
+  local out="$1"; shift
+  "$@" > "$out.new" || exit 1
+  if [[ ! -e "$out" ]]; then
+    echo "Created $out"
+    mv "$out.new" "$out"
+  elif ! diff "$out" "$out.new"; then
+    echo ""
+    echo "Changes in $out.new"
+    echo "* Remove \"$out\" or manually update from \"$out.new\""
+    echo "* Re-run"
+    exit 1
+  else
+    rm "$out.new"
+  fi
+}
 
 for what in "long" "short"; do
   echo "$what..."
   out="download/Eli_Barzilay-$what"
   ####
   md="build/$what.md"
-  ./cv.rkt "$what" "md" > "$md.new" || exit 1
-  if grep -qE ".{80}" "$md.new"; then
-    echo "Error: got lines over 80 chars in $md.new" 1>&2; exit 1
-  fi
-  if [[ ! -e "$md" ]]; then
-    echo "Created $md"
-    mv "$md.new" "$md"
-  elif ! diff "$md" "$md.new"; then
-    echo ""
-    echo "Markdown changes in $md.new"
-    echo "* Remove \"$md\" or update from \"$md.new\""
-    echo "* Re-run"
-    exit 1
-  else
-    rm "$md.new"
+  run_check "build/$what.md" ./cv.rkt "$what" "md"
+  if grep -qE ".{80}" "$md"; then
+    echo "Error: got lines over 80 chars in $md" 1>&2; exit 1
   fi
   ####
-  dates="build/dates-$what"
-  extract_dates "$md" > "$dates.new" || exit 1
-  if [[ ! -e "$dates" ]]; then
-    echo "Created $dates"
-    mv "$dates.new" "$dates"
-  elif ! diff "$dates" "$dates.new"; then
-    echo ""
-    echo "Date changes in $md"
-    echo "* Update the data in \"dates.js\""
-    echo "* Remove \"$dates\" or update from \"$dates.new\""
-    echo "* Re-run"
-    exit 1
-  else
-    rm "$dates.new"
-  fi
+  run_check "build/dates-$what" extract_dates "$md"
   ####
-  args=(-f commonmark+smart "$md")
-  args+=(-M author="Eli Barzilay")
+  tex="build/$what.tex"
+  run_check "$tex" ./cv.rkt "$what" "tex"
+  ln -sf "../acv/awesome-cv.cls" "../acv/fonts" "build"
+  args=(--halt-on-error --interaction="nonstopmode")
+  args+=("../$tex")
+  # twice to get a TOC, show nothing on first run, warnings on the second run
+  (cd "build"; xelatex "${args[@]}") > "/tmp/xelatex-log" \
+    || { cat "/tmp/xelatex-log"; exit 1; }
+  (cd "build"; xelatex "${args[@]}") \
+    | awk 'BEGIN{IGNORECASE=1} /warning|!/{show=1} /^$/{show=0} show;' \
+    | { grep -v 'Package floatflt Warning: Floating figures .* colliding' \
+          || test $? = 1; } \
+    || exit 1
+  rm -f "build/$what."{"aux","out","log"}
+  rm -f "build/"{"texput.log","awesome-cv.cls","fonts"}
+  mv "build/$what.pdf" "$out.pdf"
+  ####
+  args=(-s)
+  # args+=(-M author="Eli Barzilay")
   args+=(-M title="Eli Barzilay: Curriculum Vitae")
-  args+=(-M date="$(date --iso-8601)")
+  # args+=(-M date="2021-12-31")
   args+=(-M papersize="letter")
-  args+=(-M fontfamily="FiraSans")
-  args+=(-M fontfamilyoptions="sfdefault")
-  args+=(-H "build/latex-tweaks.sty")
-  # pandoc -s "${args[@]}" -o "$out.tex"
-  pandoc --pdf-engine=pdflatex "${args[@]}" -o "$out.pdf" || exit 1
-  pandoc "${args[@]}" -o "$out.docx" || exit 1
+  args+=(--resource-path="$here/acv/fonts")
+  # args+=(-M fontfamily="FiraSans")
+  # args+=(-M fontfamilyoptions="default")
+  # args+=(-V "mainfont:FiraSans")
+  # args+=(-V "sansfont:FiraSans")
+  # args+=(-V "monofont:Consolas")
+  if [[ -e "$out.docx" ]]; then cp "$out.docx" "build/ref.docx"; fi
+  args+=(--reference-doc="build/ref.docx")
+  # pandoc -f commonmark "$md""${args[@]}" -o "$tex"
+  args+=(--pdf-engine="xelatex")
+  pandoc -f commonmark "$md" "${args[@]}" -o "$out.docx" || exit 1
+  # pandoc -f latex "$tex" "${args[@]}" -o "$out.docx" || exit 1
+  rm -f "build/ref.docx"
+  ####
   md_to_text "$md" "$out.txt" || exit 1
 done
 

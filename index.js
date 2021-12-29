@@ -137,6 +137,7 @@ const init = ()=>{
       `Click to download the <span class="what"></span> version in`,
       ` <span class="format"></span> format`,
       `<br>Shift+click to view; switch version on the left`,
+      `<span class="fmt-warn"></span>`,
     ].join("");
     popup.addEventListener("transitionend", ()=> {
       if (!popup.classList.contains("active")) popup.style.display = "none"; });
@@ -148,6 +149,9 @@ const init = ()=>{
         if (shiftKey) location = a.href; else a.click();
       });
       b.addEventListener("mouseenter", ({target: {dataset: {name}}}) => {
+        $$("span.fmt-warn").forEach(s =>
+          s.innerHTML = name !== "Word" ? ""
+                        : "<br><i>(Note: the PDF is much better formatted)</i>");
         popup.querySelector("span.format").textContent = name.toLowerCase();
         popup.style.display = "block";
         popup.style.top = b.getBoundingClientRect().bottom + "px";
