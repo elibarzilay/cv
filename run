@@ -5,42 +5,26 @@ here="$PWD"
 
 mkdir -p "build" "download"
 
-printf -v rx "|%s" \
-       "Jan" "January" \
-       "Feb" "February" \
-       "Mar" "March" \
-       "Apr" "April" \
-       "May" \
-       "Jun" "June" \
-       "Jul" "July" \
-       "Aug" "August" \
-       "Sep" "September" \
-       "Oct" "October" \
-       "Nov" "November" \
-       "Dec" "December" \
-       "Mid" "Fall" "Spring"
-
-rx="(((${rx:1}) )?(19[89]|2[0-2][0-2])[0-9]|Present)"
-rx="$rx( ?[-–—]+ ?$rx)?"
-extract_dates() {
-  grep -woE "$rx" "$1"
+check() {
+  local f="$1"; shift
+  if [[ ! -e "$f" ]]; then
+    echo "Created $f"
+    mv "$f.new" "$f"
+  elif ! diff "$f" "$f.new"; then
+    echo ""
+    echo "Changes in $f.new"
+    echo "* Remove \"$f\" or manually update from \"$f.new\""
+    echo "* Re-run"
+    exit 1
+  else
+    rm "$f.new"
+  fi
 }
 
 run_check() { # output cmd ...
   local out="$1"; shift
   "$@" > "$out.new" || exit 1
-  if [[ ! -e "$out" ]]; then
-    echo "Created $out"
-    mv "$out.new" "$out"
-  elif ! diff "$out" "$out.new"; then
-    echo ""
-    echo "Changes in $out.new"
-    echo "* Remove \"$out\" or manually update from \"$out.new\""
-    echo "* Re-run"
-    exit 1
-  else
-    rm "$out.new"
-  fi
+  check "$out"
 }
 
 run_check_wrap() {
@@ -49,18 +33,22 @@ run_check_wrap() {
   echo "Error: got lines over 80 chars in $1" 1>&2; exit 1
 }
 
+export dates_file
+
 for what in long short; do
   echo "$what..."
   out="download/Eli_Barzilay-$what"
-  ####
-  md="build/$what.md"
+  build="build/$what"
+  #### MD
+  md="$build.md"
   run_check_wrap "$md" ./cv.rkt $what md
-  ####
+  #### TXT
+  if [[ $what = long ]]; then dates_file="dates.js.new"; fi
   run_check_wrap "$out.txt" ./cv.rkt $what md text
-  ####
-  run_check "build/dates-$what" extract_dates "$md"
-  ####
-  tex="build/$what.tex"
+  if [[ -n "$dates_file" ]]; then check "${dates_file%.new}"; fi
+  dates_file=""
+  #### PDF
+  tex="$build.tex"
   run_check "$tex" ./cv.rkt $what tex
   ln -sf "../acv/awesome-cv.cls" "../acv/fonts" "build"
   args=(--halt-on-error --interaction="nonstopmode")
@@ -73,10 +61,10 @@ for what in long short; do
     | { grep -v 'Package floatflt Warning: Floating figures .* colliding' \
           || test $? = 1; } \
     || exit 1
-  rm -f "build/$what."{"aux","out","log"}
+  rm -f "$build."{"aux","out","log"}
   rm -f "build/"{"texput.log","awesome-cv.cls","fonts"}
-  mv "build/$what.pdf" "$out.pdf"
-  ####
+  mv "$build.pdf" "$out.pdf"
+  #### DOCX
   args=(-s)
   # args+=(-M author="Eli Barzilay")
   args+=(-M title="Eli Barzilay: Curriculum Vitae")

@@ -8,14 +8,22 @@ const renderTimeline = ()=>{
     .ticks().stroke("#224 0.5", 2);
   chart.axis().labels().fontSize(10);
 
-  Object.entries(dateInfo).forEach(([sec, { entries, type, direction }]) => {
+  const NOW = (new Date).toISOString();
+  Object.entries(dateInfo).forEach(([sec, { entries, direction }]) => {
+    entries.forEach(e =>
+      e.DD = (e.D.split(/ *:: */).map(x => x === "NOW" ? NOW : x)));
+    if (!entries.every(e => e.DD.length === entries[0].DD.length))
+      throw Error(`conflicting ranges/moments in ${sec}`);
+    const type = entries[0].DD.length === 1 ? "moment" : "range";
     const isMoment = type === "moment";
     for (const x of entries) {
       x.section = sec;
-      if (isMoment) x.x = x.date, x.y = x.name;
+      if (isMoment) x.x = x.D, x.y = x.name;
+      else [x.start, x.end] = x.DD;
       if (!x.short) x.short = x.name;
     }
-    const r = chart[type](entries);
+    const r = chart[type]([...entries.map(e =>
+      e)]);
     r.direction(direction);
     r.labels().useHtml(true).format("{%short}")
      .fontFamily("Tahoma").fontWeight(100).fontSize(isMoment ? 7 : 10)

@@ -30,7 +30,7 @@
 (provide (except-out (all-from-out racket) #%module-begin)
          (all-from-out scribble/text)
          (rename-out [mod-beg #%module-begin])
-         url : *: cventries: cvitemize: W newlines:
+         ->string url : *: cventries: cvitemize: W newlines:
          header section! section*! part! sec++ sec--
          \\ it em o date loc NODATE
          ~block ~splice)
@@ -142,7 +142,7 @@
 ;; -- Wrapping ----------------------------------------------------------------
 
 (define (wrap width . text)
-  (when (<= width 5) (error 'wrap "width too small"))
+  (when (<= width 5) (error 'wrap "width too small: ~a" width))
   (let* ([text (->string text)]
          [text (regexp-replace* #rx"\n(\n*)" text " \\1")]
          [text (regexp-split #rx"\n" text)]
@@ -247,20 +247,22 @@
              [else (bad)])@;
          {@title}@"\n"}))
 
-(define (section! title . text)
+(define (section! title #:sec-dates [sec-dates #f] . text)
   (define xs (list->: (map force text)))
   (when (pair? xs)
-    (part! (with-props @list{@header[title]
-                             @(M: "\n")@;
-                             @xs}
-                       'section? #t))))
+    (part! (with-props
+             @list{@header[title]
+                   @(M: "\n")@;
+                   @(list (λ() (date-info 'section! title sec-dates)) xs)}
+             'section? #t))))
 
 (define (section*! #:pfx [pfx #f] #:itemize [itemize (F: *: cventries:)] title
+                   #:sec-dates [sec-dates #f]
                    . text)
   (define xs (list->: (map force text)))
   (when (pair? xs)
     (define is (apply itemize xs))
-    (section! title
+    (section! title #:sec-dates sec-dates
       pfx (and (is-val? pfx) (if (prop-ref (force is) 'loose?) "\n\n" "\n"))
       is)))
 
@@ -283,24 +285,63 @@
 
 ;; the date/loc are not rendered in md, add explicitly or with #:md-*
 (define (o #:loc [l #f] #:md-pfx [mpfx #f] #:md-sfx [msfx #f]
-           #:nobr [nobr #f] 1st . rest)
-  (case 1st
-    [(#f) #f]
-    [(#t) (apply o* l mpfx msfx nobr     rest)]
-    [else (apply o* l mpfx msfx nobr 1st rest)]))
+           #:nobr [nobr #f] #:dname [dname #f] #:dinfo [dinfo '()] 1st
+           . rest)
+  (and 1st (apply o* l mpfx msfx nobr dname dinfo
+                  (if (eq? #t 1st) rest (cons 1st rest)))))
 
-(define (o* l mpfx msfx nobr d title . text)
+(define (o* l mpfx msfx nobr dname dinfo d title . text)
   (define d* (and (not (eq? d NODATE)) d))
   (define (dsubst str) (and str (regexp-replace #rx"D" (->string str) d*)))
-  (list (λ() (date d*) (loc l))
+  (define dname* (or dname title))
+  (list (λ() (date d*) (loc l)
+             (when (and dname* d*) (date-info 'item! dname* d* dinfo)))
         (F: (apply ~splice (: (dsubst mpfx) title) `(,@text ,(dsubst msfx)))
             @~splice{
-              \cvplain{@d*}{@l}{@(regexp-replace #rx":$" (->string title) "")}
+              \cvplain{@d*}{@l}{@(if nobr title (regexp-replace
+                                                 #rx":$" (->string title) ""))}
               @(and (not nobr) "\n")@;
               @(apply : (if (and (pair? text) (equal? "\n" (car text)))
                           (cdr text) text))
               @||})
         (λ() (date #f) (loc #f))))
+
+;; -- Tex stuff ---------------------------------------------------------------
+
+(define all-sections '())
+(define current-section #f)
+
+(define (date-info . msg)
+  (define (done)
+    (when (and current-section (pair? (cdr current-section)))
+      (set! all-sections `(,@all-sections ,(reverse current-section)))))
+  (define (keyval xs sep)
+    (add-between (map (λ(kv) @:{@(car kv): "@(cadr kv)"}) xs) (list "," sep)))
+  (define entry
+    (match-lambda
+     [(list name datestr dinfo)
+      @splice{{
+        @block{@(keyval `([datestr ,datestr] [name ,name] ,@dinfo) "\n")}
+      }}]))
+  (define (section x)
+    @splice{@(format "~s" (car (car x))): {
+              @(keyval (cadr (car x)) " "),
+              @block{entries: [@(splice (add-between (map entry (cdr x))
+                                                     ", "))]}}})
+  (define (json)
+    @splice{{
+      @(block (add-between (map section all-sections) ",\n"))
+    }})
+  (match msg
+    [`(section! ,title ,sec-dates)
+     (done)
+     (set! current-section (and title sec-dates `((,title ,sec-dates))))]
+    [`(item! . ,info)
+     (when (and current-section (andmap is-val? info)
+                (not (equal? "" (car info))))
+       (set! current-section (cons info current-section)))]
+    ['() @:{const dateInfo = @json;
+            @||}]))
 
 ;; -- Rendering ---------------------------------------------------------------
 
@@ -314,7 +355,11 @@
 (define (render!)
   (port-count-lines! (current-output-port))
   (define text (list (reverse parts) "\n"))
-  (output (F: text (with-writer tex-writer text))))
+  (output (F: text (with-writer tex-writer text)))
+  (define dates-file (getenv "dates_file"))
+  (when (and dates-file (not (equal? "" dates-file)))
+    (with-output-to-file dates-file #:exists 'truncate
+      (λ() (output date-info)))))
 
 (define-syntax-rule (mod-beg x ...)
   (#%module-begin x ... (render!)))

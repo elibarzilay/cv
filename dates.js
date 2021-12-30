@@ -1,277 +1,259 @@
-const NOW = (new Date).toISOString();
 const dateInfo = {
   "Recent Microsoft Experience": {
-    type:      "range",
-    direction: "up",
-    anchor:    "datestr",
+    direction: "up", anchor: "datestr",
     entries: [{
-      start:   "2019-10-01", end: NOW,
       datestr: "October 2019 — Present",
-      name:    "Microsoft: TypeScript",
-      short:   "TypeScript",
+      name: "Microsoft: TypeScript",
+      D: "2019-10-01::NOW",
+      short: "TypeScript"
     }, {
-      start:   "2018-03-01", end: "2019-09-30",
       datestr: "March 2018 — October 2019",
-      name:    "Microsoft: Python group",
-      short:   "Azure Python",
+      name: "Microsoft: Python group",
+      D: "2018-03-01::2019-09-30",
+      short: "Azure Python"
     }, {
-      start:   "2016-07-01", end: "2018-02-28",
       datestr: "Mid 2016 — March 2018",
-      name:    "Microsoft: MMLSpark",
-      short:   "MMLSpark",
+      name: "Microsoft: MMLSpark",
+      D: "2016-07-01::2018-02-28",
+      short: "MMLSpark"
     }, {
-      start:   "2015-12-01", end: "2016-06-30",
       datestr: "December 2015 — Mid 2016",
-      name:    "Microsoft: Azure Machine Learning Studio",
-      short:   "AzureML Studio",
+      name: "Microsoft: Azure Machine Learning Studio (Boston)",
+      D: "2015-12-01::2016-06-30",
+      short: "AzureML Studio"
     }]},
   "Education": {
-    type:      "range",
-    direction: "down",
-    anchor:    "datestr",
+    direction: "down", anchor: "datestr",
     entries: [{
-      start:   "1997-01-01", end: "2003-07-31",
       datestr: "1997–2003",
-      name:    "Ph.D. in Computer Science, Cornell",
-      short:   "CS PhD @ Cornell",
+      name: "Ph.D. in Computer Science, Cornell",
+      D: "1997-01-01::2003-07-31",
+      short: "CS PhD @ Cornell"
     }, {
-      start:   "1994-09-01", end: "1996-12-31",
       datestr: "1994–1996",
-      name:    "M.Sc. in Computer Science, Ben-Gurion",
-      short:   "CS MSc @ Cornell",
+      name: "M.Sc. in Computer Science, BGU, Israel",
+      D: "1994-09-01::1996-12-31",
+      short: "CS MSc @ BGU"
     }, {
-      start:   "1991-09-01", end: "1994-06-30",
       datestr: "1991–1993",
-      name:    "B.Sc. in Math & Computer Science, Ben-Gurion",
-      short:   "CS+Math BSc @ BGU",
+      name: "B.Sc. in Math & Computer Science, BGU, Israel",
+      D: "1991-09-01::1994-06-30",
+      short: "CS+Math BSc @ BGU"
     }]},
   "Teaching Experience": {
-    type:      "range",
-    direction: "down",
-    anchor:    "datestr",
+    direction: "down", anchor: "datestr",
     entries: [{
-      start:   "2004-01-01", end: NOW,
       datestr: "2004–Present",
-      name:    "Programming Languages, Northeastern",
-      short:   "Programming Languages",
+      name: "Programming Languages, Northeastern",
+      D: "2004-01-01::NOW",
+      short: "Programming Languages"
     }, {
-      start:   "1997-01-01", end: "2000-05-31",
       datestr: "1997–2000",
-      name:    "Teaching Assistant, Cornell",
-      short:   "TA @ Cornell",
+      name: "Teaching Assistant, Cornell",
+      D: "1997-01-01::2000-05-31",
+      short: "TA @ Cornell"
     }, {
-      start:   "1994-09-01", end: "1996-12-31",
       datestr: "1994–1996",
-      name:    "Teaching Assistant, BGU",
-      short:   "TA @ BGU",
+      name: "Teaching Assistant, BGU",
+      D: "1994-09-01::1996-12-31",
+      short: "TA @ BGU"
     }]},
   "Research Experience": {
-    type:      "range",
-    direction: "down",
-    anchor:    "datestr",
+    direction: "down", anchor: "datestr",
     entries: [{
-      start:   "2003-09-01", end: "2014-07-01",
       datestr: "2003–2014",
-      name:    "Researcher, Programming Research Laboratory, Northeastern",
-      short:   "PRL, Northeastern",
+      name: "Researcher, Programming Research Laboratory, Northeastern",
+      D: "2003-09-01::2014-07-01",
+      short: "PRL, Northeastern"
     }, {
-      start:   "1997-01-01", end: "2003-07-31",
       datestr: "1997–2003",
-      name:    "Graduate Research Assistant in the Nuprl group, Cornell",
-      short:   "Nuprl, Cornell",
+      name: "Graduate Research Assistant in the Nuprl group, Cornell",
+      D: "1997-01-01::2003-07-31",
+      short: "Nuprl, Cornell"
     }, {
-      start:   "1994-09-01", end: "1996-12-31",
       datestr: "1994–1996",
-      name:    "Research Assistant, Ben-Gurion",
-      short:   "Computer Music @ BGU",
+      name: "Research Assistant, Ben-Gurion University",
+      D: "1994-09-01::1996-12-31",
+      short: "Computer Music @ BGU"
     }]},
   "Publications": {
-    type:      "moment",
-    direction: "down",
-    anchor:    "name",
+    direction: "down", anchor: "name",
     entries: [{
-      date:    "2018-10-20",
       datestr: "2018",
-      name:    "MMLSpark: Unifying Machine Learning Ecosystems at Massive Scales",
-      short:   "MMLSpark",
+      name: "MMLSpark: Unifying Machine Learning Ecosystems at Massive Scales",
+      D: "2018-10-20",
+      short: "MMLSpark"
     }, {
-      date:    "2018-05-01",
       datestr: "2018",
-      name:    "A Programmable Programming Language",
-      short:   "Programmable PL",
+      name: "A Programmable Programming Language",
+      D: "2018-05-01",
+      short: "Programmable PL"
     }, {
-      date:    "2015-05-01",
       datestr: "2015",
-      name:    "The Racket Manifesto",
-      short:   "Racket Manifesto",
+      name: "The Racket Manifesto",
+      D: "2015-05-01",
+      short: "Racket Manifesto"
     }, {
-      date:    "2011-10-23",
       datestr: "2011",
-      name:    "Keeping it Clean with Syntax Parameters",
-      short:   "Syntax Parameters",
+      name: "Keeping it Clean with Syntax Parameters",
+      D: "2011-10-23",
+      short: "Syntax Parameters"
     }, {
-      date:    "2011-10-01",
       datestr: "2011",
-      name:    "From Stack Traces to Lazy Rewriting Sequences",
-      short:   "Lazy Rewriting",
+      name: "From Stack Traces to Lazy Rewriting Sequences",
+      D: "2011-10-01",
+      short: "Lazy Rewriting"
     }, {
-      date:    "2009-08-15",
       datestr: "2009",
-      name:    "The Scribble Reader",
-      short:   "Scribble Reader",
+      name: "The Scribble Reader",
+      D: "2009-08-15",
+      short: "Scribble Reader"
     }, {
-      date:    "2009-08-01",
       datestr: "2009",
-      name:    "Keyword and Optional Arguments in PLT Scheme",
-      short:   "Keyword Args",
+      name: "Keyword and Optional Arguments in PLT Scheme",
+      D: "2009-08-01",
+      short: "Keyword Args"
     }, {
-      date:    "2009-09-01",
       datestr: "2009",
-      name:    "Scribble: Closing the Book on Ad Hoc Documentation Tools",
-      short:   "Scribble",
+      name: "Scribble: Closing the Book on Ad Hoc Documentation Tools",
+      D: "2009-09-01",
+      short: "Scribble"
     }, {
-      date:    "2006-09-17",
       datestr: "2006",
-      name:    "A Self-Hosting Evaluator using HOAS",
-      short:   "HOAS",
+      name: "A Self-Hosting Evaluator using HOAS",
+      D: "2006-09-17",
+      short: "HOAS"
     }, {
-      date:    "2006-01-01",
       datestr: "2006",
-      name:    "Implementing Direct Reflection in Nuprl",
-      short:   "Direct Reflection",
+      name: "Implementing Direct Reflection in Nuprl",
+      D: "2006-01-01",
+      short: "Direct Reflection"
     }, {
-      date:    "2005-03-01", // moved from 2005-09-01
       datestr: "2005",
-      name:    "Laziness Without All the Hard Work: Combining Lazy and Strict Languages for Teaching",
-      short:   "Lazy Racket",
+      name: "Laziness Without All the Hard Work: Combining Lazy and Strict Languages for Teaching",
+      D: "2005-03-01",
+      short: "Lazy Racket"
     }, {
-      date:    "2004-09-01",
       datestr: "2004",
-      name:    "Foreign Interface for PLT Scheme",
-      short:   "FFI",
+      name: "Foreign Interface for PLT Scheme",
+      D: "2004-09-01",
+      short: "FFI"
     }, {
-      date:    "2003-08-01",
       datestr: "2003",
-      name:    "MetaPRL — A Modular Logical Environment",
-      short:   "MetaPRL",
+      name: "MetaPRL — A Modular Logical Environment",
+      D: "2003-08-01",
+      short: "MetaPRL"
     }, {
-      date:    "2003-06-01",
       datestr: "2003",
-      name:    "Practical Reflection in Nuprl",
-      short:   "Practical Reflection",
+      name: "Practical Reflection in Nuprl",
+      D: "2003-06-01",
+      short: "Practical Reflection"
     }, {
-      date:    "2002-07-01", // moved from 2002-08-01
       datestr: "2002",
-      name:    "Reflecting Higher-Order Abstract Syntax in Nuprl",
-      short:   "Nuprl HOAS",
+      name: "Reflecting Higher-Order Abstract Syntax in Nuprl",
+      D: "2002-07-01",
+      short: "Nuprl HOAS"
     }, {
-      date:    "2002-05-01", // moved from 2002-11-01
       datestr: "2002",
-      name:    "Abstraction as a Means for End-User Computing in Creative Applications",
-      short:   "Creative Abstr.",
+      name: "Abstraction as a Means for End-User Computing in Creative Applications",
+      D: "2002-05-01",
+      short: "Creative Abstr."
     }, {
-      date:    "2001-01-01",
       datestr: "2001",
-      name:    "Quotation and Reflection in Nuprl and Scheme",
-      short:   "Quotation+Reflection",
+      name: "Quotation and Reflection in Nuprl and Scheme",
+      D: "2001-01-01",
+      short: "Quotation+Reflection"
     }, {
-      date:    "1996-12-31",
       datestr: "1997",
-      name:    "Booms Object Oriented Music System",
-      short:   "Booms",
+      name: "Booms Object Oriented Music System",
+      D: "1996-12-31",
+      short: "Booms"
     }]},
   "Pre-Microsoft Experience": {
-    type:      "range",
-    direction: "up",
-    anchor:    "datestr",
+    direction: "up", anchor: "datestr",
     entries: [{
-      start:   "2014-05-01", end: "2015-10-01",
       datestr: "2014–2015",
-      name:    "Gefen Dekel — Senior Software Developer",
-      short:   "Gefen Dekel",
+      name: "Gefen Dekel",
+      D: "2014-05-01::2015-10-01"
     }, {
-      start:   "2003-09-01", end: "2014-07-01",
       datestr: "2003–2014",
-      name:    "System Administrator for the PLT group",
-      short:   "SysAdmin @ PLT",
+      name: "Systems / Infrastructure",
+      D: "2003-09-01::2014-07-01",
+      short: "Sys/Infra @ PLT"
     }, {
-      start:   "1995-01-01", end: "1996-12-31",
       datestr: "1995–1997",
-      name:    "Gefen-Dekel — Software Developer",
-      short:   "Gefen-Dekel",
+      name: "Gefen-Dekel",
+      D: "1995-01-01::1996-12-31"
     }, {
-      start:   "1994-05-01", end: "1994-12-31",
       datestr: "1994",
-      name:    "Shibutzit — Software Developer",
-      name:    "Shibutzit",
+      name: "Shibutzit",
+      D: "1994-05-01::1994-12-31"
     }, {
-      start:   "1993-08-01", end: "1994-06-30",
       datestr: "1993",
-      name:    "System Administrator at Ben-Gurion",
-      short:   "Sysadmin @ BGU CS",
+      name: "System Administrator",
+      D: "1993-08-01::1994-06-30",
+      short: "Sysadmin @ BGU CS"
     }]},
   "Pre-Microsoft Major Projects": {
-    type:      "range",
-    direction: "up",
-    anchor:    "datestr",
+    direction: "up", anchor: "datestr",
     entries: [{
-      start:   "2008-01-01", end: "2010-12-31",
       datestr: "2008–2010",
-      name:    "The Scribble Reader",
-      short:   "Scribble",
+      name: "The Scribble Reader",
+      D: "2008-01-01::2010-12-31",
+      short: "Scribble"
     }, {
-      start:   "2005-01-01", end: "2006-12-31",
       datestr: "2005–2006",
-      name:    "Lazy Scheme",
+      name: "Lazy Racket",
+      D: "2005-01-01::2006-12-31"
     }, {
-      start:   "2004-01-01", end: "2007-12-31",
       datestr: "2004–2007",
-      name:    "Handin Server and Client",
-      short:   "Handin Server+Client",
+      name: "Handin server and client",
+      D: "2004-01-01::2007-12-31",
+      short: "Handin Server+Client"
     }, {
-      start:   "2003-01-01", end: "2004-12-31",
       datestr: "2003–2004",
-      name:    "Foreign Function Interface for Racket",
-      short:   "Racket FFI",
+      name: "Foreign Function Interface for Racket",
+      D: "2003-01-01::2004-12-31",
+      short: "Racket FFI"
     }, {
-      start:   "2003-09-01", end: "2014-07-01",
       datestr: "2003–2014",
-      name:    "PLT Racket Infrastructure",
-      short:   "Racket Infrastructure",
+      name: "PLT / Racket Infrastructure",
+      D: "2003-09-01::2014-07-01",
+      short: "Racket Infrastructure"
     }, {
-      start:   "1999-01-01", end: "2003-07-31",
       datestr: "1999–2003",
-      name:    "Reflection for Nuprl",
+      name: "Reflection for Nuprl",
+      D: "1999-01-01::2003-07-31"
     }, {
-      start:   "2001-01-01", end: "2001-12-01",
       datestr: "2001",
-      name:    "Web-server",
+      name: "Web-server",
+      D: "2001-01-01::2001-12-01"
     }, {
-      start:   "1999-01-01", end: "1999-12-31",
       datestr: "1999",
-      name:    "Picture collection management",
-      short:   "Picture collection",
-      anchor:  "name",
+      name: "Picture collection management",
+      D: "1999-01-01::1999-12-31",
+      short: "Picture collection",
+      anchor: "name"
     }, {
-      start:   "1999-01-01", end: "1999-12-31",
       datestr: "1999",
-      name:    "HTML generation",
-      anchor:  "name",
+      name: "HTML generation",
+      D: "1999-01-01::1999-12-31",
+      anchor: "name"
     }, {
-      start:   "1998-01-01", end: "1998-12-31",
       datestr: "1998",
-      name:    "Swindle",
+      name: "Swindle",
+      D: "1998-01-01::1998-12-31"
     }, {
-      start:   "1996-09-01", end: "1997-12-31",
       datestr: "1997",
-      name:    "Calculator",
+      name: "Emacs calculator",
+      D: "1996-09-01::1997-12-31"
     }, {
-      start:   "1995-01-01", end: "1996-12-31",
       datestr: "1995–1996",
-      name:    "Booms",
+      name: "Booms",
+      D: "1995-01-01::1996-12-31"
     }, {
-      start:   "1995-01-01", end: "1996-12-31",
       datestr: "1994–1996",
-      name:    "Multeam",
-    }]},
+      name: "Multeam",
+      D: "1995-01-01::1996-12-31"
+    }]}
 };
