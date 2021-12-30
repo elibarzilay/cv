@@ -49,8 +49,7 @@ const setTimelineTargets = ()=> {
     $$("#text > div > *").filter(n => n.tagName.startsWith("H"))
       .map(h => [h.textContent, h]));
   const blockTags = "P UL OL LI PRE H1 H2 H3 H4 H5 H6".split(/ +/);
-  Object.entries(dateInfo).forEach(([sec, xs]) => {
-    const dt = dateTypes.find(dt => dt.section === sec);
+  Object.entries(dateInfo).forEach(([sec, { entries, anchor: secAnchor }]) => {
     let node = headers[sec];
     if (!node) throw Error(`dateInfo section not found: ${sec}`);
     const nodes = [];
@@ -70,8 +69,8 @@ const setTimelineTargets = ()=> {
            // but keep it anyway
            && !(node instanceof Element && node.tagName.startsWith("H")))
       loop(node);
-    xs.forEach(x => {
-      const anchor = !x.anchor ? x[dt.anchor]
+    entries.forEach(x => {
+      const anchor = !x.anchor ? x[secAnchor]
                    : x.anchor in x ? x[x.anchor]
                    : x.anchor;
       const ns = nodes.filter(n => n[1].includes(anchor));

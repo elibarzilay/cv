@@ -8,15 +8,15 @@ const renderTimeline = ()=>{
     .ticks().stroke("#224 0.5", 2);
   chart.axis().labels().fontSize(10);
 
-  for (const dt of dateTypes) {
-    const xs = dateInfo[dt.section], isMoment = dt.type === "moment";
-    for (const x of xs) {
-      x.section = dt.section;
+  Object.entries(dateInfo).forEach(([sec, { entries, type, direction }]) => {
+    const isMoment = type === "moment";
+    for (const x of entries) {
+      x.section = sec;
       if (isMoment) x.x = x.date, x.y = x.name;
       if (!x.short) x.short = x.name;
     }
-    const r = chart[dt.type](xs);
-    r.direction(dt.direction);
+    const r = chart[type](entries);
+    r.direction(direction);
     r.labels().useHtml(true).format("{%short}")
      .fontFamily("Tahoma").fontWeight(100).fontSize(isMoment ? 7 : 10)
      .fontColor("#fff")
@@ -24,7 +24,7 @@ const renderTimeline = ()=>{
     r.height(14);
     r.tooltip().useHtml(true).fontColor("#fff")
      .titleFormat("{%name}").format(`{%datestr} <i>({%section})</i>`);
-    const color = dt.direction === "up" ? "#48c"
+    const color = direction === "up" ? "#48c"
                 : isMoment ? "#ca3" : "#c84";
     const colors = [2,4,6,8].map(o => `${color} 0.${o}`);
     const setColors = (x, i) =>
@@ -40,7 +40,7 @@ const renderTimeline = ()=>{
       setColors(r.selected().markers(), 2).size(8);
       setColors(r.labels().background(), 0);
     }
-  }
+  });
 
   chart.interactivity().selectionMode("singleSelect");
   chart.listen("pointsSelect", e => {
