@@ -22,7 +22,8 @@
 |#
 ;; -- Public ------------------------------------------------------------------
 
-(define-syntax flags '([V [S short] [L long]] [F [M md] [T tex]]))
+(define-syntax flags '([V [S short] [L long]] [F [M md] [T tex]]
+                       TEXT))
 
 (require scribble/text scribble/text/wrap)
 
@@ -37,12 +38,16 @@
 ;; -- Utilities ---------------------------------------------------------------
 
 (define (->string x)
+  (cond [(string? x) x] [(symbol? x) (number->string x)]
+        [(is-val? x) (with-output-to-string (λ() (output x)))]
+        [else ""])
   (with-output-to-string (λ() (output x))))
 
 (define (url . xs)
   (define url (->string xs))
   (define email? (regexp-match? #rx"@" url))
-  (F: @list{<@(and (not email?) "https://")@|url|>}
+  (F: (let ([url (list (and (not email?) "https://") url)])
+        (if TEXT? url (list "<" url ">")))
       @list{\href{@(if email? "mailto:" "https://")@url}@;
                  {\texttt{{\addfontfeature{LetterSpace=-2.0}@;
                            @(regexp-replace #rx"/$" url "")}}}}))
@@ -80,22 +85,28 @@
 
 (define-syntax (-def-flags- _)
   (define flags (syntax-local-value #'flags))
+  (define single-flags (filter symbol? flags))
+  (define multi-flags  (filter pair?   flags))
   (define (sym . xs)
     (string->symbol (apply string-append (map (λ(x) (format "~a" x)) xs))))
+  (define (symbol-downcase x)
+    (string->symbol (string-downcase (symbol->string x))))
   (define (maptree f x)
     (let loop ([x x])
       (cond [(null? x) x]
             [(pair? x) (cons (loop (car x)) (loop (cdr x)))]
             [else (f x)])))
-  (define (ids sfx [fs flags])
+  (define (ids sfx [fs multi-flags])
     (maptree (λ(s) (datum->syntax _ (sym s sfx))) fs))
   (define (cross opts)
     (if (null? opts) '(())
         (let ([rest (cross (cdr opts))])
           (apply append (map (λ(o) (map (λ(r) (cons o r)) rest)) (car opts))))))
   (define combos (map (λ(c) (cons (apply sym c) c))
-                      (cross (map (λ(fs) (map car (cdr fs))) flags))))
-  (with-syntax ([([Y  [X  f ] ...] ...) (ids "")]
+                      (cross (map (λ(fs) (map car (cdr fs))) multi-flags))))
+  (with-syntax ([(SF? ...) (ids '? single-flags)]
+                [(sf  ...) (ids "" (map symbol-downcase single-flags))]
+                [([Y  [X  f ] ...] ...) (ids "")]
                 [([Y? [X? f?] ...] ...) (ids '?)]
                 [([Y: [X: f:] ...] ...) (ids ':)]
                 [([Y- [X- f-] ...] ...) (ids '-)]
@@ -104,9 +115,11 @@
     #`(begin
         (define args
           (map string->symbol (vector->list (current-command-line-arguments))))
-        (let ([bad (remq* '(f ... ...) args)])
+        (let ([bad (remq* '(f ... ... sf ...) args)])
           (when (pair? bad) (raise-user-error 'cv "unknown flag/s: ~a" bad)))
-        (begin (define X? (and (memq 'f args) #t))
+        (begin (define SF? (and (memq 'sf args) #t)) (provide SF?))
+        ...
+        (begin (define X?  (and (memq 'f args) #t))
                (define-syntax-rule (X: text (... ...))
                  (and X? (: text (... ...))))
                (provide X: X?))
@@ -220,11 +233,18 @@
 (define (sec--) (cur-header (sub1 (cur-header))))
 
 (define (header title)
-  (F: @:{@(make-string (cur-header) #\#) @title}
+  (define (bad)
+    (error 'header "bad tex header level ~s for ~s" (cur-header) title))
+  (F: (if TEXT?
+        (let ([title (->string title)])
+          @:{@title
+             @(make-string (string-length title)
+                           (case (cur-header)
+                             [(1 2) #\=] [(3) #\-] [else (bad)]))})
+        @:{@(make-string (cur-header) #\#) @title})
       @:{\@(case (cur-header)
              [(2) 'cvsection] [(3) 'cvplainsection] [(4) 'cvsubsection]
-             [else (error 'header "bad tex header level ~s for ~s"
-                          (cur-header) title)])@;
+             [else (bad)])@;
          {@title}@"\n"}))
 
 (define (section! title . text)
@@ -250,11 +270,11 @@
 (define loc  (make-parameter #f))
 (define NODATE (gensym))
 
-(define \\ @F:["\\" "\\\\"])
+(define \\ (and (not TEXT?) @F:[" \\" " \\\\"]))
 
 ;; just for titles
 (define (it . text)
-  (F: @~splice{*"@text"*}
+  (F: (if TEXT? @~splice{«@|text|»} @~splice{*“@|text|”*})
       @~splice{\textit{@text}}))
 
 (define (em . text)
@@ -271,7 +291,7 @@
 
 (define (o* l mpfx msfx nobr d title . text)
   (define d* (and (not (eq? d NODATE)) d))
-  (define (dsubst str) (and str (regexp-replace #rx"D" str d*)))
+  (define (dsubst str) (and str (regexp-replace #rx"D" (->string str) d*)))
   (list (λ() (date d*) (loc l))
         (F: (apply ~splice (: (dsubst mpfx) title) `(,@text ,(dsubst msfx)))
             @~splice{

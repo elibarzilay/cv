@@ -40,7 +40,7 @@
     @(*: @:{Many languages, focus on functional programming}
          @:{Many environments, focus on Linux}
          @:{Preferable focus on full stack work, experience at all levels})}
-  @(set! oo (curry o L? #:md-sfx ", \\\nD"))
+  @(set! oo (curry o L? #:md-sfx (list "," \\ "\nD")))
   @oo["1991–2005"]{Education:
     B.Sc., M.Sc., Ph.D. in Computer Science}
   @oo["1994–2014"]{Research:
@@ -79,7 +79,7 @@
              distribution), and network design (including Kubernetes compute
              backends on Azure)})}
   @oo["Mid 2016 — March 2018"]{
-    @:{MMLSpark@M:{ @\\}}
+    @:{MMLSpark@M:[\\]}
     (@url{github.com/microsoft/SynapseML})
     @(*: @S:{Open source core library for Azure ML, built from scratch}
          @L:{Open source project, core library for the Vienna project (Azure ML)}
@@ -138,7 +138,7 @@
   @oo[L? "2004–Present" #:loc "Northeastern"]{
     Lecturer, Northeastern University
     @||
-    @(*: @:{CSU4400/CSG5400 (@url{pl.barzilay.org/}) @\\
+    @(*: @:{CSU4400/CSG5400 (@url{pl.barzilay.org/})@\\
             Programming Languages (combined master and undergraduate levels).
             @||
             Reconstructed the course materials based on a (then new) textbook
@@ -587,8 +587,8 @@
   (let ([advisor (and advisor @:{Advisor: @advisor,})]
         [subject (and subject (V: (it subject) @:{Subject: @(it subject),}))]
         [longloc @:{@(car where).}])
-    (F: (V: @:{@date @title, @\\
-               @(car where)@and[subject]{@splice{, @\\
+    (F: (V: @:{@date @title,@\\
+               @(car where)@and[subject]{@splice{,@\\
                @subject}}.}
             @:{@date @title,
                @(*: advisor subject longloc)})
@@ -613,12 +613,12 @@
                                #:after-last (if et-al? '(" et al") '()))]
          [title @it{@title}])
     (F: (V: @:{@W{@|title|@";" @|authors|@";" @date}}
-            @:{@W{@title, @\\}
-               @W{@authors, @\\}
+            @:{@W{@title,@\\}
+               @W{@authors,@\\}
                @W{@where, @|date|.}})
         (o date #:nobr S? title
            @:{@(V:"• " @:{\vspace{-7pt}@"\n"})@;
-              @authors @\\
+              @|authors|@\\
               @where}))))
 
 (define (tex-prefix)

@@ -26,18 +26,6 @@ extract_dates() {
   grep -woE "$rx" "$1"
 }
 
-md_to_text() {
-  I="$1" O="$2" node -e '
-    fs.writeFileSync(process.env.O,
-      fs.readFileSync(process.env.I).toString()
-        .replaceAll(/(?<=^|\n\n)(#+) +(.*)(?=\n)/g, (_, h, s) =>
-          s+"\n"+(h.length <= 2 ? "=" : "-").repeat(s.length))
-        .replaceAll(/ +\\\n/g, "\n")
-        .replaceAll(/<(https?:\/\/[^<>]+|[^<>@]+@[^<>@]+)>/g, "$1")
-        .replaceAll(/\*("[^"]+")\*/g, "$1"));
-  '
-}
-
 run_check() { # output cmd ...
   local out="$1"; shift
   "$@" > "$out.new" || exit 1
@@ -55,20 +43,25 @@ run_check() { # output cmd ...
   fi
 }
 
-for what in "long" "short"; do
+run_check_wrap() {
+  run_check "$@"
+  if ! grep -qE ".{80}" "$1"; then return; fi
+  echo "Error: got lines over 80 chars in $1" 1>&2; exit 1
+}
+
+for what in long short; do
   echo "$what..."
   out="download/Eli_Barzilay-$what"
   ####
   md="build/$what.md"
-  run_check "build/$what.md" ./cv.rkt "$what" "md"
-  if grep -qE ".{80}" "$md"; then
-    echo "Error: got lines over 80 chars in $md" 1>&2; exit 1
-  fi
+  run_check_wrap "$md" ./cv.rkt $what md
+  ####
+  run_check_wrap "$out.txt" ./cv.rkt $what md text
   ####
   run_check "build/dates-$what" extract_dates "$md"
   ####
   tex="build/$what.tex"
-  run_check "$tex" ./cv.rkt "$what" "tex"
+  run_check "$tex" ./cv.rkt $what tex
   ln -sf "../acv/awesome-cv.cls" "../acv/fonts" "build"
   args=(--halt-on-error --interaction="nonstopmode")
   args+=("../$tex")
@@ -102,8 +95,6 @@ for what in "long" "short"; do
   pandoc -f commonmark "$md" "${args[@]}" -o "$out.docx" || exit 1
   # pandoc -f latex "$tex" "${args[@]}" -o "$out.docx" || exit 1
   rm -f "build/ref.docx"
-  ####
-  md_to_text "$md" "$out.txt" || exit 1
 done
 
 echo "done"
