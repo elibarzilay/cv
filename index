@@ -10,9 +10,12 @@ short
 ------------------------------------>
 <title>???</title>
 <meta content="width=device-width, initial-scale=1" name="viewport">
-<style><!--#include file="lib/css/anychart-ui.min.css" --></style>
-<link href="lib/css/anychart-font.min.css" rel="stylesheet" type="text/css">
-<style><!--#include file="index.css" --></style>
+<style>
+  <!--#include file="lib/css/anychart-ui.min.css" -->
+  <!--#include file="lib/css/anychart-font.min.css" -->
+  <!--#include file="index.css" -->
+</style>
+<link href="https://fonts.googleapis.com/css?family=Fira Sans" rel="stylesheet">
 <script>
   <!--#include file="lib/js/anychart-core.min.js" -->
   <!--#include file="lib/js/anychart-timeline.min.js" -->

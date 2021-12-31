@@ -43,7 +43,10 @@ body > div { flex-shrink: 0; width: 100%; margin: auto; max-width: 100%; }
 
 #timeline     { height: 200px; }
 #controls-row { height: 3ex; }
-#text-row { background: #111; flex: auto; overflow-y: overlay; }
+#text-row {
+  background: #111; flex: auto; overflow-y: overlay;
+  font-family: Fira Sans, Arial, sans-serif;
+}
 #controls, #text { max-width: 60em; margin: auto; }
 
 /* Hack#1: avoid horizontal shift due to the scrollbar + fill vertical size */
