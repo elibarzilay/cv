@@ -9,7 +9,7 @@ short
 <!--#include file="build/short.html" -->
 ------------------------------------>
 <title>???</title>
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   <!--#include file="lib/css/anychart-ui.min.css" -->
   <!--#include file="lib/css/anychart-font.min.css" -->
