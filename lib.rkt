@@ -12,7 +12,7 @@
   SM:, LM:, ST:, ... -- combinations for both version + format
   S?, L?, M?, T?, LM?, ST?, ... -- booleans for the chosen modes
   (*: item ...)   -- itemize list
-  (W text ...)    -- wrap line
+  (W text ...)    -- wrap line (in text mode)
   (sec++) (sec--) -- inc/dec header level (starts at level 1)
   (section! title text ...)  -- add section: header + text
   (header! title)            -- add just the header
@@ -30,7 +30,7 @@
 (provide (except-out (all-from-out racket) #%module-begin)
          (all-from-out scribble/text)
          (rename-out [mod-beg #%module-begin])
-         ->string url : *: cventries: cvitemize: W newlines:
+         ->string : url *: cventries: cvitemize: W newlines:
          header section! section*! part! sec++ sec--
          \\ it em o date loc NODATE
          ~block ~splice)
@@ -42,15 +42,6 @@
         [(is-val? x) (with-output-to-string (λ() (output x)))]
         [else ""])
   (with-output-to-string (λ() (output x))))
-
-(define (url . xs)
-  (define url (->string xs))
-  (define email? (regexp-match? #rx"@" url))
-  (F: (let ([url (list (and (not email?) "https://") url)])
-        (if TEXT? url (list "<" url ">")))
-      @list{\href{@(if email? "mailto:" "https://")@url}@;
-                 {\texttt{{\addfontfeature{LetterSpace=-2.0}@;
-                           @(regexp-replace #rx"/$" url "")}}}}))
 
 (define (is-val? x) (not (or (not x) (void? x) (null? x))))
 (define (: . xs) (define r (filter is-val? xs)) (and (is-val? r) r))
@@ -80,6 +71,15 @@
 (define ((lazify f) . text) (lazy (apply f (maptree force text))))
 (define ~block  (lazify block))
 (define ~splice (lazify splice))
+
+(define (url . xs)
+  (define url (->string xs))
+  (define email? (regexp-match? #rx"@" url))
+  (define full-url (list (if email? "mailto:" "https://") url))
+  (F: (if TEXT? url @:{[`@url`](@full-url)})
+      @list{\href{@full-url}@;
+                 {\texttt{{\addfontfeature{LetterSpace=-2.0}@;
+                           @(regexp-replace #rx"/$" url "")}}}}))
 
 ;; -- Mode flags --------------------------------------------------------------
 
@@ -159,9 +159,10 @@
     text))
 
 (define (W . text)
-  (~block flush (λ() (define-values [line col pos]
-                       (port-next-location (current-output-port)))
-                     (wrap (- 79 col) text))))
+  (if (not TEXT?) text
+      (~block flush (λ() (define-values [line col pos]
+                           (port-next-location (current-output-port)))
+                         (wrap (- 79 col) text)))))
 
 (define (newlines: . xs)
   (let ([xs (apply : xs)])
@@ -311,6 +312,8 @@
 (define all-sections '())
 (define current-section #f)
 
+(define ref-counter (let ([n 0]) (λ() (set! n (add1 n)) n)))
+
 (define (date-info . msg)
   (define (done)
     (when (and current-section (pair? (cdr current-section)))
@@ -319,9 +322,9 @@
     (add-between (map (λ(kv) @:{@(car kv): "@(cadr kv)"}) xs) (list "," sep)))
   (define entry
     (match-lambda
-     [(list name datestr dinfo)
+     [(list R name datestr dinfo)
       @splice{{
-        @block{@(keyval `([datestr ,datestr] [name ,name] ,@dinfo) "\n")}
+        @block{@(keyval `([datestr ,datestr] [name ,name] [R ,R] ,@dinfo) "\n")}
       }}]))
   (define (section x)
     @splice{@(format "~s" (car (car x))): {
@@ -339,7 +342,9 @@
     [`(item! . ,info)
      (when (and current-section (andmap is-val? info)
                 (not (equal? "" (car info))))
-       (set! current-section (cons info current-section)))]
+       (define R (ref-counter))
+       (set! current-section (cons (cons R info) current-section))
+       (and M? (not TEXT?) @:{<span id="R@R"></span>}))]
     ['() @:{const dateInfo = @json;
             @||}]))
 

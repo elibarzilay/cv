@@ -48,8 +48,7 @@
   @oo["1994–Present"]{Teaching:
     Programming Languages, Programming & Fundamentals})
 
-(section*! "Recent Microsoft Experience"
-  #:sec-dates '([direction up] [anchor datestr])
+(section*! "Recent Microsoft Experience" #:sec-dates '([direction up])
   @o["December 2015" ""]{
     @V:[@:{Joined MS as a Senior Software Dev. in @date}
         @:{In 2014 I decided to switch from academia to work in the industry.
@@ -63,6 +62,9 @@
     @(*: @S:{Code maintenance (language server, vscode, builds, DefinitelyTyped)}
          @L:{Day-to-day work on bugs in TS and related systems (language server,
              vscode, builds, DefinitelyTyped maintenance)}
+         @S:{Tracing profiler}
+         @L:{Implemented most of TypeScript's tracing profiler, which helps people
+             debug compilation performance issues}
          @S:{DefinitelyTyped mergebot}
          @L:{Implementation of most of the DefinitelyTyped mergebot
              (@url{github.com/DefinitelyTyped/dt-mergebot}): a github bot
@@ -124,8 +126,7 @@
 (section! "Research Interests"
   (@L: research-interests))
 
-(section*! "Education"
-  #:sec-dates '([direction down] [anchor datestr])
+(section*! "Education" #:sec-dates '([direction down])
   (edu "1997–2003" "1997-01-01::2003-07-31"
        @:{@phd in Computer Science} "CS PhD @ Cornell"
        cornell "Prof. Robert Constable" "Implementing Reflection in Nuprl")
@@ -136,8 +137,7 @@
        @:{@bsc in Math & Computer Science (cum laude)} "CS+Math BSc @ BGU"
        bgu #f #f))
 
-(section*! "Teaching Experience"
-  #:sec-dates '([direction down] [anchor datestr])
+(section*! "Teaching Experience" #:sec-dates '([direction down])
   @(set! oo (curry o #:md-pfx "D: "))
   @oo["2004–Present" #:loc "Northeastern"
       #:dname "Programming Languages, Northeastern"
@@ -215,8 +215,7 @@
            Conducted recitation sessions, graded exams, helped in extending
            course contents and developed new material.}]})
 
-(section*! "Research Experience"
-  #:sec-dates '([direction down] [anchor datestr])
+(section*! "Research Experience" #:sec-dates '([direction down])
   #:pfx @S:{Research Interests: @research-interests
             @||}
   @(set! oo (curry o #:md-pfx "D: " #:nobr #t))
@@ -316,8 +315,7 @@
     many years later it has even inspired a textual language for Racket
     which is in heavy use today (Scribble).})
 
-(section*! "Publications"
-  #:sec-dates '([direction down] [anchor name])
+(section*! "Publications" #:sec-dates '([direction down])
   (pub "MMLSpark: Unifying Machine Learning Ecosystems at Massive Scales"
        "MMLSpark" "Mark..."
        "2018" "2018-10-20"
@@ -393,8 +391,7 @@
 
 (part! (L: (sec--)))
 
-(section*! "Pre-Microsoft Experience"
-  #:sec-dates '([direction up] [anchor datestr])
+(section*! "Pre-Microsoft Experience" #:sec-dates '([direction up])
   @(set! oo (λ(date D title #:short [sh #f] . xs)
               (apply o #:md-pfx "D: " #:nobr #t date #:dname title
                      #:dinfo `([D ,D] ,@(if sh `([short ,sh]) '()))
@@ -433,8 +430,7 @@
            system administration group for the Computer Science department in Ben-Gurion
            University.}]})
 
-(section*! "Pre-Microsoft Major Projects"
-  #:sec-dates '([direction up] [anchor datestr])
+(section*! "Pre-Microsoft Major Projects" #:sec-dates '([direction up])
   #:pfx @L:{(Approximate dates.)}
   @(set! oo (λ(date D title #:short [sh #f] #:dinfo [di '()] . xs)
               (let* ([title (->string title)]
@@ -513,14 +509,13 @@
         Wrote a complete web-server in Scheme, with the purpose of being very
         flexible and for making an on-line picture collection.}}
   @oo["1999" "1999-01-01::1999-12-31"
-      "Picture collection management" #:short "Picture collection"
-      #:dinfo `([anchor name])]{
+      "Picture collection management" #:short "Picture collection"]{
     @L:{@||
         Designed and implemented a set of tools for managing a picture
         collection, as part of a photography project (for a minor in art at
         Cornell).}}
   @oo["1999" "1999-01-01::1999-12-31"
-      "HTML generation" #:dinfo `([anchor name])]{
+      "HTML generation"]{
     @V:[@:{(precursor to Scribble)}
         @:{@||
            Wrote a system to easily generate HTML code in an easily extensible

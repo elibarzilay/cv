@@ -10,111 +10,56 @@ const $$ = x => Array.from(document.querySelectorAll(x));
 const show = what => {
   if (typeof what === "number") what = Object.keys(texts)[what];
   curVersion = what;
-  const text = texts[what];
-  document.title = text.title;
-  $("#text").innerHTML = text.HTML;
+  $("#text").innerHTML = texts[what];
+  const headers = $$("#text h1, #text h2, #text h3, #text h4");
+  document.title = headers[0].textContent;
+  $("#toc-links").innerHTML =
+    headers.map((h, i) => {
+      h.id = `S${i}`;
+      const [tag, title] = !i ? ["H2", "Intro"] : [h.tagName, h.innerHTML];
+      return `<${tag}><a href="#${h.id}">${title}</a></${tag}>`;
+    }).join("\n");
+  $$("#toc-links a").forEach(a => a.addEventListener("click", e => {
+    e.preventDefault(); e.stopImmediatePropagation();
+    const elt = $(e.target.getAttribute("href"));
+    jumpTo(elt.parentNode, elt, "start");
+  }));
   $$("span.what").forEach(s => s.textContent = what);
   $$("#versions button").forEach(b =>
     b.classList.toggle("selected", b.textContent === what));
-  $("#toc-links").innerHTML = text.headersHTML;
-  $$("#toc-links a").forEach(a => a.addEventListener("click", tocJump));
-  setTimelineTargets();
   $("#text").focus();
   $("#text-row").scrollTo(0, 0);
 };
 
-const jumpTo = elt => {
-  Object.assign(elt.style, {
-    backgroundColor: "#f806",
-    transition: "background-color 0.3s ease-in-out",
-    borderRadius: "5px" });
-  setTimeout(()=> Object.assign(elt.style, {
-                    backgroundColor: "",
-                    transition: "background-color 1s ease-in-out" }),
-             1000);
-  elt.scrollIntoView({behavior: "smooth", block: "center"});
-};
-
-const switchTo = e => show(e.target.textContent);
-const tocJump = e => {
-  const text = $("#text");
-  const hdr = e.target.textContent;
-  jumpTo(hdr === "Intro" ? $("#text h1")
-         : $$(`#text ${e.target.parentElement.tagName}`)
-             .find(h => h.textContent === hdr));
-};
-
-const setTimelineTargets = ()=> {
-  const headers = Object.fromEntries(
-    $$("#text > div > *").filter(n => n.tagName.startsWith("H"))
-      .map(h => [h.textContent, h]));
-  const blockTags = "P UL OL LI PRE H1 H2 H3 H4 H5 H6".split(/ +/);
-  Object.entries(dateInfo).forEach(([sec, { entries, anchor: secAnchor }]) => {
-    let node = headers[sec];
-    if (!node) throw Error(`dateInfo section not found: ${sec}`);
-    const nodes = [];
-    const loop = n => {
-      if (!n || (n instanceof Element && n.tagName.startsWith("H"))) return;
-      const texts = [];
-      n.childNodes.forEach(n =>
-        n instanceof Element && blockTags.includes(n.tagName)
-          ? (texts.push("\n"), loop(n))
-          : texts.push(n));
-      const text = texts.map(t => typeof t === "string" ? t : t.textContent)
-                        .join("").replaceAll(/\s+/g, " ").trim();
-      if (text.length) nodes.push([n, text]);
-    };
-    while ((node = node.nextSibling)
-           // no real need for this, since each section is in its own div,
-           // but keep it anyway
-           && !(node instanceof Element && node.tagName.startsWith("H")))
-      loop(node);
-    entries.forEach(x => {
-      const anchor = !x.anchor ? x[secAnchor]
-                   : x.anchor in x ? x[x.anchor]
-                   : x.anchor;
-      const ns = nodes.filter(n => n[1].includes(anchor));
-      if (ns.length !== 1)
-        console.error(`${ns.length} matches for ${JSON.stringify(x)}`);
-      if (!x.go) x.go = function go() { jumpTo(go.to); }
-      x.go.to = ns[0][0];
-    });
-  });
+const jumpTo = (elt, hilite, where = "center") => {
+  if (typeof elt === "string") elt = document.getElementById(elt);
+  while (elt.textContent === "") elt = elt.parentNode;
+  if (!hilite) hilite = elt;
+  const style = props => Object.assign(hilite.style, props)
+  style({ background: "#f806",
+          transition: "background 0.3s ease-in-out",
+          borderRadius: "5px" });
+  setTimeout(()=> { style({ background: "#f800",
+                            transition: "background 1s ease-in-out" });
+                    setTimeout(()=> style({ background: "", transition: "",
+                                            borderRadius: "" }),
+                               1000); },
+             2000);
+  elt.scrollIntoView({behavior: "smooth", block: where});
 };
 
 const init = ()=>{
-  const r = new commonmark.Parser({smart: true});
-  const w = new commonmark.HtmlRenderer();
-  // const tweakPubs = txt =>
-  //   txt.replace(/(?<=\n#+ Publications\n+)((?:(?:[^#\n].*)?\n)+)/, pubs =>
-  //     pubs.replaceAll(/\n  - /g, " \\\n   "));
-  const md = (txt, tweak) => {
-    // italics for all quotes
-    // txt = txt.replaceAll(/"[^"]+",?/g, "*$&*");
-    if (tweak) txt = tweak(txt);
-    txt = w.render(r.parse(txt));
-    // - put self-urls in <code>
-    txt = txt.replaceAll(/<a href="(?:mailto:)?([^"]+)">\1<\/a>/g, "<code>$&</code>");
-    return txt;
-  };
   const addText = node => {
     if (!node) return;
     const txt = node.data.trim().replace(/^--+\n|\n--+$/g, "").trim();
     const nl = txt.indexOf("\n");
     if (nl < 0) return;
-    const name = txt.substring(0, nl);
-    const contents = txt.substring(nl + 1);
-    if (!contents.startsWith("#")) return;
-    const headers = contents.split("\n").filter(s => s.startsWith("#"));
-    const title = headers[0].replace(/^#+ */, "");
-    let hNum = 0;
-    const HTML = md(contents) // md(contents, name === "long" && tweakPubs);
-      .replaceAll(/<([hH][1-6])>.*?<\/\1>/g, s =>
-        (hNum++ ? "</div>\n" : "") + "<div>\n" + s)
-      .replace(/$/, "</div>");
-    const headersHTML = md("## Intro\n" + headers.slice(1).join("\n"))
-      .replace(/<[hH].>/g, "$&<a>").replace(/<\/[hH].>/g, "</a>$&");
-    texts[name] = { name, contents, title, headers, HTML, headersHTML };
+    const [what, contents] = [txt.substring(0, nl), txt.substring(nl + 1)];
+    if (!(what.match(/^[a-z]+$/) && contents.startsWith("<"))) return;
+    // wrap each section in a div for the sticky headers
+    texts[what] = `<div>\n${contents}\n</div>`
+      .replaceAll(/<([hH][1-6])>.*?<\/\1>/g, "</div><div>\n$&")
+      .replace(/^\s*<div>\s*<\/div>\s*/, "");
     return true;
   };
   { const n = document.createNodeIterator(
@@ -123,7 +68,8 @@ const init = ()=>{
   }
   { $("#versions").innerHTML = "Version: "
       + Object.keys(texts).map(what => `<button>${what}</button>`).join("\n");
-    $$("#versions button").forEach(b => b.addEventListener("click", switchTo));
+    $$("#versions button").forEach(b =>
+      b.addEventListener("click", e => show(e.target.textContent)));
   }
   { $("#formats").innerHTML = `Download <span class="what"></span> version: `
       + (Object.entries(formats)).map(([ext, name]) =>

@@ -54,7 +54,7 @@ const renderTimeline = ()=>{
   chart.listen("pointsSelect", e => {
     if (!e.currentPoint.selected) return;
     const p = e.point;
-    p.get("go")();
+    jumpTo("R" + p.get("R"));
     p.selected(false);
   });
 

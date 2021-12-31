@@ -2,11 +2,11 @@
 <html><head><meta charset="UTF-8">
 <!------------------------------------
 long
-<!--#include file="build/long.md" -->
+<!--#include file="build/long.html" -->
 ------------------------------------>
 <!------------------------------------
 short
-<!--#include file="build/short.md" -->
+<!--#include file="build/short.html" -->
 ------------------------------------>
 <title>???</title>
 <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -18,8 +18,7 @@ short
   <!--#include file="lib/js/anychart-timeline.min.js" -->
   <!--#include file="lib/js/anychart-exports.min.js" -->
   <!--#include file="lib/js/anychart-ui.min.js" -->
-  <!--#include file="lib/commonmark.min.js" -->
-  <!--#include file="dates.js" -->
+  <!--#include file="build/long-dates.js" -->
   <!--#include file="timeline.js" -->
   <!--#include file="index.js" -->
 </script></head>
