@@ -5,7 +5,7 @@
 (define name     "Eli Barzilay")
 (define title    "Curriculum Vitae")
 (define email    "eli@barzilay.org")
-(define web      "barzilay.org/")
+(define web      "barzilay.org")
 (define phone    "+1-617-372-2483")
 (define phone2   "+1-617-383-9313")
 (define phones   @:{@phone / @phone2})
@@ -30,35 +30,67 @@
 (part! (sec++))
 
 (section*! "Overview"
-  @o[L? "2015–Present"]{
-    Senior Software Developer at Microsoft since December 2015
+  @o[L? "2015–2022"]{
+    Senior Software Developer at Microsoft, December 2015 to January 2022,
+    Principal Software Engineer at Sundae, February to June 2022
     @(*: @:{Azure Machine Learning group in Boston}
          @:{Python Group}
-         @:{TypeScript Group})}
+         @:{TypeScript Group}
+         @:{Backend design and API implementation at Sundae})}
   @o[L? "1993–Present"]{
     Professional Programmer since 1993
     @(*: @:{Many languages, focus on functional programming}
-         @:{Many environments, focus on Linux}
-         @:{Preferable focus on full stack work, experience at all levels})}
+         @:{Strong academic background, specializing in Programming Languages
+            and Formal Methods}
+         @:{Many environments, fluent in Linux}
+         @:{Preferable focus on backend/full-stack work, experience at all
+            levels})}
   @(set! oo (curry o L? #:md-sfx (list "," \\ "\nD")))
   @oo["1991–2005"]{Education:
     B.Sc., M.Sc., Ph.D. in Computer Science}
   @oo["1994–2014"]{Research:
-    Computer Music, Theorem Proving, Programming Languages}
+    Programming Languages, Theorem Proving, Computer Music}
   @oo["1994–Present"]{Teaching:
     Programming Languages, Programming & Fundamentals})
 
-(section*! "Recent Microsoft Experience" #:sec-dates '([direction up])
-  @o["December 2015" ""]{
-    @V:[@:{Joined MS as a Senior Software Dev. in @date}
+(section*! "Recent Industry Experience" #:sec-dates '([direction up])
+  @o["December 2015 — Present" ""]{
+    @V:[@:{Joined MS as a Senior Software Dev. in late 2015@";" in 2022 I
+           realized that I need more greenfield-focused work, and switched to
+           startup work at Sundae.com as a Principal Software Eng.}
         @:{In 2014 I decided to switch from academia to work in the industry.
            After a few short projects I joined Microsoft as a Senior Software
-           Developer in @|date|.}]}
+           Developer in late 2015.  In January 2022 I realized that I'm missing
+           more greenfield-style work, and after much reflection and
+           deliberation decided to leave Microsoft and switch to a startup: I
+           joined Sundae.com as a Principal Software Engineer, and have greatly
+           enjoyed it@";" but the company was forced to reduce the engineering
+           team (to around half its size) as a result of problems in the
+           housing market.}]}
   @(set! oo (λ (date D title #:short [short title] . xs)
               (apply o #:md-pfx "D: " #:dinfo `([D ,D] [short ,short])
                      #:dname @:{Microsoft: @title} date title xs)))
-  @oo["October 2019 — Present" "2019-10-01::NOW"]{
-    TypeScript
+  @oo["February 2022 — June 2022" "2022-02-28::2022-06-17"]{
+    @(F: @:{[Sundae](https://sundae.com/)} @:{Sundae})
+    @(*: @S:{Joined Sundae.com on February 2022 as a Principal Software Engineer}
+         @L:{Following my decision to switch to startup work, I joined
+             Sundae.com as a Principal Software Engineer on February 2022.}
+         @S:{Work focused on improving the young codebase and implementing new
+             APIs}
+         @L:{During this time my work was mainly focused on improving the very
+             young codebase, as well as implementing new APIs.  The former was
+             mainly making the code robust by improving the TypeScript type
+             declarations, and revamping the overall design of the system.}
+         @:{I greatly enjoyed my time at Sundae, affirming my decision to leave
+            Microsoft.  The intended role was to continue in a direction of
+            "special projects", mostly around making the code base more robust
+            as well as dealing with new highlevel requirement as needed.
+            However, the faltering housing market in June made the company
+            reduce the engineering team by half and minimize the highlevel
+            programming work, so I had to leave even though my managers were
+            happy with the work I did.})}
+  @oo["October 2019 — January 2022" "2019-10-01::2022-01-31"]{
+    @(F: @:{[TypeScript](https://www.typescriptlang.org/)} @:{TypeScript})
     @(*: @S:{Code maintenance (language server, vscode, builds, DefinitelyTyped)}
          @L:{Day-to-day work on bugs in TS and related systems (language server,
              vscode, builds, DefinitelyTyped maintenance)}
@@ -112,8 +144,8 @@
              micro-services})}
   @o[L? NODATE]{
     Used numerous technologies (abridged list):
-    @(*: @:{Platforms: Linux, Windows, Hyper-V, Ubuntu, Azure VMs and other
-            services, Github, Azure DevOps, Docker}
+    @(*: @:{Platforms: Linux, Windows, Hyper-V, Azure VMs and other services,
+            Github, GraphQL, Azure DevOps, Docker}
          @:{Build/code management: Git, Bash (install+build scripts), Docker}
          @:{Languages: TypeScript, JavaScript, Python, Bash, Powershell, Scala,
             Java, R, ARM Templates})})
