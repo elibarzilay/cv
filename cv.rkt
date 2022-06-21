@@ -63,8 +63,8 @@
          @L:{Day-to-day work on bugs in TS and related systems (language server,
              vscode, builds, DefinitelyTyped maintenance)}
          @S:{Tracing profiler}
-         @L:{Implemented most of TypeScript's tracing profiler, which helps people
-             debug compilation performance issues}
+         @L:{Implemented TypeScript's tracing profiler (with Andrew Casey), which
+             helps people debug compilation performance issues}
          @S:{DefinitelyTyped mergebot}
          @L:{Implementation of most of the DefinitelyTyped mergebot
              (@url{github.com/DefinitelyTyped/dt-mergebot}): a github bot
