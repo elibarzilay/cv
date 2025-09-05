@@ -74,11 +74,42 @@ body::-webkit-scrollbar-thumb,
 }
 #controls button {
   color: #888; background: #444; transition: all 0.3s ease-in-out;
+  &.dnld{
+    background: #333;
+    padding-right: 1ex; white-space: nowrap; border-radius: 5px;
+    cursor: pointer; outline: none;
+    & svg { vertical-align: bottom; }
+  }
 }
 #controls button.selected { color: #ccc; background: #666; }
-#controls button:hover { color: #fff; }
+#controls button:hover { color: #fff; background: #676; }
 
-#versions, #formats { white-space: nowrap; }
+#versions, #formats { white-space: nowrap; user-select: none; }
+
+#versions {
+  cursor: pointer;
+  display: inline-block;
+  & .switch {
+    display: inline-block; vertical-align: middle;
+    position: relative; width: 36px; height: 20px; margin-inline: 5px;
+    background: #666; border-radius: 20px;
+    &::before {
+      content: ""; position: absolute;
+      width: 16px; height: 16px; top: 2px; left: 2px;
+      background: #fff; border-radius: 50%;
+      transition: 0.15s;
+    }
+  }
+  & > span { transition: 0.15s; }
+  &.on .switch {
+    /*background: #4caf50;*/
+    &::before { left: 18px; };
+  }
+  & .s0 { color: #dfd; }
+  & .s1 { color: #a88; }
+  &.on .s0 { color: #a88; }
+  &.on .s1 { color: #dfd; }
+}
 
 #text-row { position: relative; }
 

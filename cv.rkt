@@ -9,7 +9,8 @@
 (define phone    "+1-617-372-2483")
 (define phone2   "+1-617-383-9313")
 (define phones   @:{@phone / @phone2})
-(define address  "19 Winchester St, Apt #610, Brookline, MA 02446")
+(define address  (V: "Brookline, MA 02446"
+                     "19 Winchester St, Apt #610, Brookline, MA 02446"))
 (define github   "elibarzilay")
 (define linkedin "eli-barzilay")
 
@@ -29,16 +30,23 @@
 
 (part! (sec++))
 
-(section*! "Overview"
+(section*! "Quick Overview"
+  @o[L? "2022–2025"]{
+    Principal Software Engineer at GoDaddy, August 2022–August 2025
+    @(*: @:{Code infrastructure, repo & build pipeline migrations}
+         @:{Lead work on code quality tools}
+         @:{Backend work: Services, APIs, Automation, Docker, AWS}
+         @:{Heavy cross-team work})}
+  @o[L? "2022"]{
+    Principal Software Engineer at Sundae, February–June 2022
+    @(*: @:{Backend design and API implementation})}
   @o[L? "2015–2022"]{
-    Senior Software Developer at Microsoft, December 2015 to January 2022,
-    Principal Software Engineer at Sundae, February to June 2022
+    Senior Software Developer at Microsoft, December 2015–January 2022
     @(*: @:{Azure Machine Learning group in Boston}
          @:{Python Group}
-         @:{TypeScript Group}
-         @:{Backend design and API implementation at Sundae})}
-  @o[L? "1993–Present"]{
-    Professional Programmer since 1993
+         @:{TypeScript Group})}
+  @o[L? "1992–Present"]{
+    Professional Programmer since 1992
     @(*: @:{Many languages, focus on functional programming}
          @:{Strong academic background, specializing in Programming Languages
             and Formal Methods}
@@ -46,51 +54,72 @@
          @:{Preferable focus on backend/full-stack work, experience at all
             levels})}
   @(set! oo (curry o L? #:md-sfx (list "," \\ "\nD")))
-  @oo["1991–2005"]{Education:
-    B.Sc., M.Sc., Ph.D. in Computer Science}
+  @oo["1994–Present"]{Teaching:
+    Programming Languages, Programming & Fundamentals}
   @oo["1994–2014"]{Research:
     Programming Languages, Theorem Proving, Computer Music}
-  @oo["1994–Present"]{Teaching:
-    Programming Languages, Programming & Fundamentals})
+  @oo["1991–2005"]{Education:
+    B.Sc., M.Sc., Ph.D. in Computer Science})
 
-(section*! "Recent Industry Experience" #:sec-dates '([direction up])
-  @o["December 2015 — Present" ""]{
-    @V:[@:{Joined MS as a Senior Software Dev. in late 2015@";" in 2022 I
-           realized that I need more greenfield-focused work, and switched to
-           startup work at Sundae.com as a Principal Software Eng.}
-        @:{In 2014 I decided to switch from academia to work in the industry.
-           After a few short projects I joined Microsoft as a Senior Software
-           Developer in late 2015.  In January 2022 I realized that I'm missing
-           more greenfield-style work, and after much reflection and
-           deliberation decided to leave Microsoft and switch to a startup: I
-           joined Sundae.com as a Principal Software Engineer, and have greatly
-           enjoyed it@";" but the company was forced to reduce the engineering
-           team (to around half its size) as a result of problems in the
-           housing market.}]}
-  @(set! oo (λ (date D title #:short [short title] . xs)
-              (apply o #:md-pfx "D: " #:dinfo `([D ,D] [short ,short])
-                     #:dname @:{Microsoft: @title} date title xs)))
-  @oo["February 2022 — June 2022" "2022-02-28::2022-06-17"]{
-    @(F: @:{[Sundae](https://sundae.com/)} @:{Sundae})
-    @(*: @S:{Joined Sundae.com on February 2022 as a Principal Software Engineer}
-         @L:{Following my decision to switch to startup work, I joined
-             Sundae.com as a Principal Software Engineer on February 2022.}
-         @S:{Work focused on improving the young codebase and implementing new
-             APIs}
+(section*! "Industry Experience" #:sec-dates '([side up])
+  @o["August 2022 — August 2025"
+     #:md-pfx "D: " #:dinfo `([D "2022-08-15::Present"])]{
+    GoDaddy
+    @(*: @S:{Joined the recently-acquired Poynt team.}
+         @L:{Looking for a new startup-style place, I was pulled into a GoDaddy
+             group which was a recent enough acquisition of a startup (Poynt)
+             making for a startup-like work environment.}
+         @S:{Main focus on migration and modernization of a huge project with
+             many repositories.}
+         @L:{My focus was on migration and modernization of a huge project with
+             many repositories, which was mostly maintained in on-premise GHE
+             with an outdated Jenkins, to a modern GHEC and using GH Workflows.}
+         @S:{Another important area: promote code quality via automations.}
+         @L:{I also served as a "stabilizing force" for a hectic environment.
+             The recent move has led to quality problems, and constant fires.
+             I worked towards improving this and help move things in the desired
+             direction while improving stability. In addition to the work that
+             I did, this also involved developer education: both on technical
+             subjects that many find hard (eg, bash scripting), and on a more
+             abstract level (eg, proper code ownership).}
+         @S:{Also included a lot of typical backend work: APIs of all kinds,
+             services, automations, docker images, AWS deployments. This involved
+             a lot of cross-team and -org work.}
+         @L:{As part of and in addition to the above, there was the usual
+             typical backend kind of work: APIs of all kinds (code- and
+             build-related GH APIs)@";" services (implementing our own APIs)@";"
+             automations (GH workflows, managing deployed nodes, cron jobs,
+             document batch processing)@";" docker images (as well as working with
+             k8s and AWS images)@";" AWS deployments (migrating deploys from a
+             jenkins pipeline pushing to a PM2-managed server nodes to a modern
+             image-based deployment tool). The nature of my work was always heavy
+             on cross-team impact (code quality for several teams) as well as
+             cross-org (mainly with the central engineering division).})}
+  @o["February 2022 — June 2022"
+     #:md-pfx "D: " #:dinfo `([D "2022-02-28::2022-06-17"])]{
+    Sundae
+    @(*: @S:{Joined Sundae on February 2022 as a Principal Software Engineer.}
+         @L:{Following a decision to switch to a more greenfield-style work, I
+             joined a startup, Sundae, as a Principal Software Engineer.}
+         @S:{Work focused on improving the young codebase, implementing new
+             APIs, handling "special projects", and making the code base more
+             robust.}
          @L:{During this time my work was mainly focused on improving the very
              young codebase, as well as implementing new APIs.  The former was
              mainly making the code robust by improving the TypeScript type
-             declarations, and revamping the overall design of the system.}
-         @:{I greatly enjoyed my time at Sundae, affirming my decision to leave
-            Microsoft.  The intended role was to continue in a direction of
-            "special projects", mostly around making the code base more robust
-            as well as dealing with new highlevel requirement as needed.
-            However, the faltering housing market in June made the company
-            reduce the engineering team by half and minimize the highlevel
-            programming work, so I had to leave even though my managers were
-            happy with the work I did.})}
+             declarations, and revamping the overall design of the system. Also
+             included were various "special projects".}
+         @S:{I enjoyed Sundae, but the faltering housing market in June 2022 made
+             the company drop most of its software engineering effort.}
+         @L:{I greatly enjoyed my time at Sundae which went very well, affirming
+             my decision to leave Microsoft.  However, the faltering housing
+             market in June 2022 made the company drop most of its software
+             engineering effort.})}
+  @(set! oo (λ (date D title #:short [short title] . xs)
+              (apply o #:md-pfx "D: " #:dinfo `([D ,D] [short ,short])
+                     #:dname @:{Microsoft: @title} date title xs)))
   @oo["October 2019 — January 2022" "2019-10-01::2022-01-31"]{
-    @(F: @:{[TypeScript](https://www.typescriptlang.org/)} @:{TypeScript})
+    @url{TypeScript | www.typescriptlang.org/}
     @(*: @S:{Code maintenance (language server, vscode, builds, DefinitelyTyped)}
          @L:{Day-to-day work on bugs in TS and related systems (language server,
              vscode, builds, DefinitelyTyped maintenance)}
@@ -98,10 +127,10 @@
          @L:{Implemented TypeScript's tracing profiler (with Andrew Casey), which
              helps people debug compilation performance issues}
          @S:{DefinitelyTyped mergebot}
-         @L:{Implementation of most of the DefinitelyTyped mergebot
-             (@url{github.com/DefinitelyTyped/dt-mergebot}): a github bot
-             that enables self-maintenance, reducing the load of handling the
-             huge constant stream of incoming PRs (hundreds per week)}
+         @L:{@W{Implementation of DefinitelyTyped's
+                @url{mergebot | github.com/DefinitelyTyped/dt-mergebot}: a
+                github bot that enables self-maintenance, managing the huge
+                load of incoming PRs (hundreds per week)}}
          @S:{Conversion of TypeScript to JS modules (ongoing)}
          @L:{Conversion of the TypeScript code base to JS modules (ongoing)})}
   @oo["March 2018 — October 2019" "2018-03-01::2019-09-30" #:short "Azure Python"]{
@@ -115,8 +144,7 @@
              distribution), and network design (including Kubernetes compute
              backends on Azure)})}
   @oo["Mid 2016 — March 2018" "2016-07-01::2018-02-28"]{
-    @:{MMLSpark@M:[\\]}
-    (@url{github.com/microsoft/SynapseML})
+    @url{MMLSpark | github.com/microsoft/SynapseML/}
     @(*: @S:{Open source core library for Azure ML, built from scratch}
          @L:{Open source project, core library for the Vienna project (Azure ML)}
          @L:{Code development from the project's very beginning}
@@ -134,7 +162,7 @@
              programming (in Scala), replace imperative idioms by functional
              ones, and learn about more advanced functional programming patterns}
          @L:{The project was later renamed “SynapseML”})}
-  @oo["December 2015 — Mid 2016" "2015-12-01::2016-06-30" #:short "AzureML Studio"]{
+  @oo["December 2015 — March 2018" "2015-12-01::2018-03-01" #:short "AzureML Studio"]{
     @:{Azure Machine Learning Studio@L:{ (Boston)}}
     @(*: @S:{Frontend visualization (infinite grid scroller w/ on-demand service)}
          @L:{Front-end visualizations, mainly table view of infinite matrix,
@@ -142,13 +170,21 @@
          @S:{Mostly done in TypeScript}
          @L:{Mostly done in TypeScript@";" also involved Visual Studio, TFS, and
              micro-services})}
+  @o["December 2015 — January 2022" #:dinfo `([D "2015-12-01::2022-01-31"])
+     #:md-pfx "D: "]{
+    Microsoft@(M: (and (not TEXT?) " \\"))
+    @V:[@:{Joined MS as a Senior Software Dev. in late 2015.}
+        @:{In 2014 I decided to switch from academia to industry work.  After a
+           few short projects I joined Microsoft as a Senior Software Developer
+           in late 2015.}]}
   @o[L? NODATE]{
     Used numerous technologies (abridged list):
-    @(*: @:{Platforms: Linux, Windows, Hyper-V, Azure VMs and other services,
-            Github, GraphQL, Azure DevOps, Docker}
-         @:{Build/code management: Git, Bash (install+build scripts), Docker}
+    @(*: @:{Platforms: Linux, Windows, Hyper-V, MS Azure, AWS,
+            GitHub & GitLab (incl. API, Automation, DevOps, etc), GraphQL,
+            Docker}
+         @:{Build/code management: Git, Bash, Docker}
          @:{Languages: TypeScript, JavaScript, Python, Bash, Powershell, Scala,
-            Java, R, ARM Templates})})
+            Java, R, ARM Templates, Lisp(s)})})
 
 (part! (L: (header "Academic") (sec++)))
 
@@ -158,7 +194,7 @@
 (section! "Research Interests"
   (@L: research-interests))
 
-(section*! "Education" #:sec-dates '([direction down])
+(section*! "Education" #:sec-dates '([side down])
   (edu "1997–2003" "1997-01-01::2003-07-31"
        @:{@phd in Computer Science} "CS PhD @ Cornell"
        cornell "Prof. Robert Constable" "Implementing Reflection in Nuprl")
@@ -169,7 +205,7 @@
        @:{@bsc in Math & Computer Science (cum laude)} "CS+Math BSc @ BGU"
        bgu #f #f))
 
-(section*! "Teaching Experience" #:sec-dates '([direction down])
+(section*! "Teaching Experience" #:sec-dates '([side down])
   @(set! oo (curry o #:md-pfx "D: "))
   @oo["2004–Present" #:loc "Northeastern"
       #:dname "Programming Languages, Northeastern"
@@ -247,7 +283,7 @@
            Conducted recitation sessions, graded exams, helped in extending
            course contents and developed new material.}]})
 
-(section*! "Research Experience" #:sec-dates '([direction down])
+(section*! "Research Experience" #:sec-dates '([side down])
   #:pfx @S:{Research Interests: @research-interests
             @||}
   @(set! oo (curry o #:md-pfx "D: " #:nobr #t))
@@ -347,7 +383,7 @@
     many years later it has even inspired a textual language for Racket
     which is in heavy use today (Scribble).})
 
-(section*! "Publications" #:sec-dates '([direction down])
+(section*! "Publications" #:sec-dates '([side down])
   (pub "MMLSpark: Unifying Machine Learning Ecosystems at Massive Scales"
        "MMLSpark" "Mark..."
        "2018" "2018-10-20"
@@ -423,7 +459,7 @@
 
 (part! (L: (sec--)))
 
-(section*! "Pre-Microsoft Experience" #:sec-dates '([direction up])
+(section*! "Older Experience" #:sec-dates '([side up])
   @(set! oo (λ(date D title #:short [sh #f] . xs)
               (apply o #:md-pfx "D: " #:nobr #t date #:dname title
                      #:dinfo `([D ,D] ,@(if sh `([short ,sh]) '()))
@@ -462,7 +498,7 @@
            system administration group for the Computer Science department in Ben-Gurion
            University.}]})
 
-(section*! "Pre-Microsoft Major Projects" #:sec-dates '([direction up])
+(section*! "Old Major Projects" #:sec-dates '([side up])
   #:pfx @L:{(Approximate dates.)}
   @(set! oo (λ(date D title #:short [sh #f] #:dinfo [di '()] . xs)
               (let* ([title (->string title)]

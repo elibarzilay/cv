@@ -6,6 +6,10 @@ DirectoryIndex index
   SetOutputFilter INCLUDES
 </Files>
 
+# Block these
+RedirectMatch 404 /TODO
+RedirectMatch 404 /\..*
+
 RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,QSA,L,NC]

@@ -21,7 +21,7 @@ short
   <!--#include file="lib/js/anychart-timeline.min.js" -->
   <!--#include file="lib/js/anychart-exports.min.js" -->
   <!--#include file="lib/js/anychart-ui.min.js" -->
-  <!--#include file="build/long-dates.js" -->
+  <!--#include file="build/dates.js" -->
   <!--#include file="timeline.js" -->
   <!--#include file="index.js" -->
 </script></head>
@@ -29,7 +29,7 @@ short
   <div id="timeline" class="faded"></div>
   <div id="controls-row" class="faded">
     <div id="controls">
-      <div id="versions"></div>
+      <div> Versions: <div id="versions"></div></div>
       <div id="formats"></div>
     </div>
   </div>

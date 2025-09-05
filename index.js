@@ -7,6 +7,14 @@ let curVersion = "";
 const $  = x => document.querySelector(x);
 const $$ = x => Array.from(document.querySelectorAll(x));
 
+const downloadIcon = [
+  `<svg xmlns="http://www.w3.org/2000/svg" height="24px"`,
+  ` viewBox="0 -960 960 960" width="24px" fill="currentColor">`,
+  `<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200`,
+  ` 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0`,
+  ` 33-23.5 56.5T720-160H240Z"/></svg>`,
+].join("");
+
 const show = what => {
   if (typeof what === "number") what = Object.keys(texts)[what];
   curVersion = what;
@@ -66,15 +74,19 @@ const init = ()=>{
       document.head, NodeFilter.SHOW_COMMENT, ()=> NodeFilter.FILTER_ACCEPT);
     while (addText(n.nextNode())) { }
   }
-  { $("#versions").innerHTML = "Version: "
-      + Object.keys(texts).map(what => `<button>${what}</button>`).join("\n");
-    $$("#versions button").forEach(b =>
-      b.addEventListener("click", e => show(e.target.textContent)));
+  { // expecting exactly two versions
+    const vers = $("#versions");
+    vers.innerHTML =
+      Object.keys(texts).map((what, i) => `<span class="s${i}">${what}</span>`)
+        .join(`<div class="switch"></div>`);
+    vers.addEventListener("click", () =>
+      show(vers.querySelectorAll("span")[+vers.classList.toggle("on")]
+             .textContent));
   }
   { $("#formats").innerHTML = `Download <span class="what"></span> version: `
       + (Object.entries(formats)).map(([ext, name]) =>
-          `<button data-file="download/Eli_Barzilay-VER.${ext}"`
-          + ` data-name="${name}">${name}⭳</button>`)
+          `<button class="dnld" data-file="download/Eli_Barzilay-VER.${ext}"`
+          + ` data-name="${name}">${downloadIcon} ${name}</button>`)
         .join("\n");
     const a = document.createElement("a");
     const popup = $("#popup");

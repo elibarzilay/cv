@@ -9,7 +9,7 @@ const renderTimeline = ()=>{
   chart.axis().labels().fontSize(10);
 
   const NOW = (new Date).toISOString();
-  Object.entries(dateInfo).forEach(([sec, { entries, direction }]) => {
+  Object.entries(dateInfo).forEach(([sec, { entries, side }]) => {
     entries.forEach(e =>
       e.DD = (e.D.split(/ *:: */).map(x => x === "NOW" ? NOW : x)));
     if (!entries.every(e => e.DD.length === entries[0].DD.length))
@@ -24,7 +24,7 @@ const renderTimeline = ()=>{
     }
     const r = chart[type]([...entries.map(e =>
       e)]);
-    r.direction(direction);
+    r.direction(side);
     r.labels().useHtml(true).format("{%short}")
      .fontFamily("Tahoma").fontWeight(100).fontSize(isMoment ? 7 : 10)
      .fontColor("#fff")
@@ -32,7 +32,7 @@ const renderTimeline = ()=>{
     r.height(14);
     r.tooltip().useHtml(true).fontColor("#fff")
      .titleFormat("{%name}").format(`{%datestr} <i>({%section})</i>`);
-    const color = direction === "up" ? "#48c"
+    const color = side === "up" ? "#48c"
                 : isMoment ? "#ca3" : "#c84";
     const colors = [2,4,6,8].map(o => `${color} 0.${o}`);
     const setColors = (x, i) =>

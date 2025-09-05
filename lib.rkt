@@ -32,15 +32,12 @@
          (rename-out [mod-beg #%module-begin])
          ->string : url *: cventries: cvitemize: W newlines:
          header section! section*! part! sec++ sec--
-         \\ it em o date loc NODATE
+         \\ it em o NODATE
          ~block ~splice)
 
 ;; -- Utilities ---------------------------------------------------------------
 
 (define (->string x)
-  (cond [(string? x) x] [(symbol? x) (number->string x)]
-        [(is-val? x) (with-output-to-string (λ() (output x)))]
-        [else ""])
   (with-output-to-string (λ() (output x))))
 
 (define (is-val? x) (not (or (not x) (void? x) (null? x))))
@@ -72,14 +69,21 @@
 (define ~block  (lazify block))
 (define ~splice (lazify splice))
 
+;; @url{some-url} or @url{text | some-url}
+;;   the second version shows just the text in plain-text contexts
 (define (url . xs)
-  (define url (->string xs))
-  (define email? (regexp-match? #rx"@" url))
-  (define full-url (list (if email? "mailto:" "https://") url))
-  (F: (if TEXT? url @:{[`@url`](@full-url)})
+  (define-values [text url]
+    (let ([m (regexp-match #rx"^(?:([^|]+?) *\\| *([^|]+)|.*)$"
+                           (->string xs))])
+      (if (cadr m) (apply values (cdr m)) (values #f (car m)))))
+  (define pfx (cond [(regexp-match? #rx":" url) ""]
+                    [(regexp-match? #rx"@" url) "mailto:"]
+                    [else "https://"]))
+  (define full-url (list pfx url))
+  (F: (if TEXT? (or text url) @:{[@(or text @list{`@url`})](@full-url)})
       @list{\href{@full-url}@;
                  {\texttt{{\addfontfeature{LetterSpace=-2.0}@;
-                           @(regexp-replace #rx"/$" url "")}}}}))
+                           @(or text (regexp-replace #rx"/$" url ""))}}}}))
 
 ;; -- Mode flags --------------------------------------------------------------
 
@@ -269,8 +273,6 @@
 
 ;; -- Tex stuff ---------------------------------------------------------------
 
-(define date (make-parameter #f))
-(define loc  (make-parameter #f))
 (define NODATE (gensym))
 
 (define \\ (and (not TEXT?) @F:[" \\" " \\\\"]))
@@ -284,28 +286,27 @@
   (F: @~splice{*@|text|*}
       @~splice{\emph{@text}}))
 
-;; the date/loc are not rendered in md, add explicitly or with #:md-*
-(define (o #:loc [l #f] #:md-pfx [mpfx #f] #:md-sfx [msfx #f]
-           #:nobr [nobr #f] #:dname [dname #f] #:dinfo [dinfo '()] 1st
-           . rest)
-  (and 1st (apply o* l mpfx msfx nobr dname dinfo
+;; the date/loc are not rendered in md
+;;   add the date with #:md-* and a `D` in the string
+(define (o #:loc [loc #f] #:md-pfx [mpfx #f] #:md-sfx [msfx #f]
+           #:nobr [nobr #f] #:dname [dname #f] #:dinfo [dinfo '()]
+           1st . rest)
+  (and 1st (apply o* loc mpfx msfx nobr dname dinfo
                   (if (eq? #t 1st) rest (cons 1st rest)))))
 
-(define (o* l mpfx msfx nobr dname dinfo d title . text)
+(define (o* loc mpfx msfx nobr dname dinfo d title . text)
   (define d* (and (not (eq? d NODATE)) d))
   (define (dsubst str) (and str (regexp-replace #rx"D" (->string str) d*)))
   (define dname* (or dname title))
-  (list (λ() (date d*) (loc l)
-             (when (and dname* d*) (date-info 'item! dname* d* dinfo)))
+  (list (λ() (when (and dname* d*) (date-info 'item! dname* d* dinfo)))
         (F: (apply ~splice (: (dsubst mpfx) title) `(,@text ,(dsubst msfx)))
             @~splice{
-              \cvplain{@d*}{@l}{@(if nobr title (regexp-replace
-                                                 #rx":$" (->string title) ""))}
+              \cvplain{@d*}{@loc}{@(if nobr title (regexp-replace
+                                                   #rx":$" (->string title) ""))}
               @(and (not nobr) "\n")@;
               @(apply : (if (and (pair? text) (equal? "\n" (car text)))
                           (cdr text) text))
-              @||})
-        (λ() (date #f) (loc #f))))
+              @||})))
 
 ;; -- Tex stuff ---------------------------------------------------------------
 
@@ -352,9 +353,9 @@
 
 (define (tex-writer str p [start 0] [end (string-length str)])
   (let loop ([start start])
-    (define m (and (< start end) (regexp-match-positions #rx"[#&]" str start end p)))
+    (define m (and (< start end) (regexp-match-positions #rx"[&#]" str start end p)))
     (when m
-      (write-string (case (string-ref str (caar m)) [(#\&) "\\&"] [(#\#) "\\#"]) p)
+      (write-string (format "\\~a" (string-ref str (caar m))) p)
       (loop (cdar m)))))
 
 (define (render!)

@@ -40,10 +40,12 @@ for what in long short; do
   #### MD
   md="$build.md"
   run_check "$md" ./cv.rkt $what md
+  md_fmt=commonmark+smart
   #### HTML
-  pandoc -f commonmark -t html "$md" -o "$build.html"
+  pandoc -f $md_fmt -t html "$md" -o "$build.html"
   #### TXT
-  dates_file="$build-dates.js" \
+  if [[ $what = long ]]; then df="build/dates.js"; else df=""; fi
+  dates_file="$df" \
     run_check_wrap "$out.txt" ./cv.rkt $what md text
   #### PDF
   tex="$build.tex"
@@ -76,9 +78,9 @@ for what in long short; do
   # args+=(-V "monofont:Consolas")
   if [[ -e "$out.docx" ]]; then cp "$out.docx" "build/ref.docx"; fi
   args+=(--reference-doc="build/ref.docx")
-  # pandoc -f commonmark "$md""${args[@]}" -o "$tex"
+  # pandoc -f $md_fmt "$md""${args[@]}" -o "$tex"
   args+=(--pdf-engine="xelatex")
-  pandoc -f commonmark "$md" "${args[@]}" -o "$out.docx" || exit 1
+  pandoc -f $md_fmt "$md" "${args[@]}" -o "$out.docx" || exit 1
   # pandoc -f latex "$tex" "${args[@]}" -o "$out.docx" || exit 1
   rm -f "build/ref.docx"
 done
