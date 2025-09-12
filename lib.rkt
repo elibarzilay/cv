@@ -76,9 +76,16 @@
     (let ([m (regexp-match #rx"^(?:([^|]+?) *\\| *([^|]+)|.*)$"
                            (->string xs))])
       (if (cadr m) (apply values (cdr m)) (values #f (car m)))))
-  (define pfx (cond [(regexp-match? #rx":" url) ""]
-                    [(regexp-match? #rx"@" url) "mailto:"]
-                    [else "https://"]))
+  (define pfx
+    (cond [(regexp-match? #rx":" url) ""]
+          [(regexp-match? #rx"@" url) "mailto:"]
+          [(regexp-match? #rx"^\\+?[0-9]+[0-9() .,-]+[0-9]$" url)
+           (unless text
+             (let ([n (regexp-replace #rx"^\\+1-*" url "")])
+               (set! text (if TEXT? n @list{`@n`}))))
+           (set! url (regexp-replace* #rx"[^0-9+]" url ""))
+           "tel:"]
+          [else "https://"]))
   (define full-url (list pfx url))
   (F: (if TEXT? (or text url) @:{[@(or text @list{`@url`})](@full-url)})
       @list{\href{@full-url}@;
@@ -252,9 +259,9 @@
              [else (bad)])@;
          {@title}@"\n"}))
 
-(define (section! title #:sec-dates [sec-dates #f] . text)
+(define (section! title #:sec-dates [sec-dates #f] #:if [bool #t] . text)
   (define xs (list->: (map force text)))
-  (when (pair? xs)
+  (when (and bool (pair? xs))
     (part! (with-props
              @list{@header[title]
                    @(M: "\n")@;
@@ -262,12 +269,12 @@
              'section? #t))))
 
 (define (section*! #:pfx [pfx #f] #:itemize [itemize (F: *: cventries:)] title
-                   #:sec-dates [sec-dates #f]
+                   #:sec-dates [sec-dates #f] #:if [bool #t]
                    . text)
   (define xs (list->: (map force text)))
   (when (pair? xs)
     (define is (apply itemize xs))
-    (section! title #:sec-dates sec-dates
+    (section! title #:sec-dates sec-dates #:if bool
       pfx (and (is-val? pfx) (if (prop-ref (force is) 'loose?) "\n\n" "\n"))
       is)))
 
@@ -288,21 +295,23 @@
 
 ;; the date/loc are not rendered in md
 ;;   add the date with #:md-* and a `D` in the string
-(define (o #:loc [loc #f] #:md-pfx [mpfx #f] #:md-sfx [msfx #f]
+(define (o #:loc [loc #f] #:md-pfx [mpfx #f] #:title-sfx [tsfx #f] #:md-sfx [msfx #f]
            #:nobr [nobr #f] #:dname [dname #f] #:dinfo [dinfo '()]
+           #:if [bool #t]
            1st . rest)
-  (and 1st (apply o* loc mpfx msfx nobr dname dinfo
-                  (if (eq? #t 1st) rest (cons 1st rest)))))
+  (and 1st bool
+       (apply o* loc mpfx tsfx msfx nobr dname dinfo
+              (if (eq? #t 1st) rest (cons 1st rest)))))
 
-(define (o* loc mpfx msfx nobr dname dinfo d title . text)
+(define (o* loc mpfx tsfx msfx nobr dname dinfo d title . text)
   (define d* (and (not (eq? d NODATE)) d))
-  (define (dsubst str) (and str (regexp-replace #rx"D" (->string str) d*)))
+  (define (dsubst str) (and str d* (regexp-replace #rx"D" (->string str) d*)))
   (define dname* (or dname title))
   (list (λ() (when (and dname* d*) (date-info 'item! dname* d* dinfo)))
-        (F: (apply ~splice (: (dsubst mpfx) title) `(,@text ,(dsubst msfx)))
+        (F: (~splice (: (dsubst mpfx) title (dsubst tsfx)) text (dsubst msfx))
             @~splice{
-              \cvplain{@d*}{@loc}{@(if nobr title (regexp-replace
-                                                   #rx":$" (->string title) ""))}
+              \cvplain{@d*}{@loc}{@;
+                @(if nobr title (regexp-replace #rx":$" (->string title) ""))}
               @(and (not nobr) "\n")@;
               @(apply : (if (and (pair? text) (equal? "\n" (car text)))
                           (cdr text) text))

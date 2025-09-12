@@ -5,6 +5,14 @@ here="$PWD"
 
 mkdir -p "build" "download"
 
+all_answers=""
+ask() {
+  local R
+  if [[ -n "$all_answers" ]]; then R="$all_answers"; else read -p "$1 " R; fi
+  if [[ "$R" == Y ]]; then all_answers="$R"; fi
+  if [[ "$R" != [yY]* ]]; then exit 1; fi
+}
+
 check() {
   local f="$1"; shift
   if [[ ! -s "$f" ]]; then
@@ -15,7 +23,8 @@ check() {
     echo "Changes in $f.new"
     echo "* Remove \"$f\" or manually update from \"$f.new\""
     echo "* Re-run"
-    exit 1
+    ask "Continue?"
+    mv -f "$f.new" "$f"
   else
     rm "$f.new"
   fi
