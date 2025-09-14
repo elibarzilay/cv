@@ -322,7 +322,15 @@
 (define all-sections '())
 (define current-section #f)
 
-(define ref-counter (let ([n 0]) (λ() (set! n (add1 n)) n)))
+(define get-ref-hash
+  (let ([n 0] [hashes (make-hash)])
+    (λ(x)
+      (define H (number->string (modulo (equal-hash-code x) #x1000) 16))
+      (define bad (hash-ref hashes H #f))
+      (when bad
+        (error 'get-ref-hash "hash collision for ~s and ~s" bad x))
+      (hash-set! hashes H x)
+      H)))
 
 (define (date-info . msg)
   (define (done)
@@ -349,12 +357,11 @@
     [`(section! ,title ,sec-dates)
      (done)
      (set! current-section (and title sec-dates `((,title ,sec-dates))))]
-    [`(item! . ,info)
-     (when (and current-section (andmap is-val? info)
-                (not (equal? "" (car info))))
-       (define R (ref-counter))
-       (set! current-section (cons (cons R info) current-section))
-       (and M? (not TEXT?) @:{<span id="R@R"></span>}))]
+    [`(item! . ,(and info (list name datestr dinfo)))
+     (when (and current-section (andmap is-val? info) (not (equal? "" name)))
+       (define H (get-ref-hash (list name dinfo)))
+       (set! current-section (cons (cons H info) current-section))
+       (and M? (not TEXT?) @:{<span id="R@H"></span>}))]
     ['() @:{const dateInfo = @json;
             @||}]))
 
