@@ -48,17 +48,22 @@ for what in long short; do
   build="build/$what"
   #### MD
   md="$build.md"
+  echo "  $md"
   run_check "$md" ./cv.rkt $what md
   md_fmt=commonmark+smart
   #### HTML
+  echo "  $build.html"
   pandoc -f $md_fmt -t html "$md" -o "$build.html"
   #### TXT
+  echo "  $out.txt"
   if [[ $what = long ]]; then df="build/dates.js"; else df=""; fi
   dates_file="$df" \
     run_check_wrap "$out.txt" ./cv.rkt $what md text
   #### PDF
   tex="$build.tex"
+  echo "  $tex"
   run_check "$tex" ./cv.rkt $what tex
+  echo "  $out.pdf"
   ln -sf "../acv/awesome-cv.cls" "../acv/fonts" "build"
   args=(--halt-on-error --interaction="nonstopmode")
   args+=("../$tex")
@@ -74,6 +79,7 @@ for what in long short; do
   rm -f "build/"{"texput.log","awesome-cv.cls","fonts"}
   mv "$build.pdf" "$out.pdf"
   #### DOCX
+  echo "  $out.docx"
   args=(-s)
   # args+=(-M author="Eli Barzilay")
   args+=(-M title="Eli Barzilay: Curriculum Vitae")

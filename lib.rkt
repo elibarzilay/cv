@@ -69,6 +69,8 @@
 (define ~block  (lazify block))
 (define ~splice (lazify splice))
 
+(define simple-text? (make-parameter #f))
+
 ;; @url{some-url} or @url{text | some-url}
 ;;   the second version shows just the text in plain-text contexts
 (define (url . xs)
@@ -87,10 +89,12 @@
            "tel:"]
           [else "https://"]))
   (define full-url (list pfx url))
-  (F: (if TEXT? (or text url) @:{[@(or text @list{`@url`})](@full-url)})
-      @list{\href{@full-url}@;
-                 {\texttt{{\addfontfeature{LetterSpace=-2.0}@;
-                           @(or text (regexp-replace #rx"/$" url ""))}}}}))
+  (λ() (if (simple-text?)
+         (or text (regexp-replace #rx"/$" url ""))
+         (F: (if TEXT? (or text url) @:{[@(or text @list{`@url`})](@full-url)})
+             @list{\href{@full-url}@;
+                        {\texttt{{\addfontfeature{LetterSpace=-2.0}@;
+                                  @(or text (regexp-replace #rx"/$" url ""))}}}}))))
 
 ;; -- Mode flags --------------------------------------------------------------
 
@@ -305,7 +309,8 @@
 
 (define (o* loc mpfx tsfx msfx nobr dname dinfo d title . text)
   (define d* (and (not (eq? d NODATE)) d))
-  (define (dsubst str) (and str d* (regexp-replace #rx"D" (->string str) d*)))
+  (define (dsubst str)
+    (and str d* (regexp-replace #px"\\bD\\b" (->string str) d*)))
   (define dname* (or dname title))
   (list (λ() (when (and dname* d*) (date-info 'item! dname* d* dinfo)))
         (F: (~splice (: (dsubst mpfx) title (dsubst tsfx)) text (dsubst msfx))
@@ -325,10 +330,10 @@
 (define get-ref-hash
   (let ([n 0] [hashes (make-hash)])
     (λ(x)
-      (define H (number->string (modulo (equal-hash-code x) #x1000) 16))
+      (define hash (number->string (abs (equal-hash-code x)) 16))
+      (define H (~a hash #:width 4 #:pad-string "0" #:align 'right))
       (define bad (hash-ref hashes H #f))
-      (when bad
-        (error 'get-ref-hash "hash collision for ~s and ~s" bad x))
+      (when bad (error 'get-ref-hash "hash collision for ~s and ~s" bad x))
       (hash-set! hashes H x)
       H)))
 
@@ -359,8 +364,19 @@
      (set! current-section (and title sec-dates `((,title ,sec-dates))))]
     [`(item! . ,(and info (list name datestr dinfo)))
      (when (and current-section (andmap is-val? info) (not (equal? "" name)))
-       (define H (get-ref-hash (list name dinfo)))
-       (set! current-section (cons (cons H info) current-section))
+       (define (->simple x)
+         (parameterize ([simple-text? #t]) (string-trim (->string x))))
+       (define simple-name (->simple name))
+       (define simple-dinfo
+         (map (λ(kv) (if (not (equal? 'short (car kv))) kv
+                         `(short ,(->simple (cadr kv)))))
+              dinfo))
+       (define D (or (assq 'D dinfo)
+                     (error 'date-info "missing D in dinfo: ~s" dinfo)))
+       (define N (cond [(assq 'short simple-dinfo) => cadr] [else simple-name]))
+       (define H (get-ref-hash (list N D)))
+       (set! current-section
+             (cons (list H simple-name datestr simple-dinfo) current-section))
        (and M? (not TEXT?) @:{<span id="R@H"></span>}))]
     ['() @:{const dateInfo = @json;
             @||}]))

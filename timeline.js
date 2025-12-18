@@ -22,8 +22,7 @@ const renderTimeline = ()=>{
       else [x.start, x.end] = x.DD;
       if (!x.short) x.short = x.name;
     }
-    const r = chart[type]([...entries.map(e =>
-      e)]);
+    const r = chart[type]([...entries]);
     r.direction(side);
     r.labels().useHtml(true).format("{%short}")
      .fontFamily("Tahoma").fontWeight(100).fontSize(isMoment ? 7 : 10)

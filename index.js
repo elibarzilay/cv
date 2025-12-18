@@ -7,6 +7,8 @@ const defaultVersion = "long";
 const $  = x => document.querySelector(x);
 const $$ = x => Array.from(document.querySelectorAll(x));
 
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
 const downloadIcon = [
   `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"`,
   ` viewBox="0 -960 960 960" fill="currentColor">
@@ -49,7 +51,7 @@ const show = () => {
   $("#text-row").scrollTo(0, 0);
 };
 
-const jumpTo = (elt, hilite, where = "center") => {
+const jumpTo = async (elt, hilite, where = "center") => {
   if (typeof elt === "string") elt = document.getElementById(elt);
   while (elt.textContent === "") elt = elt.parentNode;
   if (!hilite) hilite = elt;
@@ -57,13 +59,12 @@ const jumpTo = (elt, hilite, where = "center") => {
   style({ background: "#f806",
           transition: "background 0.3s ease-in-out",
           borderRadius: "5px" });
-  setTimeout(()=> { style({ background: "#f800",
-                            transition: "background 1s ease-in-out" });
-                    setTimeout(()=> style({ background: "", transition: "",
-                                            borderRadius: "" }),
-                               1000); },
-             2000);
-  elt.scrollIntoView({behavior: "smooth", block: where});
+  elt.scrollIntoView({ behavior: "smooth", block: where });
+  await sleep(2000);
+  style({ background: "#f800",
+          transition: "background 1s ease-in-out" });
+  await sleep(1000);
+  style({ background: "", transition: "", borderRadius: "" });
 };
 
 const init = ()=>{
@@ -106,7 +107,7 @@ const init = ()=>{
     const a = document.createElement("a");
     const popup = $("#popup");
     popup.innerHTML = [
-      `Click to <span class="op"></span>`,
+      `<span class="op"></span>`,
       ` the <span class="what"></span> version in`,
       ` <span class="format"></span> format`,
       `<span class="fmt-warn"></span>`,
@@ -125,7 +126,8 @@ const init = ()=>{
         $("span.fmt-warn").innerHTML =
           b.dataset.name !== "Word" ? ""
           : "<br><i>(Note: the PDF is better formatted)</i>";
-        popup.querySelector("span.op").textContent = span.dataset.op;
+        popup.querySelector("span.op").textContent =
+          span.dataset.op.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
         popup.querySelector("span.format").textContent = b.dataset.name.toLowerCase();
         popup.style.display = "block";
         popup.style.top = (b.getBoundingClientRect().bottom + 4) + "px";
