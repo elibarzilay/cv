@@ -2,7 +2,6 @@
 
 const texts = {};
 const formats = { pdf: "PDF", txt: "Text", docx: "Word" };
-const defaultVersion = "long";
 
 const $  = x => document.querySelector(x);
 const $$ = x => Array.from(document.querySelectorAll(x));
@@ -11,42 +10,42 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 
 const downloadIcon = [
   `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"`,
-  ` viewBox="0 -960 960 960" fill="currentColor">
-  <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200`,
+  ` viewBox="0 -960 960 960" fill="currentColor">`,
+  `<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200`,
   ` 200ZM240-160q-33 0-56-23t-24-57v-120h80v120h480v-120h80v120q0`,
-  ` 33-23 57t-57 23H240Z"/>
-</svg>`,
+  ` 33-23 57t-57 23H240Z"/>`,
+  `</svg>`,
 ].join("");
 const viewIcon = [
   `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"`,
-  ` viewBox="0 0 1024 1024" fill="currentColor">
-  <path d="M953 496c-7-9-152-221-443-221A547 547 0 0 0 68 496a28 28 0 0 0 0`,
+  ` viewBox="0 0 1024 1024" fill="currentColor">`,
+  `<path d="M953 496c-7-9-152-221-443-221A547 547 0 0 0 68 496a28 28 0 0 0 0`,
   ` 31c6 9 152 222 442 222 291 0 436-213 443-222a28 28 0 0 0 0-31zM510`,
   ` 693a501 501 0 0 1-383-181 499 499 0 0 1 767 0 499 499 0 0 1-384 181z"/>`,
   `<path d="M510 386a126 126 0 1 0 1 252 126 126 0 0 0-1-252zm0 196a70`,
-  ` 70 0 1 1 1-140 70 70 0 0 1-1 140z"/>
-</svg>
-`,
+  ` 70 0 1 1 1-140 70 70 0 0 1-1 140z"/>`,
+  `</svg>`,
 ].join("");
 
+let shown = null;
+
 const show = () => {
-  $("#versions").classList.toggle(
-    "flip", sessionStorage.shown !== Object.keys(texts)[0]);
-  $("#text").innerHTML = texts[sessionStorage.shown];
+  $("#versions").classList.toggle("flip", shown !== Object.keys(texts)[0]);
+  $("#text").innerHTML = texts[shown];
   const headers = $$("#text h1, #text h2, #text h3, #text h4");
   document.title = headers[0].textContent;
   $("#toc-links").innerHTML =
     headers.map((h, i) => {
       h.id = `S${i}`;
       const [tag, title] = !i ? ["H2", "Intro"] : [h.tagName, h.innerHTML];
-      return `<${tag}><a href="#${h.id}">${title}</a></${tag}>`;
+      return `<${tag}><a href="#${h.id}" tabindex="-1">${title}</a></${tag}>`;
     }).join("\n");
   $$("#toc-links a").forEach(a => a.addEventListener("click", e => {
     e.preventDefault(); e.stopImmediatePropagation();
     const elt = $(e.target.getAttribute("href"));
     jumpTo(elt.parentNode, elt, "start");
   }));
-  $$("span.what").forEach(s => s.textContent = sessionStorage.shown);
+  $$("span.what").forEach(s => s.textContent = shown);
   $("#text").focus();
   $("#text-row").scrollTo(0, 0);
 };
@@ -56,15 +55,21 @@ const jumpTo = async (elt, hilite, where = "center") => {
   while (elt.textContent === "") elt = elt.parentNode;
   if (!hilite) hilite = elt;
   const style = props => Object.assign(hilite.style, props)
-  style({ background: "#f806",
-          transition: "background 0.3s ease-in-out",
+  style({ boxShadow: "inset 0 0 0 9999px #f806",
+          transition: "box-shadow 0.3s ease-in-out",
           borderRadius: "5px" });
   elt.scrollIntoView({ behavior: "smooth", block: where });
   await sleep(2000);
-  style({ background: "#f800",
-          transition: "background 1s ease-in-out" });
+  style({ boxShadow: "inset 0 0 0 9999px #f800",
+          transition: "box-shadow 1s ease-in-out" });
   await sleep(1000);
   style({ background: "", transition: "", borderRadius: "" });
+};
+
+const mimicClick = e => {
+  if (e.key !== " " && e.key !== "Enter") return;
+  e.preventDefault();
+  e.target.click();
 };
 
 const init = ()=>{
@@ -87,21 +92,27 @@ const init = ()=>{
   }
   { // the CSS is expecting exactly two versions
     const versions = Object.keys(texts);
-    $("#versions").innerHTML =
+    const elt = $("#versions");
+    elt.tabIndex = 0;
+    elt.setAttribute("role", "button");
+    elt.setAttribute("aria-label", "Toggle version");
+    elt.innerHTML =
       versions.map(what => `<span>${what}</span>`)
         .join(`<div class="switch"></div>`);
-    $("#versions").addEventListener("click", () => {
-      sessionStorage.shown =
-        versions[(versions.indexOf(sessionStorage.shown) + 1) % versions.length];
+    elt.addEventListener("click", () => {
+      shown = versions[(versions.indexOf(shown) + 1) % versions.length];
+      history.replaceState(null, "", `/${shown}`);
       show();
     });
+    elt.addEventListener("keydown", mimicClick);
   }
   { $("#formats").innerHTML =
       (Object.entries(formats)).map(([ext, name]) => [
         `<div class="get" data-file="download/Eli_Barzilay-VER.${ext}"`,
         ` data-name="${name}">`,
-        `<span data-op="download">${downloadIcon}&#x200A;${name}</span>`,
-        `<span data-op="view">${viewIcon}</span>`,
+        `<span data-op="download" tabindex="0" role="button">${
+          downloadIcon}&#x200A;${name}</span>`,
+        `<span data-op="view" tabindex="0" role="button">${viewIcon}</span>`,
         `</div>`,
       ].join("")).join("\n");
     const a = document.createElement("a");
@@ -112,32 +123,37 @@ const init = ()=>{
       ` <span class="format"></span> format`,
       `<span class="fmt-warn"></span>`,
     ].join("");
-    popup.addEventListener("transitionend", ()=> {
-      if (!popup.classList.contains("active")) popup.style.display = "none"; });
     $$("#formats div.get span").forEach(span => {
       const b = span.parentElement;
       span.addEventListener("click", () => {
-        const file = b.dataset.file.replace(/\bVER\b/, sessionStorage.shown);
+        const file = b.dataset.file.replace(/\bVER\b/, shown);
         a.href = file, a.download = file.replace(/^.*\//, "");
         $("#text").focus();
         if (span.dataset.op === "view") location = a.href; else a.click();
       });
-      span.addEventListener("mouseenter", () => {
+      span.addEventListener("keydown", mimicClick);
+      const setText = unfocus => () => {
+        if (unfocus) document.activeElement.blur();
         $("span.fmt-warn").innerHTML =
           b.dataset.name !== "Word" ? ""
           : "<br><i>(Note: the PDF is better formatted)</i>";
         popup.querySelector("span.op").textContent =
           span.dataset.op.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
         popup.querySelector("span.format").textContent = b.dataset.name.toLowerCase();
-        popup.style.display = "block";
-        popup.style.top = (b.getBoundingClientRect().bottom + 4) + "px";
-        popup.style.left = (span.offsetLeft - popup.offsetWidth + span.offsetWidth) + "px";
-        popup.classList.add("active");
-      });
-      b.addEventListener("mouseleave", ()=> popup.classList.remove("active"));
+      };
+      span.addEventListener("mouseenter", setText(true));
+      span.addEventListener("focus", setText(false));
     });
   }
-  sessionStorage.shown ??= defaultVersion;
+  { // set path to root if invalid
+    const p = location.pathname.slice(1);
+    if (p in texts) {
+      shown = p;
+    } else {
+      if (p) history.replaceState(null, "", "/");
+      shown = Object.keys(texts)[0];
+    }
+  }
   show();
 };
 
