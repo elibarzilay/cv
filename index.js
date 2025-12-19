@@ -30,6 +30,9 @@ const viewIcon = [
 let shown = null;
 
 const show = () => {
+  const layoutMode =
+    getComputedStyle(document.documentElement).getPropertyValue('--layout-mode').trim();
+  const savedScroll = layoutMode === "small" && window.scrollY;
   $("#versions").classList.toggle("flip", shown !== Object.keys(texts)[0]);
   $("#text").innerHTML = texts[shown];
   const headers = $$("#text h1, #text h2, #text h3, #text h4");
@@ -47,11 +50,17 @@ const show = () => {
   }));
   $$("span.what").forEach(s => s.textContent = shown);
   $("#text").focus();
-  $("#text-row").scrollTo(0, 0);
+  if (savedScroll) window.scrollTo(0, savedScroll);
+  else $("#text-row").scrollTo(0, 0);
 };
 
 const jumpTo = async (elt, hilite, where = "center") => {
   if (typeof elt === "string") elt = document.getElementById(elt);
+  if (!elt) {
+    if (shown !== "long")
+      longVerPopup("This event is described in the long version.", "#828");
+    return;
+  }
   while (elt.textContent === "") elt = elt.parentNode;
   if (!hilite) hilite = elt;
   const style = props => Object.assign(hilite.style, props)
@@ -64,6 +73,15 @@ const jumpTo = async (elt, hilite, where = "center") => {
           transition: "box-shadow 1s ease-in-out" });
   await sleep(1000);
   style({ background: "", transition: "", borderRadius: "" });
+};
+
+const longVerPopup = async (msg, bgcolor, seconds = 1200) => {
+  const popup = $("#verpopup");
+  popup.style.setProperty("--bg", bgcolor);
+  popup.innerHTML = msg;
+  popup.classList.add("on");
+  clearTimeout(longVerPopup.timeout);
+  longVerPopup.timeout = setTimeout(() => popup.classList.remove("on"), seconds);
 };
 
 const mimicClick = e => {
@@ -103,6 +121,12 @@ const init = ()=>{
       shown = versions[(versions.indexOf(shown) + 1) % versions.length];
       history.replaceState(null, "", `/${shown}`);
       show();
+      if (shown === "long" && localStorage.longWarning !== "yes") {
+        // show long version warning once, but allow a few flicks to read it
+        setTimeout(() => localStorage.longWarning = "yes", 10_000);
+        longVerPopup("Note: this is the long version,<br>which is too detailed for most uses.",
+                     "#263", 2000);
+      }
     });
     elt.addEventListener("keydown", mimicClick);
   }
@@ -116,14 +140,15 @@ const init = ()=>{
         `</div>`,
       ].join("")).join("\n");
     const a = document.createElement("a");
-    const popup = $("#popup");
+    const popup = $("#getpopup");
     popup.innerHTML = [
       `<span class="op"></span>`,
       ` the <span class="what"></span> version in`,
       ` <span class="format"></span> format`,
       `<span class="fmt-warn"></span>`,
     ].join("");
-    $$("#formats div.get span").forEach(span => {
+    const spans = $$("#formats div.get span");
+    spans.forEach(span => {
       const b = span.parentElement;
       span.addEventListener("click", () => {
         const file = b.dataset.file.replace(/\bVER\b/, shown);
@@ -134,6 +159,7 @@ const init = ()=>{
       span.addEventListener("keydown", mimicClick);
       const setText = unfocus => () => {
         if (unfocus) document.activeElement.blur();
+        spans.forEach(s => s.style.anchorName = s !== span ? "" : "--getpopup");
         $("span.fmt-warn").innerHTML =
           b.dataset.name !== "Word" ? ""
           : "<br><i>(Note: the PDF is better formatted)</i>";
