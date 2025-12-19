@@ -22,7 +22,6 @@ long
   <!--#include file="lib/js/anychart-exports.min.js" -->
   <!--#include file="lib/js/anychart-ui.min.js" -->
   <!--#include file="build/dates.js" -->
-  <!--#include file="timeline.js" -->
   <!--#include file="index.js" -->
 </script></head>
 <body>
