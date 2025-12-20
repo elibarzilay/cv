@@ -92,9 +92,8 @@
   (λ() (if (simple-text?)
          (or text (regexp-replace #rx"/$" url ""))
          (F: (if TEXT? (or text url) @:{[@(or text @list{`@url`})](@full-url)})
-             @list{\href{@full-url}@;
-                        {\texttt{{\addfontfeature{LetterSpace=-2.0}@;
-                                  @(or text (regexp-replace #rx"/$" url ""))}}}}))))
+             @list{\href{@full-url}{\textbf{\textit{@;
+               @(or text @list{\texttt{@(regexp-replace #rx"/$" url "")}})}}}}))))
 
 ;; -- Mode flags --------------------------------------------------------------
 

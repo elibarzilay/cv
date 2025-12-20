@@ -365,10 +365,10 @@
         @:{A concrete syntax implementation for text-rich code, providing
            functionality similar to here-docs and string interpolation while
            remaining fully integrated with S-expressions. This syntax forms the
-           basis for a family of domain-specific languages used for Racket’s
+           basis for a family of domain-specific languages used for Racket's
            documentation system, textbooks, and articles.}]
     @||
-    Built and maintained much of the project’s infrastructure, including the
+    Built and maintained much of the project's infrastructure, including the
     build system, release process, and web content generation, and partially
     served as system administrator. This work combined substantial technical
     engineering with community-scale maintenance, release coordination, and
@@ -392,7 +392,7 @@
     Research Assistant, Ben-Gurion University@;
     @L:{@"\n"
         Developed a Common Lisp–based system for creative music editing as part
-        of my Master’s thesis. The work focused on a musical composition tool
+        of my Master's thesis. The work focused on a musical composition tool
         that functioned as a visual functional language and was shown to
         generalize to other forms of structured creative editing, such as
         graphic editing. The implementation combined programming language
@@ -466,7 +466,7 @@
        "FFI" "Eli, Dmitry"
        "2004" "2004-09-01"
        "Workshop on Scheme and Functional Programming")
-  (pub "MetaPRL — A Modular Logical Environment"
+  (pub "MetaPRL: A Modular Logical Environment"
        "MetaPRL" "Jason..."
        "2003" "2003-08-01"
        "International Conference on Theorem Proving in Higher Order Logics")
@@ -654,7 +654,7 @@
            Gefen-Dekel Technologies (part of Dalet Digital Media Systems).  The
            original project was discontinued but served as a basis for the “Dalet
            Web Publisher” which was eventually integrated in Dalet's main
-           application — DaletPlus, and later Dalet Galaxy.}]})
+           application—DaletPlus, and later Dalet Galaxy.}]})
 
 (section*! "Personal" #:itemize (F: *: cvitemize:) #:if L?
   @:{Citizen of Israel, permanent US residence since April 2006.}
@@ -709,8 +709,10 @@
       \fontdir[fonts/]
       \setmonofont{Consolas}
       \definecolor{awesome-mine}{HTML}{5500CC}
+      \definecolor{darklink}{HTML}{4400AA}
       \colorlet{awesome}{awesome-mine}
       \setbool{acvSectionColorHighlight}{true}
+      \hypersetup{colorlinks=true,linkcolor=darklink,urlcolor=darklink,citecolor=darklink}
       \renewcommand{\acvHeaderSocialSep}{\quad—\bullet—\quad}
       \name{@(regexp-replace #rx" ([^ ]+$)" name "}{\\1")}
       \title{@title}
