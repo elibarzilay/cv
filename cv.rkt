@@ -284,36 +284,30 @@
     Lecturer, Northeastern University
     @||
     @*:[@:{CSU4400/CSG5400 (@url{pl.barzilay.org/})@\\
-           Programming Languages (combined master and undergraduate levels).
+           Programming Languages (combined master and undergraduate).
            @||
-           Reconstructed the course materials based on a (then new) textbook
-           from Brown University, @it{Programming Languages: Application and
-           Interpretation}, by Shriram Krishnamurthi.  Eventually, the
-           material had evolved to much more than the book, adding completely
-           new and detailed chapters on some advanced topics in programming
-           languages that are either not skimmed or not included in the book.
-           Examples are lambda calculus, macros, type systems, domain-specific
-           languages, and continuations.  This was taught every semester from
-           2004 until the present.  (Combined with the graduate course since
-           the fall semester of 2008.)
+           Designed and taught a long-running Programming Languages course,
+           rebuilt from the Brown University textbook @it{Programming Languages:
+           Application and Interpretation} and substantially extended with
+           original material. Added in-depth coverage of lambda calculus,
+           macros, type systems, continuations, domain-specific languages, and
+           language semantics.
            @||
-           In addition, I designed a (Racket-based) paperless system for
-           homework submission, grading, and for exams.  While some of these
-           systems are no longer used, I keep implementing new ones as needed
-           (for example, the exam server/client was replaced by a WPA in-class
-           quiz, @url{plq.barzilay.org/}) — up to 100 commits in most weeks.
+           Developed extensive course infrastructure and tooling, including a
+           Racket-based @url{assignment submission system | https://github.com/racket/handin},
+           grading framework, exam client/server system,
+           @url{in-class quizzes | https://github.com/elibarzilay/plq} and more.
+           These systems evolved continuously over years of teaching, with
+           regular re-implementations as course needs changed.
            @||
-           To support the course material, I designed a large number of
-           S-expression-based languages with wildly different semantics: a lazy
-           language, an implicitly-curried language, a fast lambda-calculus
-           language (compiled to Racket rather than a rewrite engine
-           implementation), a dynamically-scoped language, a language with
-           ML-like scope for top-level definitions and more.  This is in
-           addition to the main language, which is a variant of Typed Racket,
-           extended with disjoint sum types.
+           Created numerous custom S-expression-based teaching languages with
+           distinct semantics (lazy evaluation, dynamic scoping, implicit
+           currying, ML-style binding, compiled lambda calculus). The primary
+           course language is a Typed Racket variant extended with disjoint sum
+           types.
            @||
-           My materials were taken by a number of people, and they are
-           currently being taught in Canada, Korea, and in Israel.}
+           Course materials have been adopted by instructors internationally,
+           including use in Canada, Korea, and Israel.}
         @:{CSU213, Fundamentals of Computer Science II, Spring 2006.}]}
   @oo["1997–2000" #:loc "Cornell"
       #:dname "Teaching Assistant, Cornell"
@@ -322,33 +316,30 @@
     @||
     @*:[@:{CS212, Structures and Interpretation of Computer Programs.
            @||
-           Conducted recitation sessions, participated in developing homework
-           materials and exams and graded them during the two semesters of fall
-           1997 and spring 2000.  From 1998 to 2000, I designed, implemented,
-           and maintained Swindle, a rich language implemented on top of
-           PLT-Scheme that replaced a Dylan-like environment that was
-           previously used in the PL course.  This system provides a CLOS-like
-           object oriented environment and many other features required to make
-           it viable for the material.  The new language was used in the course
-           until 2000, when the course was re-revised by newer staff and
-           switched to SML.  During this period, and in a number of years
-           following it, I kept in touch with the course teams, was involved in
-           course material development, and gave occasional guest lectures.
+           Conducted recitation sessions; participated in developing homework
+           materials and exams; and graded coursework during Fall 1997 and
+           Spring 2000. From 1998 to 2000, designed, implemented, and
+           maintained Swindle, a rich language built on PLT Scheme that
+           replaced a previously used Dylan-like environment. Swindle provides
+           a CLOS-like object system and additional features required for the
+           course material.
            @||
-           Swindle was used for many years in a number of additional colleges
-           and universities, including Dartmouth, Vassar and Duke.  In some, it
-           is being used to this day.  (It is part of the Racket distribution.)}]}
+           The language was used in CS212 until 2000, when the course was
+           revised and switched to SML. I remained involved with course teams
+           for several years afterward, contributing to materials and giving
+           occasional guest lectures.
+           @||
+           Swindle was adopted by a number of additional universities,
+           including Dartmouth, Vassar, and Duke, and remains part of the
+           Racket distribution.}]}
   @oo["1994–1996" #:loc "BGU, Israel"
       #:dname "Teaching Assistant, BGU"
       #:dinfo '([D "1994-09-01::1996-12-31"] [short "TA @ BGU"])]{
     Teaching Assistant, Ben-Gurion University
     @||
-    @:{@*:[@:{Automata and Formal Languages}
-           @:{Structures and Interpretation of Computer Programs}
-           @:{Advanced Programming Languages}]
-       @||
-       Conducted recitation sessions, graded exams, helped in extending
-       course contents and developed new material.}})
+    @*:[@:{Automata and Formal Languages}
+        @:{Structures and Interpretation of Computer Programs}
+        @:{Advanced Programming Languages}]})
 
 (section*! "Research Experience" #:sec-dates '([side down]) #:if L?
   #:pfx @S:{Research Interests: @research-interests
@@ -360,95 +351,71 @@
     Researcher, Programming Research Laboratory,
     Northeastern University, working with Prof. Matthias Felleisen
     @||
-    During this time, I was part of the small core development team behind
-    Racket (formerly PLT Scheme) and helped grow it into the “language
-    greenhouse” that it is today.  Specifically, I have designed and
-    implemented a number of important core features in the language:
+    Member of the small core development team behind Racket (formerly PLT
+    Scheme), contributing to its growth into a large-scale “language
+    greenhouse.” Designed and implemented several core language features,
+    including:
     @||
-    @*:[@:{A libffi-based dynamic foreign interface, which allows interfacing
-           foreign libraries from Racket.  This interface has replaced the
-           previous ad-hoc system, and enabled rapid development in many
-           important areas such as a platform-independent GUI system (a
-           re-implementation of wxWindows in Racket), a portable database
-           interface, an OpenGL library, and many more.}
-        @:{A Lazy Racket language that is similar in its syntax to Racket, but
-           different in its execution semantics.  This implementation paved the
-           way to a number of similar important languages, such as Typed
-           Racket.}
-        @:{A concrete syntax that makes it possible to deal with text-rich
-           code, in a way that provides functionality similar to here-docs and
-           string interpolation, yet is more integrated in the language than
-           common approaches.  This syntax forms the bases for a family of
-           domain specific languages that are used for Racket's documentation
-           system, textbooks, articles, and more.}
-        @:{I have created the group's infrastructure and everything that is
-           involved, and partially served as a system administrator to maintain
-           it.  This included substantial technical pieces like making up the
-           Racket build process and web page generation as well as social
-           aspects like setting up mailing lists and other community building
-           efforts.}
-        @:{Numerous other projects within the Racket community and the PLT
-           research group.  Some of these would be considered as major language
-           features in other languages, but in Racket they are just libraries.
-           For example, I have implemented Racket's generators, and its system
-           of generic functions.}]}
+    @*:[@:{A libffi-based dynamic foreign function interface, replacing earlier
+           ad-hoc mechanisms and enabling portable GUIs, database interfaces,
+           OpenGL bindings, and other foreign-library integrations.}
+        @:{Lazy Racket, a language variant with the same syntax as Racket but
+           different execution semantics, which influenced later languages
+           such as Typed Racket.}
+        @:{A concrete syntax implementation for text-rich code, providing
+           functionality similar to here-docs and string interpolation while
+           remaining fully integrated with S-expressions. This syntax forms the
+           basis for a family of domain-specific languages used for Racket’s
+           documentation system, textbooks, and articles.}]
+    @||
+    Built and maintained much of the project’s infrastructure, including the
+    build system, release process, and web content generation, and partially
+    served as system administrator. This work combined substantial technical
+    engineering with community-scale maintenance, release coordination, and
+    long-term support.
+    @||
+    Contributed numerous additional libraries within the Racket and PLT
+    ecosystems, including generators and generic functions, which would be
+    considered major language features in many other systems.}
   @oo["1997–2003" #:loc "Cornell"
       #:dname "Graduate Research Assistant in the Nuprl group, Cornell"
       #:dinfo '([D "1997-01-01::2003-07-31"] [short "Nuprl, Cornell"])]{
     Graduate Research Assistant in the Nuprl group,
     directed by Prof. Robert Constable, Cornell University@;
     @L:{@"\n"
-        The focus of this research was the implementation of a reflection
-        system for the Nuprl theorem prover, covering both the practical and
-        the theoretical aspects.  Made additional contributions to Nuprl, and
-        participated in the development of the MetaPRL theorem prover
-        (designed and implemented by Jason Hickey).}}
+        Conducted research on implementing reflection for the Nuprl theorem
+        prover, covering both theoretical foundations and practical system
+        design. Made additional contributions to Nuprl and participated in the
+        development of the MetaPRL theorem prover.}}
   @oo["1994–1996" #:loc "BGU, Israel"
       #:dinfo '([D "1994-09-01::1996-12-31"] [short "Computer Music @ BGU"])]{
     Research Assistant, Ben-Gurion University@;
     @L:{@"\n"
-        Developed a Common Lisp based system for creative music editing as
-        part of my Masters thesis.  This research was centered around an
-        implementation of a musical composition tool, resulting in a system
-        that is essentially a visual functional language.  The system was
-        shown to be useful in other forms of structured creative editing such
-        as graphic editing.  The implementation was heavily influenced by
-        programming languages work combined with operational graph editing,
-        which are used to form user-defined reusable abstractions.}})
+        Developed a Common Lisp–based system for creative music editing as part
+        of my Master’s thesis. The work focused on a musical composition tool
+        that functioned as a visual functional language and was shown to
+        generalize to other forms of structured creative editing, such as
+        graphic editing. The implementation combined programming language
+        techniques with operational graph editing to support reusable,
+        user-defined abstractions.}})
 
 (section! "Ph.D. Dissertation" #:if L?
   @o["1997–2003" #:loc "Cornell"]{
     @it{Implementing Reflection in Nuprl}
     @||
-    Nuprl is a theorem prover, a system that materializes the relation
-    between logic and programming languages.  The logical aspects of such an
-    environment naturally pulls any implementation of reflection towards a
-    reimplementation of the logical system within itself.  This approach is
-    adequate for achieving theoretical results (e.g., Godel numbers), but
-    for actual work where reflection is needed, it is impractical.
+    Developed a strong reflection model for the Nuprl theorem prover,
+    contrasting with traditional weak-reflection approaches based on separate
+    encodings of the reflected layer. Reflection is achieved by exposing
+    internal system-level functionality directly to the user level, borrowing
+    techniques from Lisp and Scheme to make the reflected and base systems
+    identical.
     @||
-    My research work on implementing reflection for Nuprl borrowed heavily
-    from common practices in programming languages, and most specifically
-    from Lisp and Scheme: achieve reflection through exposure of internal
-    system-level functionality to the user-level.  By design, this is a
-    @em{strong reflection} principle, meaning that the reflected system is
-    inherently identical to the base system.  This work diverged from the
-    more common logical tradition of a weak reflection, where a separate
-    description of the reflected layer is provided, requiring proof that the
-    resulting reflective layer is equivalent to the source layer.
-    @||
-    Implementing this kind of reflection leads to similar issues as in
-    reflective programming languages.  Most notably, I used a higher order
-    abstract syntax (HOAS) approach for syntax representation, and
-    implemented operations on these new constructs.  The theoretical side of
-    this work, however, went beyond what is done on the PL side, requiring a
-    specification of the semantics for encoded quotations of syntax with
-    bindings, resulting in new logical rules for the system.  The major
-    contribution of this work is in closing the gap between the logical
-    world and the programming languages world in the context of reflection.
-    Much of this work has influenced the reflection work in MetaPRL too, and
-    many years later it has even inspired a textual language for Racket
-    which is in heavy use today (Scribble).})
+    The work adopts a higher-order abstract syntax (HOAS) representation for
+    syntax with bindings and defines operations over these representations.
+    This required specifying semantics for quoted syntax with bindings and
+    introducing new logical rules in Nuprl. The results influenced later
+    reflection work in MetaPRL and, years later, inspired textual language
+    mechanisms in Racket, most notably Scribble.})
 
 (section*! "Publications" #:sec-dates '([side down]) #:if L?
   (pub "MMLSpark: Unifying Machine Learning Ecosystems at Massive Scales"
@@ -571,7 +538,6 @@
            University.}]})
 
 (section*! "Notable Earlier Projects" #:sec-dates '([side up])
-  #:pfx @L:{(Approximate dates.)}
   @(set! oo (λ(date D title #:short [sh #f] #:dinfo [di '()] #:if [bool #t] . xs)
               (let* ([title (->string title)]
                      [xs (apply : xs)]
