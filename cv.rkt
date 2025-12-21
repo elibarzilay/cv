@@ -94,37 +94,6 @@
 
 (part! (sec--))
 
-(section*! "Quick Overview" #:if L?
-  @o["2022–2025"]{
-    Principal Software Developer at GoDaddy, August 2022–August 2025
-    @*:[@:{Code infrastructure, repo & build pipeline migrations}
-        @:{Lead work on code quality tools}
-        @:{Backend work: Services, APIs, Automation, Docker, AWS}
-        @:{Heavy cross team work}]}
-  @o["2022"]{
-    Principal Software Developer at Sundae, February–June 2022
-    @*:[@:{Backend design and API implementation}]}
-  @o["2015–2022"]{
-    Senior Software Developer at Microsoft, December 2015–January 2022
-    @*:[@:{Azure Machine Learning group in Boston}
-        @:{Python Group}
-        @:{TypeScript Group}]}
-  @o["1992–Present"]{
-    Professional Programmer since 1992
-    @*:[@:{Many languages, focus on functional programming}
-        @:{Strong academic background, specializing in Programming Languages
-           and Formal Methods}
-        @:{Many environments, fluent in Linux}
-        @:{Preferable focus on backend/full-stack work, experience at all
-           levels}]}
-  @(set! oo (curry o #:md-sfx (list "," \\ "\nD")))
-  @oo["1994–Present"]{Teaching:
-    Programming Languages, Programming & Fundamentals}
-  @oo["1994–2014"]{Research:
-    Programming Languages, Theorem Proving, Computer Music}
-  @oo["1991–2005"]{Education:
-    B.Sc., M.Sc., Ph.D. in Computer Science})
-
 (section*! "Industry Experience" #:sec-dates '([side up])
   @o["August 2022 – August 2025"
      #:md-pfx "D: " #:dinfo `([D "2022-08-15::2025-08-13"])]{
