@@ -27,31 +27,72 @@
 
 (part! (sec++))
 
-(section! "Professional Summary"
-  @V:[@W{Senior/Principal software developer with 20+ years of experience building
-         and modernizing backend systems in both startups and large enterprises. I
-         combine deep technical expertise with a practical approach to raising
-         code quality and strengthening engineering practices, via code ownership,
-         proper reviews, and reliable release processes. I value clean,
-         well-structured code and help teams move toward it in a pragmatic way —
-         mentoring engineers while delivering robust systems and fostering
-         sustainable engineering culture.}
-      @W{Senior/Principal backend and infrastructure developer with over 20 years
-         of experience designing APIs, distributed systems, and developer tooling
-         at scale. I have led modernization efforts, stabilized large platforms,
-         and guided cross team migrations in both startup and enterprise
-         environments, including Microsoft and GoDaddy.
+(section! "Overview"
+  @:{@W{My work focuses on building and evolving systems where technical
+        quality is taken seriously and tradeoffs are handled deliberately.}
+     @||
+     @V:[@W{Senior/Principal backend developer with 20+ years of experience
+            building and evolving backend systems in both startups and large
+            organizations. I work on new systems as well as existing codebases,
+            focusing on reliability, clear structure, and engineering practices
+            that support long-term maintainability.
+            @||
+            My background in programming languages shapes a careful, methodical
+            approach to design and refactoring, where incremental technical
+            steps accumulate into substantial improvements over time. In senior
+            roles, I tend to work close to the core of systems—APIs, build and
+            deployment pipelines, and developer tooling—while influencing both
+            structural and cultural engineering practices and mentoring
+            engineers through shared technical work.}
+         @W{Senior/Principal backend and infrastructure developer with over 20
+            years of experience designing and building backend systems across
+            startups and large organizations. I have worked extensively on
+            stabilizing and modernizing existing platforms, but I also enjoy
+            and seek out opportunities to design and implement new systems from
+            the ground up.
+            @||
+            My academic background in programming languages informs a
+            disciplined approach to software design, whether starting fresh or
+            improving an existing codebase. I tend to work incrementally at the
+            code level to avoid unnecessary risk, while aiming for substantial
+            structural improvement in the resulting system.
+            @||
+            I see senior and principal roles as having influence beyond
+            individual contributions: shaping expectations around code quality,
+            review discipline, and ownership, and helping counterbalance
+            feature pressure with technical judgment. I usually do this through
+            hands-on work—designing core components, writing code, and
+            mentoring engineers through day-to-day collaboration—while
+            contributing to an engineering culture that values correctness,
+            clarity, and sustainability.}]})
+
+(part! (sec++))
+
+(section! "Preferences"
+  @V:[@W{I am at my best when I'm building new systems or introducing new tools
+         and structure that help codebases evolve in a clean and controlled
+         way. I value explicit structure and clarity in code.
          @||
-         My PhD and academic background shaped a rigorous approach to programming,
-         with a focus on clean, extensible, and maintainable code. Combined with
-         extensive industry experience, this enables me to improve existing
-         systems through non-disruptive, incremental changes while also designing
-         well-structured solutions for new projects. I emphasize sound engineering
-         practices such as clear code ownership, reliable release processes, and
-         disciplined reviews, and I encourage teams toward better code and
-         sustainable practices in a pragmatic way. Years of teaching programming
-         languages have further strengthened my ability to mentor engineers and
-         foster strong engineering culture alongside delivering robust systems.}])
+         I am looking for a remote role, but I do value direct conversation and
+         an occasional face-to-face as things that significantly improve
+         technical outcomes.}
+      @W{I do my strongest work when I'm involved in building new systems or
+         adding new structure and tooling that helps existing codebases evolve
+         in a robust, understandable way. This includes greenfield work as well
+         as foundational improvements that shape how a system grows over time.
+         @||
+         I favor approaches and tools that make structure explicit and change
+         easier to reason about, while remaining pragmatic about using whatever
+         technologies a given project requires. In industry work, this has
+         often meant JavaScript and TypeScript, which I've found to support
+         this balance well for large, long-lived systems.
+         @||
+         I am seeking a remote role, but I place real value on human
+         collaboration and shared context. In find that technical work greatly
+         benefits from richer communication, including regular calls and
+         occasional in-person interaction.}])
+
+(part! (sec--))
 
 (section*! "Quick Overview" #:if L?
   @o["2022–2025"]{
@@ -656,15 +697,6 @@
 
 (section*! "Personal" #:itemize (F: *: cvitemize:) #:if L?
   @:{Citizen of Israel, permanent US residence since April 2006.}
-  @:{Work preference:
-     @*:[@:{Functional programming.}
-         @:{Building new projects rather than maintenance of existing software.}
-         @:{Languages:
-            @*:[@:{I love hacking Racket; specifically, creating little languages and
-                   using its meta-programming capabilities.}
-                @:{More recently I switched to JavaScript/TypeScript as my language
-                   of choice in commercial settings.}]}
-         @:{Remote or hybrid in the Boston area.}]}
   @:{Photography: A minor in Art at Cornell, mostly digital photography.}
   @:{Music: I love electronic music and experiment with making some as well as
      hacking on my own music player (implemented as a web app).})
