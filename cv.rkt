@@ -231,28 +231,26 @@
 (define (edu date D title short where advisor subject)
   (let ([advisor (and advisor @:{Advisor: @advisor,})]
         [subject (and subject (L: @:{Subject: @(it subject),}))]
-        [longloc @:{@(car where).}]
+        [longloc @:{@V:[(cadr where) (caddr where)].}]
         [title (->string title)])
-    (o date #:dname (list (regexp-replace #rx" *\\([^()]+\\)$" title "")
-                          ", " (cadr where))
-       #:dinfo `([D ,D] [short ,short]) #:loc (cadr where) #:md-pfx "D: "
-       title (if (and TEXT? S?) "; " @M:{,@S:[@\\]
-                                         @||})
-       (if SM?
-         @:{@(car where)@and[subject]{@splice{,@\\
-            @subject}}}
-         @*:[advisor subject longloc]))))
+    (o date #:dname @:{@title, @(car where)}
+       #:dinfo `([D ,D] [short ,short]) #:loc (LT: (car where)) #:md-pfx "D: "
+       (list title @ST:{@";" @(cadr where)})
+       (if (and TEXT? S?) "; "
+           @M:{,@S:[@\\]
+               @||})
+       (if S? (M: (cadr where)) @*:[advisor subject longloc]))))
 (define phd-in (V: "PhD," "Ph.D. in"))
 (define msc-in (V: "MSc," "M.Sc. in"))
 (define bsc-in (V: "BSc," "B.Sc. in"))
 (define cornell
-  (list (V: "Cornell University"
-            "Cornell University, New York, NY, USA")
-        "Cornell"))
+  (list "Cornell"
+        "Cornell University"
+        "Cornell University, New York, NY, USA"))
 (define bgu
-  (list (V: "Ben-Gurion Univ, Israel"
-            "Ben-Gurion University of the Negev, Be'er-Sheva, Israel")
-        "BGU, Israel"))
+  (list "BGU, Israel"
+        "Ben-Gurion Univ, Israel"
+        "Ben-Gurion University of the Negev, Be'er-Sheva, Israel"))
 
 (section*! "Education" #:sec-dates '([side down])
   (edu "1997–2003" "1997-01-01::2003-07-31"
