@@ -5,6 +5,8 @@ here="$PWD"
 
 mkdir -p "build" "download"
 
+die() { echo "error: $*" 1>&2; exit 1; }
+
 all_answers=""
 ask() {
   local R
@@ -13,33 +15,49 @@ ask() {
   if [[ "$R" != [yY]* ]]; then exit 1; fi
 }
 
+ask=1
 check() {
-  local f="$1"; shift
-  if [[ ! -s "$f" ]]; then
-    echo "Created $f"
-    mv -f "$f.new" "$f"
-  elif ! diff "$f" "$f.new"; then
-    echo ""
-    echo "Changes in $f.new"
-    echo "* Remove \"$f\" or manually update from \"$f.new\""
-    echo "* Re-run"
-    ask "Continue?"
-    mv -f "$f.new" "$f"
-  else
-    rm "$f.new"
+  local f1="$1" f2="$2"; shift 2
+  if [[ ! -s "$f2" ]]; then
+    echo "Created $f2"
+    mv -f "$f1" "$f2"
+    return
   fi
+  local diff="$(diff "$f2" "$f1")"
+  if [[ -z "$diff" ]]; then
+    rm "$f1"
+    return
+  fi
+  if (( ! ask )); then
+    echo "Changes in $f1 => $f2"
+    mv -f "$f1" "$f2"
+    return
+  fi
+  local sep="$(printf '%*s\n' 80 '')"; sep="${sep// /-}"
+  echo "$sep"; echo "Changes in $f2 :: $f1"
+  echo "$sep"; echo "$diff"; echo "$sep"
+  echo "Changes in $f1"
+  echo "=> Remove \"$f2\" or manually update from \"$f1\""
+  ask "Continue?"
+  mv -f "$f1" "$f2"
 }
 
-run_check() { # output cmd ...
+run() { # output cmd ...
+  local ask=1 checkwrap=0
+  while [[ "$1" = --* ]]; do
+    case "${1#--}" in
+      (dont-ask) ask=0 ;;
+      (check-wrap) checkwrap=1 ;;
+      (*) die "run: unknown flag: $1" ;;
+    esac
+    shift
+  done
   local out="$1"; shift
   "$@" > "$out.new" || exit 1
-  check "$out"
-}
-
-run_check_wrap() {
-  run_check "$@"
-  if ! grep -qE ".{80}" "$1"; then return; fi
-  echo "Error: got lines over 80 chars in $1" 1>&2; exit 1
+  if ((checkwrap)) && grep -qE ".{80}" "$out.new"; then
+    die "got lines over 80 chars in $out.new"
+  fi
+  check "$out.new" "$out"
 }
 
 for what in long short; do
@@ -49,55 +67,76 @@ for what in long short; do
   #### MD
   md="$build.md"
   echo "  $md"
-  run_check "$md" ./cv.rkt $what md
+  run "$md" ./cv.rkt $what md
   md_fmt=commonmark+smart
   #### HTML
-  echo "  $build.html"
-  pandoc -f $md_fmt -t html "$md" -o "$build.html"
+  html="$build.html"
+  echo "  $html"
+  run --dont-ask "$html" pandoc -f $md_fmt -t html "$md"
   #### TXT
-  echo "  $out.txt"
-  if [[ $what = long ]]; then df="build/dates.js"; else df=""; fi
-  dates_file="$df" \
-    run_check_wrap "$out.txt" ./cv.rkt $what md text
-  #### PDF
+  txt="$out.txt"
+  echo "  $txt"
+  df="$build-dates.js" dates="build/dates.js"
+  dates_file="$df" run --check-wrap "$txt" ./cv.rkt $what md text
+  if [[ $what = long ]]; then
+    check "$df" "$dates"
+  else
+    uniq="$(comm -23 <(grep '^ *R:' "$df" | sort) <(grep '^ *R:' "$dates" | sort))"
+    if [[ -n "$uniq" ]]; then
+      echo "---- entries in $df that are not in $dates ----"
+      echo "$uniq"
+      die "$df is not a subset of $dates"
+    fi
+    rm "$df"
+  fi
+  #### TEX
   tex="$build.tex"
   echo "  $tex"
-  run_check "$tex" ./cv.rkt $what tex
-  echo "  $out.pdf"
-  ln -sf "../acv/awesome-cv.cls" "../acv/fonts" "build"
-  args=(--halt-on-error --interaction="nonstopmode")
-  args+=("../$tex")
-  # twice to get a TOC, show nothing on first run, warnings on the second run
-  (cd "build"; xelatex "${args[@]}") > "/tmp/xelatex-log" \
-    || { cat "/tmp/xelatex-log"; exit 1; }
-  (cd "build"; xelatex "${args[@]}") \
-    | awk 'BEGIN{IGNORECASE=1} /warning|!/{show=1} /^$/{show=0} show;' \
-    | { grep -v 'Package floatflt Warning: Floating figures .* colliding' \
-          || test $? = 1; } \
-    || exit 1
-  rm -f "$build."{"aux","out","log"}
-  rm -f "build/"{"texput.log","awesome-cv.cls","fonts"}
-  mv "$build.pdf" "$out.pdf"
+  run "$tex" ./cv.rkt $what tex
+  #### PDF
+  pdf="$out.pdf"
+  if [[ "$tex" -nt "$pdf" ]]; then
+    echo "  $pdf"
+    ln -sf "../acv/awesome-cv.cls" "../acv/fonts" "build"
+    cmd=(xelatex)
+    cmd+=(--halt-on-error --interaction="nonstopmode")
+    cmd+=("../$tex")
+    # twice to get a TOC, show nothing on first run, warnings on the second run
+    (cd "build"; "${cmd[@]}") > "/tmp/xelatex-log" \
+      || { cat "/tmp/xelatex-log"; exit 1; }
+    (cd "build"; "${cmd[@]}") \
+      | awk 'BEGIN{IGNORECASE=1} /warning|!/{show=1} /^$/{show=0} show;' \
+      | { grep -v 'Package floatflt Warning: Floating figures .* colliding' \
+            || test $? = 1; } \
+      || exit 1
+    rm -f "$build."{"aux","out","log"}
+    rm -f "build/"{"texput.log","awesome-cv.cls","fonts"}
+    mv "$build.pdf" "$pdf"
+  fi
   #### DOCX
-  echo "  $out.docx"
-  args=(-s)
-  # args+=(-M author="Eli Barzilay")
-  args+=(-M title="Eli Barzilay: Curriculum Vitae")
-  # args+=(-M date="2021-12-31")
-  args+=(-M papersize="letter")
-  args+=(--resource-path="$here/acv/fonts")
-  # args+=(-M fontfamily="FiraSans")
-  # args+=(-M fontfamilyoptions="default")
-  # args+=(-V "mainfont:FiraSans")
-  # args+=(-V "sansfont:FiraSans")
-  # args+=(-V "monofont:Consolas")
-  if [[ -e "$out.docx" ]]; then cp "$out.docx" "build/ref.docx"; fi
-  args+=(--reference-doc="build/ref.docx")
-  # pandoc -f $md_fmt "$md""${args[@]}" -o "$tex"
-  args+=(--pdf-engine="xelatex")
-  pandoc -f $md_fmt "$md" "${args[@]}" -o "$out.docx" || exit 1
-  # pandoc -f latex "$tex" "${args[@]}" -o "$out.docx" || exit 1
-  rm -f "build/ref.docx"
+  docx="$out.docx"
+  if [[ "$md" -nt "$docx" ]]; then
+    echo "  $docx"
+    cmd=(pandoc)
+    cmd+=(-f $md_fmt "$md")
+    # cmd+=(-f latex "$tex") # <-- to create a tex file instead
+    cmd+=(-s)
+    # cmd+=(-M author="Eli Barzilay")
+    cmd+=(-M title="Eli Barzilay: Curriculum Vitae")
+    # cmd+=(-M date="2021-12-31")
+    cmd+=(-M papersize="letter")
+    cmd+=(--resource-path="$here/acv/fonts")
+    # cmd+=(-M fontfamily="FiraSans")
+    # cmd+=(-M fontfamilyoptions="default")
+    # cmd+=(-V "mainfont:FiraSans")
+    # cmd+=(-V "sansfont:FiraSans")
+    # cmd+=(-V "monofont:Consolas")
+    if [[ -e "$docx" ]]; then cp "$docx" "build/ref.docx"; fi
+    cmd+=(--reference-doc="build/ref.docx")
+    cmd+=(--pdf-engine="xelatex")
+    "${cmd[@]}" -o "$docx" || exit 1
+    rm -f "build/ref.docx"
+  fi
 done
 
 echo "done"

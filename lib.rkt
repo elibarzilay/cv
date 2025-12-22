@@ -11,6 +11,8 @@
   (T: text ...)   -- only-tex, same as (F: #f (: text ...))
   SM:, LM:, ST:, ... -- combinations for both version + format
   S?, L?, M?, T?, LM?, ST?, ... -- booleans for the chosen modes
+  !S:, !L:, !M:, !T: -- negated forms of S:, ...
+  TEXT?, TEXT:, !TEXT: -- same for text mode (subvariant of md mode)
   (*: item ...)   -- itemize list
   (W text ...)    -- wrap line (in text mode)
   (sec++) (sec--) -- inc/dec header level (starts at level 1)
@@ -20,7 +22,7 @@
                                 (has #:pfx to precede the text)
 
 |#
-;; -- Public ------------------------------------------------------------------
+;; ---->> Public --------------------------------------------------------------
 
 (define-syntax flags '([V [S short] [L long]] [F [M md] [T tex]]
                        TEXT))
@@ -32,13 +34,15 @@
          (rename-out [mod-beg #%module-begin])
          ->string : url *: cventries: cvitemize: W newlines:
          header section! section*! part! sec++ sec--
-         \\ it em o NODATE
+         \\ it em o
          ~block ~splice)
 
-;; -- Utilities ---------------------------------------------------------------
+;; ---->> Utilities -----------------------------------------------------------
 
 (define (->string x)
   (with-output-to-string (λ() (output x))))
+
+(define-syntax-rule (push! val var) (set! var (cons val var)))
 
 (define (is-val? x) (not (or (not x) (void? x) (null? x))))
 (define (: . xs) (define r (filter is-val? xs)) (and (is-val? r) r))
@@ -51,7 +55,7 @@
           [else (f x)])))
 
 ;; generic properties (from ~/pl/utils/web-utils.rkt)
-(define-values [prop-set! prop-ref]
+(define-values [prop-set! prop-ref copy-missing-props]
   (let ([t (make-weak-hasheq)])
     (values
      (λ(obj prop val . more)
@@ -60,10 +64,17 @@
            (hash-set! t prop val)
            (when (pair? more) (loop (car more) (cadr more) (cddr more))))))
      (λ(obj prop [default #f])
-       (hash-ref (hash-ref! t obj make-hash) prop default)))))
+       (hash-ref (hash-ref! t obj make-hash) prop default))
+     (λ(from to)
+       (define from-props (hash-ref! t from make-hash))
+       (define to-props   (hash-ref! t to   make-hash))
+       (define to-keys    (hash-keys (hash-ref! t to   make-hash)))
+       (for ([(k v) (in-hash from-props)] #:unless (memq k to-keys))
+         (hash-set! to-props k v))))))
 (define with-props
-  (case-lambda [(obj) obj]
-               [(obj k v . more) (apply prop-set! obj k v more) obj]))
+  (case-lambda
+    [(obj) (if (promise? obj) (lazy (copy-missing-props obj (force obj))) obj)]
+    [(obj k v . more) (apply prop-set! obj k v more) obj]))
 
 (define ((lazify f) . text) (lazy (apply f (maptree force text))))
 (define ~block  (lazify block))
@@ -75,7 +86,7 @@
 ;;   the second version shows just the text in plain-text contexts
 (define (url . xs)
   (define-values [text url]
-    (let ([m (regexp-match #rx"^(?:([^|]+?) *\\| *([^|]+)|.*)$"
+    (let ([m (regexp-match #rx"^(?:([^|]+?) *\\|+ *([^|]+)|.*)$"
                            (->string xs))])
       (if (cadr m) (apply values (cdr m)) (values #f (car m)))))
   (define pfx
@@ -95,7 +106,7 @@
              @list{\href{@full-url}{\textbf{\textit{@;
                @(or text @list{\texttt{@(regexp-replace #rx"/$" url "")}})}}}}))))
 
-;; -- Mode flags --------------------------------------------------------------
+;; ---->> Mode flags ----------------------------------------------------------
 
 (define-syntax (-def-flags- _)
   (define flags (syntax-local-value #'flags))
@@ -110,33 +121,43 @@
       (cond [(null? x) x]
             [(pair? x) (cons (loop (car x)) (loop (cdr x)))]
             [else (f x)])))
-  (define (ids sfx [fs multi-flags])
-    (maptree (λ(s) (datum->syntax _ (sym s sfx))) fs))
+  (define (ids #:pfx [pfx ""] sfx [fs multi-flags])
+    (maptree (λ(s) (datum->syntax _ (sym pfx s sfx))) fs))
   (define (cross opts)
     (if (null? opts) '(())
         (let ([rest (cross (cdr opts))])
           (apply append (map (λ(o) (map (λ(r) (cons o r)) rest)) (car opts))))))
   (define combos (map (λ(c) (cons (apply sym c) c))
                       (cross (map (λ(fs) (map car (cdr fs))) multi-flags))))
-  (with-syntax ([(SF? ...) (ids '? single-flags)]
-                [(sf  ...) (ids "" (map symbol-downcase single-flags))]
-                [([Y  [X  f ] ...] ...) (ids "")]
-                [([Y? [X? f?] ...] ...) (ids '?)]
-                [([Y: [X: f:] ...] ...) (ids ':)]
-                [([Y- [X- f-] ...] ...) (ids '-)]
-                [([C? P? ...] ...) (ids '? combos)]
-                [([C: P: ...] ...) (ids ': combos)])
+  (with-syntax ([(SF?  ...) (ids '? single-flags)]
+                [(SF:  ...) (ids ': single-flags)]
+                [(!SF: ...) (ids #:pfx '! ': single-flags)]
+                [(sf   ...) (ids "" (map symbol-downcase single-flags))]
+                [([Y   [X  f ]   ...] ...) (ids "")]
+                [([Y?  [X? f?]   ...] ...) (ids '?)]
+                [([Y:  [X: f:]   ...] ...) (ids ':)]
+                [([!Y: [!X: !f:] ...] ...) (ids #:pfx '! ':)]
+                [([Y-  [X- f-]   ...] ...) (ids '-)]
+                [([C?  P? ...]   ...) (ids '? combos)]
+                [([C:  P: ...]   ...) (ids ': combos)])
     #`(begin
         (define args
           (map string->symbol (vector->list (current-command-line-arguments))))
         (let ([bad (remq* '(f ... ... sf ...) args)])
           (when (pair? bad) (raise-user-error 'cv "unknown flag/s: ~a" bad)))
-        (begin (define SF? (and (memq 'sf args) #t)) (provide SF?))
+        (begin (define SF? (and (memq 'sf args) #t))
+               (define-syntax-rule (SF: text (... ...))
+                 (and SF? (: text (... ...))))
+               (define-syntax-rule (!SF: text (... ...))
+                 (and (not SF?) (: text (... ...))))
+               (provide SF? SF: !SF:))
         ...
         (begin (define X?  (and (memq 'f args) #t))
                (define-syntax-rule (X: text (... ...))
                  (and X? (: text (... ...))))
-               (provide X: X?))
+               (define-syntax-rule (!X: text (... ...))
+                 (and (not X?) (: text (... ...))))
+               (provide X? X: !X:))
         ... ...
         (begin (let ([fs (filter values (list (and X? 'f) ...))])
                  (case (length fs)
@@ -153,7 +174,23 @@
         ...)))
 -def-flags-
 
-;; -- Wrapping ----------------------------------------------------------------
+;; ---->> Meta-info -----------------------------------------------------------
+
+(define meta-info (make-hash))
+
+(provide meta:)
+(define-syntax meta:
+  (syntax-rules ()
+    [(meta:) (begin)]
+    [(meta: name val more ...)
+     (begin (define name val)
+            (hash-set! meta-info 'name val)
+            (meta: more ...))]))
+
+(define-syntax-rule (meta-ref name)
+  (hash-ref meta-info 'name))
+
+;; ---->> Wrapping ------------------------------------------------------------
 
 (define (wrap width . text)
   (when (<= width 5) (error 'wrap "width too small: ~a" width))
@@ -182,7 +219,7 @@
   (let ([xs (apply : xs)])
     (and xs (add-between xs "\n"))))
 
-;; -- TeX envs ----------------------------------------------------------------
+;; ---->> TeX envs ------------------------------------------------------------
 
 (define (cventries: . xs)
   (apply newlines: `("\\begin{cvplains}" ,@xs "\\end{cvplains}")))
@@ -190,12 +227,13 @@
 (define (cvitemize: . xs)
   (apply newlines: `("\\begin{cvplains}" ,(apply *: xs) "\\end{cvplains}")))
 
-;; -- Itemize -----------------------------------------------------------------
+;; ---->> Itemize -------------------------------------------------------------
 
 (define items-level (make-parameter 0))
-(define (*: . xs)
-  (lazy (parameterize ([items-level (add1 (items-level))])
-          (apply items (maptree force xs)))))
+(define (*: #:loose [loose? '?] . xs)
+  (with-props (lazy (parameterize ([items-level (add1 (items-level))])
+                      (apply items #:loose loose? (maptree force xs))))
+              'items? #t))
 (define (should-be-loose? is)
   (define (has-empty-line? is)
     (and (pair? is)
@@ -209,7 +247,7 @@
   (or (has-empty-line? is) (has-long-paras? is)))
 (define (has-items? x)
   (or (prop-ref x 'items?) (and (pair? x) (ormap has-items? x))))
-(define (items . items)
+(define (items #:loose [loose0? '?] . items)
   (define xs (list->: items))
   (when xs
     (define lvl (items-level))
@@ -220,7 +258,7 @@
                      [else "-"])])
             (λ(x) @~block{@* @~block{@x}}))
           (λ(x) @:{\item @x})))
-    (define loose? (ormap should-be-loose? xs))
+    (define loose? (if (boolean? loose0?) loose0? (ormap should-be-loose? xs)))
     (define is  (map item xs))
     (define sep (F: (if (or (and (= 1 lvl) (V: #f #t)) loose?) "\n\n" "\n")
                     "\n"))
@@ -230,18 +268,17 @@
                               \end{itemize}})))
     (with-props (wrap (add-between is sep)) 'items? #t 'loose? loose?)))
 
-;; -- Parts -------------------------------------------------------------------
+;; ---->> Parts ---------------------------------------------------------------
 
 (define parts '())
 
 (define (part! . xs)
   (define ps (list->: xs))
   (when (pair? ps)
-    (set! parts `(,@ps
-                  ,(and (pair? parts)
-                        (if (and LM? (prop-ref (car parts) 'section?))
-                          "\n\n\n" "\n\n"))
-                  ,@parts))))
+    (when (pair? parts)
+      (push! (if (and LM? (prop-ref (car parts) 'section?)) "\n\n\n" "\n\n")
+             parts))
+    (for-each (λ(p) (push! p parts)) ps)))
 
 (define cur-header (make-parameter 1))
 (define (sec++) (cur-header (add1 (cur-header))))
@@ -281,9 +318,7 @@
       pfx (and (is-val? pfx) (if (prop-ref (force is) 'loose?) "\n\n" "\n"))
       is)))
 
-;; -- Tex stuff ---------------------------------------------------------------
-
-(define NODATE (gensym))
+;; ---->> TeX stuff -----------------------------------------------------------
 
 (define \\ (and (not TEXT?) @F:[" \\" " \\\\"]))
 
@@ -298,30 +333,57 @@
 
 ;; the date/loc are not rendered in md
 ;;   add the date with #:md-* and a `D` in the string
-(define (o #:loc [loc #f] #:md-pfx [mpfx #f] #:title-sfx [tsfx #f] #:md-sfx [msfx #f]
-           #:nobr [nobr #f] #:dname [dname #f] #:dinfo [dinfo '()]
+(define (o #:date date #:title title #:loc [loc #f]
+           #:dname [dname title] #:datespec [datespec #f] #:short [short #f]
+           #:title-sfx [tsfx #f]
+           #:md-pfx [mpfx #f] #:md-title-sfx [mtsfx tsfx]     ; <- MD flags
+           #:tex-title-sfx [ttsfx tsfx] #:tex-nobr [tnobr #f] ; <- TEX flags
            #:if [bool #t]
-           1st . rest)
-  (and 1st bool
-       (apply o* loc mpfx tsfx msfx nobr dname dinfo
-              (if (eq? #t 1st) rest (cons 1st rest)))))
+           . text)
+  (when bool
+    (define (dsubst str)
+      (and str date (regexp-replace #px"\\bD\\b" (->string str) date)))
+    (list (and dname date (λ() (date-info 'item! dname date datespec short)))
+          (F: @~splice{
+                @(: (dsubst mpfx) title (dsubst mtsfx))
+                @text}
+              @~splice{
+                \cvplain{@date}{@loc}{@|title|@ttsfx}
+                @(and (not tnobr) "\n")@;
+                @text
+                @||}))))
 
-(define (o* loc mpfx tsfx msfx nobr dname dinfo d title . text)
-  (define d* (and (not (eq? d NODATE)) d))
-  (define (dsubst str)
-    (and str d* (regexp-replace #px"\\bD\\b" (->string str) d*)))
-  (define dname* (or dname title))
-  (list (λ() (when (and dname* d*) (date-info 'item! dname* d* dinfo)))
-        (F: (~splice (: (dsubst mpfx) title (dsubst tsfx)) text (dsubst msfx))
-            @~splice{
-              \cvplain{@d*}{@loc}{@;
-                @(if nobr title (regexp-replace #rx":$" (->string title) ""))}
-              @(and (not nobr) "\n")@;
-              @(apply : (if (and (pair? text) (equal? "\n" (car text)))
-                          (cdr text) text))
-              @||})))
+;; ---->> TeX customizastion --------------------------------------------------
 
-;; -- Tex stuff ---------------------------------------------------------------
+(define (tex-prefix)
+  @T:{\documentclass[11pt, letterpaper]{awesome-cv}
+      \geometry{left=1.4cm, top=.8cm, right=1.4cm, bottom=1.8cm, footskip=.5cm}
+      \fontdir[fonts/]
+      \setmonofont{Consolas}
+      \definecolor{awesome-mine}{HTML}{5500CC}
+      \definecolor{darklink}{HTML}{4400AA}
+      \colorlet{awesome}{awesome-mine}
+      \setbool{acvSectionColorHighlight}{true}
+      \hypersetup{colorlinks=true,linkcolor=darklink,urlcolor=darklink,citecolor=darklink}
+      \renewcommand{\acvHeaderSocialSep}{\quad—\bullet—\quad}
+      \name{@(regexp-replace #rx" ([^ ]+$)" (meta-ref name) "}{\\1")}
+      \title{@meta-ref[title]}
+      \address{@meta-ref[address]}
+      \mobile{@meta-ref[phone]}
+      \phone{@meta-ref[phone2]}
+      \email{@meta-ref[email]}
+      \homepage{@(regexp-replace #rx"/$" (meta-ref web) "")}
+      \github{@meta-ref[github]}
+      \linkedin{@meta-ref[linkedin]}
+      \begin{document}
+      \makecvheader[C]
+      \makecvfooter{}{@meta-ref[name]~~~·~~~@meta-ref[title]}{\thepage}
+      \vskip 0mm})
+
+(define (tex-suffix)
+  @T:{\end{document}})
+
+;; ---->> References ----------------------------------------------------------
 
 (define all-sections '())
 (define current-section #f)
@@ -339,15 +401,15 @@
 (define (date-info . msg)
   (define (done)
     (when (and current-section (pair? (cdr current-section)))
-      (set! all-sections `(,@all-sections ,(reverse current-section)))))
+      (push! (reverse current-section) all-sections)))
   (define (keyval xs sep)
-    (add-between (map (λ(kv) @:{@(car kv): "@(cadr kv)"}) xs) (list "," sep)))
-  (define entry
-    (match-lambda
-     [(list R name datestr dinfo)
-      @splice{{
-        @block{@(keyval `([datestr ,datestr] [name ,name] [R ,R] ,@dinfo) "\n")}
-      }}]))
+    (add-between
+     (filter-map (λ(kv) (and (cadr kv) @:{@(car kv): "@(cadr kv)"})) xs)
+     (list "," sep)))
+  (define (entry info)
+    @splice{{
+      @block{@(keyval info "\n")}
+    }})
   (define (section x)
     @splice{@(format "~s" (car (car x))): {
               @(keyval (cadr (car x)) " "),
@@ -355,48 +417,55 @@
                                                      ", "))]}}})
   (define (json)
     @splice{{
-      @(block (add-between (map section all-sections) ",\n"))
+      @(block (add-between (map section (reverse all-sections)) ",\n"))
     }})
   (match msg
     [`(section! ,title ,sec-dates)
      (done)
      (set! current-section (and title sec-dates `((,title ,sec-dates))))]
-    [`(item! . ,(and info (list name datestr dinfo)))
-     (when (and current-section (andmap is-val? info) (not (equal? "" name)))
-       (define (->simple x)
-         (parameterize ([simple-text? #t]) (string-trim (->string x))))
-       (define simple-name (->simple name))
-       (define simple-dinfo
-         (map (λ(kv) (if (not (equal? 'short (car kv))) kv
-                         `(short ,(->simple (cadr kv)))))
-              dinfo))
-       (define D (or (assq 'D dinfo)
-                     (error 'date-info "missing D in dinfo: ~s" dinfo)))
-       (define N (cond [(assq 'short simple-dinfo) => cadr] [else simple-name]))
-       (define H (get-ref-hash (list N D)))
-       (set! current-section
-             (cons (list H simple-name datestr simple-dinfo) current-section))
-       (and M? (not TEXT?) @:{<span id="R@H"></span>}))]
+    [`(item! . ,(list name datestr datespec short))
+     (define (->simple x)
+       (and x (parameterize ([simple-text? #t]) (string-trim (->string x)))))
+     (when (and current-section name datestr datespec)
+       (let* ([name  (->simple name)]
+              [short (->simple short)])
+         (define R (get-ref-hash (list (or short name) datespec)))
+         (define info `([datestr ,datestr] [name ,name] [R ,R]
+                        [D ,datespec] [short ,short]))
+         (push! info current-section)
+         (and M? (not TEXT?) @:{<span id="R@R"></span>})))]
     ['() @:{const dateInfo = @json;
             @||}]))
 
-;; -- Rendering ---------------------------------------------------------------
+;; ---->> Rendering -----------------------------------------------------------
 
 (define (tex-writer str p [start 0] [end (string-length str)])
+  ;; \n\n\n doesn't really work, since this works on written fragments
+  (define tex-rx #rx"([&#])|(\n\n\n+)")
   (let loop ([start start])
-    (define m (and (< start end) (regexp-match-positions #rx"[&#]" str start end p)))
+    (define m (and (< start end)
+                   (regexp-match-positions tex-rx str start end p)))
     (when m
-      (write-string (format "\\~a" (string-ref str (caar m))) p)
+      (define-values [1st 2nd] (apply values (cdr m)))
+      (cond [1st (write-string (format "\\~a" (string-ref str (car 1st))) p)]
+            [2nd (write-string "\n\n" p)]
+            [else (error 'tex-writer "internal error")])
       (loop (cdar m)))))
 
 (define (render!)
   (port-count-lines! (current-output-port))
   (define text (list (reverse parts) "\n"))
-  (output (F: text (with-writer tex-writer text)))
+  (define r (->string (F: text (with-writer tex-writer text))))
+  (output (if T? (regexp-replace* #rx"\n\n\n+" r "\n\n") r))
   (define dates-file (getenv "dates_file"))
   (when (and dates-file (not (equal? "" dates-file)))
     (with-output-to-file dates-file #:exists 'truncate
       (λ() (output date-info)))))
 
-(define-syntax-rule (mod-beg x ...)
-  (#%module-begin x ... (render!)))
+(define-syntax-rule (mod-beg (meta: m ...) x ...)
+  (#%module-begin
+    (meta: m ...)
+    (part! (tex-prefix))
+    x ...
+    (part! (tex-suffix))
+    (render!)))

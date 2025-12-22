@@ -197,6 +197,7 @@ inits.push(renderTimeline);
 // >>- Jump to element
 
 const jumpTo = async (elt, hilite, where = "center") => {
+  setTimeout(() => $("#text").focus({ preventScroll: true }), 250);
   if (typeof elt === "string") elt = document.getElementById(elt);
   if (!elt) {
     if (shown !== "long")

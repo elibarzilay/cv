@@ -2,21 +2,22 @@
 
 #lang at-exp s-exp "lib.rkt"
 
-(define name     "Eli Barzilay")
-(define title    "Curriculum Vitae")
-(define email    "eli@barzilay.org")
-(define web      "barzilay.org")
-(define phone    "+1-617-372-2483")
-(define phone2   "+1-617-383-9313")
-(define address  (V: "Brookline, MA"
-                     "19 Winchester St, Apt #610, Brookline, MA 02446"))
-(define github   "elibarzilay")
-(define linkedin "eli-barzilay")
+;; ---->> Meta ----------------------------------------------------------------
 
-(define (main)
+(meta: name     "Eli Barzilay"
+       title    "Curriculum Vitae"
+       email    "eli@barzilay.org"
+       web      "barzilay.org"
+       phone    "+1-617-372-2483"
+       phone2   "+1-617-383-9313"
+       address  (V: "Brookline, MA"
+                    "19 Winchester St, Apt #610, Brookline, MA 02446")
+       github   "elibarzilay"
+       linkedin "eli-barzilay")
 
 (define oo #f)
-(part! (tex-prefix))
+
+;; ---->> Toplevel ------------------------------------------------------------
 
 (section! #:if M? @:{@|name|: @title}
   @V:[@:{@url[email] • @url[web] • @url{@phone} • @address}
@@ -26,6 +27,8 @@
           @:{Address: @address}]])
 
 (part! (sec++))
+
+;; ---->> Overview ------------------------------------------------------------
 
 (section! "Overview"
   @:{@W{My work focuses on building and evolving systems where technical
@@ -66,8 +69,9 @@
             contributing to an engineering culture that values correctness,
             clarity, and sustainability.}]})
 
-(part! (sec++))
+;; ---->> Preferences ---------------------------------------------------------
 
+(part! (sec++))
 (section! "Preferences"
   @V:[@W{I am at my best when I'm building new systems or introducing new tools
          and structure that help codebases evolve in a clean and controlled
@@ -91,13 +95,17 @@
          collaboration and shared context. In find that technical work greatly
          benefits from richer communication, including regular calls and
          occasional in-person interaction.}])
-
 (part! (sec--))
 
+;; ---->> Industry Experience -------------------------------------------------
+
+(define sublist
+  (F: (λ xs (apply *: #:loose L? xs)) :))
+
 (section*! "Industry Experience" #:sec-dates '([side up])
-  @o["August 2022 – August 2025"
-     #:md-pfx "D: " #:dinfo `([D "2022-08-15::2025-08-13"])]{
-    @:{GoDaddy, Principal Software Developer}
+  @o[#:date "August 2022 – August 2025" #:datespec "2022-08-15::2025-08-13"
+     #:title @:{GoDaddy, Principal Software Developer}
+     #:md-pfx "D: "]{
     @*:[@L:{Looking for a new startup-style place, I was pulled into a GoDaddy
             group which was a recent acquisition of a startup (Poynt) making for
             a startup-like work environment}
@@ -129,9 +137,9 @@
             image-based deployment tool). The nature of my work was always heavy
             on cross team impact (code quality for several teams) as well as
             cross-org (mainly with the central engineering division)}]}
-  @o["February 2022 – June 2022"
-     #:md-pfx "D: " #:dinfo `([D "2022-02-28::2022-06-17"])]{
-    @:{Sundae, Principal Software Developer}
+  @o[#:date "February 2022 – June 2022" #:datespec "2022-02-28::2022-06-17"
+     #:title @:{Sundae, Principal Software Developer}
+     #:md-pfx "D: "]{
     @*:[@S:{Brought in to stabilize and extend a young codebase}
         @L:{Following a decision to switch to a more greenfield-style work, I
             joined a startup, Sundae, as a Principal Software Developer}
@@ -149,18 +157,20 @@
             market in June 2022 made the company drop most of its software
             engineering effort}]}
   @(set! oo (λ (date D title #:short [short title] . xs)
-              (apply o #:md-pfx "D: " #:dinfo `([D ,D] [short ,short])
-                     #:dname @:{Microsoft: @title}
-                     date (F: title @:{• @title}) xs)))
-  @o["December 2015 – January 2022" #:dinfo `([D "2015-12-01::2022-01-31"])
+              (o #:date date #:datespec D #:title (F: title @:{• @title})
+                 #:dname @:{Microsoft: @title} #:short short
+                 #:md-pfx "D: "
+                 xs)))
+  @o[#:date "December 2015 – January 2022" #:datespec "2015-12-01::2022-01-31"
+     #:title @:{Microsoft, Senior Software Developer}
      #:md-pfx "D: "]{
-    @:{Microsoft, Senior Software Developer@(LM: (and (not TEXT?) "\n"))}
-    @L:{In 2014 I decided to go back to industry work.  After a few short projects
+    @L:{@M:["\n"]@;
+        In 2014 I decided to go back to industry work.  After a few short projects
         I joined Microsoft as a Senior Software Developer in late 2015.
-        @||}@;
-    @(F: *: :)[
-      @oo["October 2019 – January 2022" "2019-10-01::2022-01-31"]{
-        @url{TypeScript | www.typescriptlang.org/}
+        @"\n"}@;
+    @sublist[
+      @oo["October 2019 – January 2022" "2019-10-01::2022-01-31"
+          @url{TypeScript || www.typescriptlang.org/}]{
         @*:[@S:{Maintained and extended core TypeScript tooling: language server,
                 VS Code integration, build pipeline, and DefinitelyTyped ecosystem}
             @L:{Day-to-day work on bugs in TS and related systems (language server,
@@ -172,7 +182,7 @@
             @S:{Developed the DefinitelyTyped mergebot, streamlining PR workflows
                 for a repo with ~10k type packages and the wider TS community}
             @L:{@W{Implementation of DefinitelyTyped's
-                   @url{mergebot | github.com/DefinitelyTyped/dt-mergebot}: a
+                   @url{mergebot || github.com/DefinitelyTyped/dt-mergebot}: a
                    github bot that enables self-maintenance, managing the huge
                    load of incoming PRs (hundreds per week)}}
             @S:{Drove conversion of the TypeScript compiler to ES modules,
@@ -180,8 +190,8 @@
             @L:{One of my major projects was the conversion of the TypeScript compiler
                 to ES modules, aligning with modern JS standards. This was completed
                 after I left the group}]}
-      @oo["March 2018 – October 2019" "2018-03-01::2019-09-30" #:short "Azure Python"]{
-        Python group
+      @oo["March 2018 – October 2019" "2018-03-01::2019-09-30"
+          "Python group" #:short "Azure Python"]{
         @*:[@S:{Engineered backend infrastructure for Microsoft's Jupyter notebooks
                 offering}
             @L:{The main Microsoft offering for running Jupyter notebooks (iPython)
@@ -192,8 +202,8 @@
                 infrastructure (library collection, image builds, publish, internal
                 distribution), and network design (including Kubernetes compute
                 backends on Azure)}]}
-      @oo["Mid 2016 – March 2018" "2016-07-01::2018-02-28"]{
-        @url{MMLSpark | github.com/microsoft/SynapseML/}
+      @oo["Mid 2016 – March 2018" "2016-07-01::2018-02-28"
+          @url{MMLSpark || github.com/microsoft/SynapseML/}]{
         @*:[@S:{Designed and built core infrastructure for MMLSpark (now SynapseML),
                 an open-source distributed machine learning library for Azure ML}
             @L:{Open source project, core library for the Vienna project (Azure ML)}
@@ -212,8 +222,8 @@
                 programming (in Scala), replace imperative idioms by functional
                 ones, and learn about more advanced functional programming patterns}
             @L:{The project was later renamed “SynapseML”}]}
-      @oo["December 2015 – March 2018" "2015-12-01::2018-03-01" #:short "AzureML Studio"]{
-        @:{Azure Machine Learning Studio@L:{ (Boston)}}
+      @oo["December 2015 – March 2018" "2015-12-01::2018-03-01"
+          @:{Azure Machine Learning Studio@L:{ (Boston)}} #:short "AzureML Studio"]{
         @*:[@S:{Built scalable frontend visualizations, including an infinite
                 grid scroller with dynamic data fetching}
             @L:{Front-end visualizations, mainly table view of infinite matrix,
@@ -221,14 +231,16 @@
             @S:{Delivered TypeScript-based UI components for ML workflows}
             @L:{Mostly done in TypeScript@";" also involved Visual Studio, TFS, and
                 micro-services}]}]}
-  @o[L? NODATE]{
-    Used numerous technologies (abridged list):
+  @o[#:if L? #:date #f
+     #:title @:{Used numerous technologies (abridged list)}]{
     @*:[@:{Platforms: Linux, Windows, Hyper-V, MSFT Azure, AWS,
            GitHub & GitLab (incl. API, Automation, DevOps, etc), GraphQL,
            Docker}
         @:{Build/code management: Git, Bash, Docker}
         @:{Languages: TypeScript, JavaScript, Python, Bash, Powershell, Scala,
            Java, R, ARM Templates, Lisp(s)}]})
+
+;; ---->> Academic ------------------------------------------------------------
 
 (part! (L: (header "Academic") (sec++)))
 
@@ -238,18 +250,18 @@
 (section! "Research Interests"
   (@L: research-interests))
 
+;; ---->> Education -----------------------------------------------------------
+
 (define (edu date D title short where advisor subject)
   (let ([advisor (and advisor @:{Advisor: @advisor,})]
         [subject (and subject (L: @:{Subject: @(it subject),}))]
         [longloc @:{@V:[(cadr where) (caddr where)].}]
         [title (->string title)])
-    (o date #:dname @:{@title, @(car where)}
-       #:dinfo `([D ,D] [short ,short]) #:loc (LT: (car where)) #:md-pfx "D: "
-       (list title @ST:{@";" @(cadr where)})
-       (if (and TEXT? S?) "; "
-           @M:{,@S:[@\\]
-               @||})
-       (if S? (M: (cadr where)) @*:[advisor subject longloc]))))
+    (o #:date date #:title (list title @ST:{@";" @(cadr where)})
+       #:dname @:{@title, @(car where)}
+       #:datespec D #:short short #:loc (LT: (car where))
+       #:md-pfx "D: " #:md-title-sfx @S:{,@!TEXT:{ \}}
+       (V: (M: (cadr where)) @*:[advisor subject longloc]))))
 (define phd-in (V: "PhD," "Ph.D. in"))
 (define msc-in (V: "MSc," "M.Sc. in"))
 (define bsc-in (V: "BSc," "B.Sc. in"))
@@ -273,10 +285,13 @@
        @:{@bsc-in Math & Computer Science (cum laude)} "CS+Math BSc @ BGU"
        bgu #f #f))
 
+;; ---->> Academic Experience -------------------------------------------------
+
 (section*! "Academic Experience" #:if S?
   @(set! oo (λ (date title . xs)
-              (apply o #:title-sfx " (D): " #:nobr #t
-                     date (F: title (: title ":")) xs)))
+              (o #:date date #:title title
+                 #:md-title-sfx " (D):" #:tex-title-sfx ":" #:tex-nobr #t
+                 xs)))
   @oo["1994–2014" "Researcher"]{
     Programming languages, theorem proving, and computer
     music@";" core member of the PLT Scheme/Racket project}
@@ -284,12 +299,14 @@
     primarily Programming Languages@";"
     currently adjunct faculty at Northeastern})
 
+;; ---->> Teaching Experience -------------------------------------------------
+
 (section*! "Teaching Experience" #:sec-dates '([side down]) #:if L?
   @(set! oo (curry o #:md-pfx "D: "))
-  @oo["2004–Present" #:loc "Northeastern"
+  @oo[#:date "2004–Present" #:datespec "2004-01-01::NOW" #:loc "Northeastern"
+      #:title @:{Lecturer, Northeastern University}
       #:dname "Programming Languages, Northeastern"
-      #:dinfo '([D "2004-01-01::NOW"] [short "Programming Languages"])]{
-    Lecturer, Northeastern University
+      #:short "Programming Languages"]{
     @||
     @*:[@:{CSU4400/CSG5400 (@url{pl.barzilay.org/})@\\
            Programming Languages (combined master and undergraduate).
@@ -302,9 +319,9 @@
            language semantics.
            @||
            Developed extensive course infrastructure and tooling, including a
-           Racket-based @url{assignment submission system | https://github.com/racket/handin},
+           Racket-based @url{assignment submission system || https://github.com/racket/handin},
            grading framework, exam client/server system,
-           @url{in-class quizzes | https://github.com/elibarzilay/plq} and more.
+           @url{in-class quizzes || https://github.com/elibarzilay/plq} and more.
            These systems evolved continuously over years of teaching, with
            regular re-implementations as course needs changed.
            @||
@@ -317,10 +334,9 @@
            Course materials have been adopted by instructors internationally,
            including use in Canada, Korea, and Israel.}
         @:{CSU213, Fundamentals of Computer Science II, Spring 2006.}]}
-  @oo["1997–2000" #:loc "Cornell"
-      #:dname "Teaching Assistant, Cornell"
-      #:dinfo '([D "1997-01-01::2000-05-31"] [short "TA @ Cornell"])]{
-    Teaching Assistant, Cornell University
+  @oo[#:date "1997–2000" #:datespec "1997-01-01::2000-05-31" #:loc "Cornell"
+      #:title @:{Teaching Assistant, Cornell University}
+      #:dname "Teaching Assistant, Cornell" #:short "TA @ Cornell"]{
     @||
     @*:[@:{CS212, Structures and Interpretation of Computer Programs.
            @||
@@ -340,23 +356,24 @@
            Swindle was adopted by a number of additional universities,
            including Dartmouth, Vassar, and Duke, and remains part of the
            Racket distribution.}]}
-  @oo["1994–1996" #:loc "BGU, Israel"
-      #:dname "Teaching Assistant, BGU"
-      #:dinfo '([D "1994-09-01::1996-12-31"] [short "TA @ BGU"])]{
-    Teaching Assistant, Ben-Gurion University
+  @oo[#:date "1994–1996" #:datespec "1994-09-01::1996-12-31" #:loc "BGU, Israel"
+      #:title @:{Teaching Assistant, Ben-Gurion University}
+      #:dname "Teaching Assistant, BGU" #:short "TA @ BGU"]{
     @||
     @*:[@:{Automata and Formal Languages}
         @:{Structures and Interpretation of Computer Programs}
         @:{Advanced Programming Languages}]})
 
+;; ---->> Research Experience -------------------------------------------------
+
 (section*! "Research Experience" #:sec-dates '([side down]) #:if L?
   #:pfx @S:{Research Interests: @research-interests
             @||}
-  @(set! oo (curry o #:md-pfx "D: " #:nobr #t))
-  @oo["2003–2014" #:loc "Northeastern"
+  @(set! oo (curry o #:md-pfx "D: " #:tex-nobr #t))
+  @oo[#:date "2003–2014" #:datespec "2003-09-01::2014-07-01" #:loc "Northeastern"
+      #:title @:{Researcher, Programming Research Laboratory,}
       #:dname "Researcher, Programming Research Laboratory, Northeastern"
-      #:dinfo '([D "2003-09-01::2014-07-01"] [short "PRL, Northeastern"])]{
-    Researcher, Programming Research Laboratory,
+      #:short "PRL, Northeastern"]{
     Northeastern University, working with Prof. Matthias Felleisen
     @||
     Member of the small core development team behind Racket (formerly PLT
@@ -385,20 +402,20 @@
     Contributed numerous additional libraries within the Racket and PLT
     ecosystems, including generators and generic functions, which would be
     considered major language features in many other systems.}
-  @oo["1997–2003" #:loc "Cornell"
+  @oo[#:date "1997–2003" #:datespec "1997-01-01::2003-07-31" #:loc "Cornell"
+      #:title @:{Graduate Research Assistant in the Nuprl group,}
       #:dname "Graduate Research Assistant in the Nuprl group, Cornell"
-      #:dinfo '([D "1997-01-01::2003-07-31"] [short "Nuprl, Cornell"])]{
-    Graduate Research Assistant in the Nuprl group,
+      #:short "Nuprl, Cornell"]{
     directed by Prof. Robert Constable, Cornell University@;
     @L:{@"\n"
         Conducted research on implementing reflection for the Nuprl theorem
         prover, covering both theoretical foundations and practical system
         design. Made additional contributions to Nuprl and participated in the
         development of the MetaPRL theorem prover.}}
-  @oo["1994–1996" #:loc "BGU, Israel"
-      #:dinfo '([D "1994-09-01::1996-12-31"] [short "Computer Music @ BGU"])]{
-    Research Assistant, Ben-Gurion University@;
-    @L:{@"\n"
+  @oo[#:date "1994–1996" #:datespec "1994-09-01::1996-12-31" #:loc "BGU, Israel"
+      #:title @:{Research Assistant, Ben-Gurion University}
+      #:short "Computer Music @ BGU"]{
+    @L:{@||
         Developed a Common Lisp–based system for creative music editing as part
         of my Master's thesis. The work focused on a musical composition tool
         that functioned as a visual functional language and was shown to
@@ -407,9 +424,11 @@
         techniques with operational graph editing to support reusable,
         user-defined abstractions.}})
 
+;; ---->> Dissertation --------------------------------------------------------
+
 (section! "Ph.D. Dissertation" #:if L?
-  @o["1997–2003" #:loc "Cornell"]{
-    @it{Implementing Reflection in Nuprl}
+  @o[#:date "1997–2003" #:loc "Cornell"
+     #:title @it{Implementing Reflection in Nuprl}]{
     @||
     Developed a strong reflection model for the Nuprl theorem prover,
     contrasting with traditional weak-reflection approaches based on separate
@@ -425,6 +444,35 @@
     reflection work in MetaPRL and, years later, inspired textual language
     mechanisms in Racket, most notably Scribble.})
 
+;; ---->> Publications --------------------------------------------------------
+
+(define all-authors
+  '("Eli Barzilay"
+    "Mark Hamilton"
+    "Matthias Felleisen" "Matthew Flatt" "Robby Findler" "John Clements"
+    "Ryan Culpepper" "Stephen Chang"
+    "Dmitry Orlovsky"
+    "Robert Constable" "Stuart Allen" "Jason Hickey"
+    "Mira Balaban" "Michael Elhadad"))
+(define (pub title short authors date D where)
+  (define (auth a)
+    (define full (findf (λ(full) (string-prefix? full a)) all-authors))
+    (V: (regexp-replace #rx"^.* " full "") full))
+  (let* ([et-al?  (regexp-match? #px"\\.{3}$" authors)]
+         [authors (if et-al? (regexp-replace #rx" *\\.*$" authors "") authors)]
+         [authors (regexp-split #rx" *, *" authors)]
+         [authors (add-between (map auth authors) '(", ") #:splice? #t
+                               #:after-last (if et-al? '(" et al") '()))]
+         [title*  @it{@title}])
+    (o #:date date #:datespec D #:dname title #:short short #:tex-nobr S?
+       #:md-title-sfx @:{,@!TEXT:{ \}}
+       #:title (W title*)
+       (F: (V: @:{@W{@|authors|@";" @date}}
+               @:{@W{@authors,@\\}
+                  @W{@where, @|date|.}})
+           @:{@(V:"• " @:{\vspace{-7pt}@"\n"})@;
+              @|authors|@\\
+              @where}))))
 (section*! "Publications" #:sec-dates '([side down]) #:if L?
   (pub "MMLSpark: Unifying Machine Learning Ecosystems at Massive Scales"
        "MMLSpark" "Mark..."
@@ -501,232 +549,169 @@
 
 (part! (L: (sec--)))
 
-(section*! "Earlier Experience" #:sec-dates '([side up])
-  @(set! oo (λ(date D title #:short [sh #f] #:if [bool #t] . xs)
-              (apply o #:md-pfx (and L? "D: ") #:title-sfx (and S? " (D):")
-                     #:nobr #t date #:dname title #:if bool
-                     #:dinfo (if D `([D ,D] ,@(if sh `([short ,sh]) '())) '())
-                     (if (or T? L?) @:{@title —} title) @V:[" " "\n"] xs)))
-  @oo["2014–2015" "2014-05-01::2015-10-01"
-      "Gefen-Dekel"]{
-    @V:[@:{desktop app framework (Chromium + CEF);
-           taught React for company-wide migration}
-        @:{Senior software developer
-           @||
-           Helped embedding Chromium (via CEF) into Dalet's desktop application,
-           later followed up with learning about how React can be used in a
-           browser-based editor, and eventually ran a two day tutorial on React,
-           to help transition the company codebase.}]}
-  @oo["2003–2014" "2003-09-01::2014-07-01"
-      "Systems / Infrastructure" #:short "Sys/Infra @ PLT"]{
-    @V:[@:{part of the Racket (PLT) group}
-        @:{As part of the PLT group behind Racket, I was in charge of the framework of
-           servers, builds, releases, code repository and all other services that are
-           required to run such a project.}]}
-  @oo["1995–1997" "1995-01-01::1996-12-31"
-      "Gefen-Dekel"]{
-    @V:[@:{multimedia applications for radio stations}
-        @:{Was among the first programmers of Gefen-Dekel, the software development
-           branch of Dalet Digital Media Systems. Developed multimedia applications
-           for Windows, aimed mainly at radio station software and advertisement
-           management.}]}
-  @oo[#:if S? "1993–1994" #f "Other early roles"]{
-    @:{Prolog-based staff scheduling system (shifts
-       for hospitals, schools, etc)@";" Unix system administration}}
-  @oo[#:if L? "1994" "1994-05-01::1994-12-31"
-      "Shibutzit"]{
-    @V:[@:{Prolog-based application for shift allocations}
-        @:{Summer work in Shibutzit, a small company, developing a Prolog-based
-           application for Windows for allocation of human resource shifts.}]}
-  @oo[#:if L? "1993" "1993-08-01::1994-06-30"
-      "System Administrator" #:short "Sysadmin @ BGU CS"]{
-    @V:[@:{various Unix systems}
-        @:{During the last year of my undergraduate studies, I worked as part of the
-           system administration group for the Computer Science department in Ben-Gurion
-           University.}]})
+;; ---->> Earlier Experience --------------------------------------------------
 
-(section*! "Notable Earlier Projects" #:sec-dates '([side up])
-  @(set! oo (λ(date D title #:short [sh #f] #:dinfo [di '()] #:if [bool #t] . xs)
-              (let* ([title (->string title)]
-                     [xs (apply : xs)]
-                     [xs (or xs '())])
-                (apply o #:md-pfx (and L? "D: ") #:title-sfx (and S? " (D): ")
-                       #:nobr #t date #:dname title #:if bool
-                       #:dinfo `([D ,D] ,@(if sh `([short ,sh]) '()) ,@di)
-                       (list title (T: ":") (LM: "\n"))
-                       xs))))
-  @oo["2008–2010" "2008-01-01::2010-12-31"
+(set! oo
+  (λ(date D title #:short [sh #f] #:if [bool #t] . xs)
+    (let* ([title (->string title)]
+           [xs (or (apply : xs) '())])
+      (o #:if bool #:date date #:datespec D
+         #:title title
+         #:md-pfx @L:{D: }
+         #:md-title-sfx (V: " (D):" "\n")
+         #:tex-title-sfx @:{:}
+         #:tex-nobr #t
+         #:dname title #:short sh
+         xs))))
+
+(define earlier-experience
+  (list
+   @oo["2014–2015" "2014-05-01::2015-10-01"
+       "Gefen-Dekel"]{
+     @V:[@:{desktop app framework (Chromium + CEF);
+            taught React for company-wide migration}
+         @:{Helped embedding Chromium (via CEF) into Dalet's desktop application,
+            later followed up with learning about how React can be used in a
+            browser-based editor, and eventually ran a two day tutorial on React,
+            to help transition the company codebase.}]}
+   @oo["2003–2014" "2003-09-01::2014-07-01"
+       "Systems / Infrastructure" #:short "Sys/Infra @ PLT"]{
+     @V:[@:{part of the Racket (PLT) group}
+         @:{As part of the PLT group behind Racket, I was in charge of the framework of
+            servers, builds, releases, code repository and all other services that are
+            required to run such a project.}]}
+   @oo["1995–1997" "1995-01-01::1996-12-31"
+       "Gefen-Dekel"]{
+     @V:[@:{multimedia applications for radio stations}
+         @:{Was among the first programmers of Gefen-Dekel, the software development
+            branch of Dalet Digital Media Systems. Developed multimedia applications
+            for Windows, aimed mainly at radio station software and advertisement
+            management.}]}
+   @oo[#:if S? "1993–1994" #f "Other early roles"]{
+     @:{Prolog-based staff scheduling system (shifts
+        for hospitals, schools, etc)@";" Unix system administration}}
+   @oo[#:if L? "1994" "1994-05-01::1994-12-31"
+       "Shibutzit"]{
+     @V:[@:{Prolog-based application for shift allocations}
+         @:{Summer work in Shibutzit, a small company, developing a Prolog-based
+            application for Windows for allocation of human resource shifts.}]}
+   @oo[#:if L? "1993" "1993-08-01::1994-06-30"
+       "System Administrator" #:short "Sysadmin @ BGU CS"]{
+     @V:[@:{various Unix systems}
+         @:{During the last year of my undergraduate studies, I worked as part of the
+            system administration group for the Computer Science department in Ben-Gurion
+            University.}]}))
+
+(apply section*! "Earlier Experience" #:sec-dates '([side up])
+  earlier-experience)
+
+;; ---->> Earlier Projects ----------------------------------------------------
+
+(define earlier-projects
+  (list
+   @oo["2008–2010" "2008-01-01::2010-12-31"
        "The Scribble Reader" #:short "Scribble"]{
-    @V:[@:{designed and implemented the syntax for
-           text-rich code (docs, HTML, etc.), a core contribution that later led to
-           the Scribble documentation system and related textual tools in Racket}
-        @:{@||
-           Designed a concrete syntactic extension to Racket that combines the
-           convenience of “here-documents” and string interpolation, while
-           maintaining the benefits of S-expressions.  The idea behind the syntax
-           is based on the Nuprl quotations, which result in a language that is
-           easier to use than quasi-quotations.  The syntax was named “Scribble”,
-           and later evolved into Racket's documentation system, making one of
-           the earlier cases of using Racket as a real language framework, where
-           a single program can be written multiple languages that are different
-           even at the concrete syntax level.}]}
-  @oo["2005–2006" "2005-01-01::2006-12-31"
-      "Lazy Racket"]{
-    @V:[@:{implemented the lazy dialect of Racket}
-        @:{@||
-           Implemented the Lazy Racket language.  It is a language that is
-           identical to Racket except for its lazy execution semantics.  It was
-           developed for the PL course, but the result is a powerful ability to
-           mix lazy and strict code in a single language, using Racket's module
-           system.  This is in addition to other languages developed for the
-           course.}]}
-  @oo["2004–2007" "2004-01-01::2007-12-31"
-      "Handin Server+Client"]{
-    @V:[@:{along with other teaching-related software}
-        @:{@||
-           Extended the Racket Handin server and client (originally developed by
-           Matthew Flatt) considerably, making it usable in courses with widely
-           varying demands.  In addition, designed a completely automated system
-           to deal with running the PL course, including website publishing and
-           on-line content (class notes, homework handins, etc.), electronic
-           grading, secure grades publishing with statistics and graphs,
-           class-participation tool, a kiosk-mode client for taking exams, and
-           more.}]}
-  @oo["2003–2004" "2003-01-01::2004-12-31"
-      "Foreign Function Interface for Racket" #:short "Racket FFI"]{
-    @V:[@:{designed and implemented}
-        @:{@||
-           Designed and implemented Racket's foreign function interface for
-           Racket, replacing a more traditional C-based approach where Racket
-           code replaces the role of C.}]}
-  @oo[#:if L? "2003–2014" "2003-09-01::2014-07-01"
-       "PLT / Racket Infrastructure" #:short "Racket Infrastructure"]{
-    @V:[@:{development & maintenance}
-        @:{@||
-           Implemented the build process for making nightly builds of Racket as
-           well as official distributions, revised the web-content framework
-           using the new Scribble-based syntax as a markup language, was in
-           charge of moving the Racket codebase from CVS to Subversion first and
-           then to git next.}]}
-  @oo[#:if L? "1999–2003" "1999-01-01::2003-07-31"
-      @V:[@:{Reflection for the Nuprl theorem prover}
-          @:{Reflection for Nuprl}]]{
-    @L:{@||
-        Implemented reflection for the Nuprl theorem prover.}}
-  @oo[#:if L? "2001" "2001-01-01::2001-12-01"
-      @V:[@:{Web-server implementation in Scheme, with dynamic code execution}
-          @:{Web-server}]]{
-    @L:{@||
-        Wrote a complete web-server in Scheme, with the purpose of being very
-        flexible and for making an on-line picture collection.}}
-  @oo[#:if L? "1999" "1999-01-01::1999-12-31"
-      "Picture collection management" #:short "Picture collection"]{
-    @:{@||
-       Designed and implemented a set of tools for managing a picture
-       collection, as part of a photography project (for a minor in art at
-       Cornell).}}
-  @oo[#:if L? "1999" "1999-01-01::1999-12-31"
-      "HTML generation"]{
-    @V:[@:{(precursor to Scribble)}
-        @:{@||
-           Wrote a system to easily generate HTML code in an easily extensible
-           way, relying on such features as self-quoting code and keyword
-           argument.  This system was used for several years by a few academic
-           and commercial sites.  Years later it evolved into the Scribble
-           syntax.}]}
-  @oo["1998" "1998-01-01::1998-12-31"
-      "Swindle"]{
-    @V:[@:{MOP-based object system, used in several universities}
-        @:{@||
-           Implemented Swindle: an extension language on top of PLT-Scheme/Racket
-           for CS212 in the Cornell CS department.  Swindle was in active use at
-           several universities for many years, and still is in use in some.}]}
-  @oo["1997" "1996-09-01::1997-12-31"
-      "Emacs calculator"]{
-    @V:[@:{part of the standard Emacs distribution}
-        @:{@||
-           Implemented an interactive calculator package which is now a standard
-           part of Emacs.}]}
-  @oo[#:if L? "1995–1996" "1995-01-01::1996-12-31"
-      "Booms"]{
-    @V:[@:{a visual language for music composition}
-        @:{@||
-           A visual language environment for creative editing, mainly intended
-           for music composition.  Implemented in Allegro Common Lisp for
-           Windows.}]}
-  @oo[#:if L? "1994–1996" "1995-01-01::1996-12-31"
-      "Multeam"]{
-    @V:[@:{a Usenet-like system for media content}
-        @:{@||
-           A Usenet-like system for managing media content which was developed at
-           Gefen-Dekel Technologies (part of Dalet Digital Media Systems).  The
-           original project was discontinued but served as a basis for the “Dalet
-           Web Publisher” which was eventually integrated in Dalet's main
-           application—DaletPlus, and later Dalet Galaxy.}]})
+     @V:[@:{designed and implemented the syntax for
+            text-rich code (docs, HTML, etc.), a core contribution that later led to
+            the Scribble documentation system and related textual tools in Racket}
+         @:{Designed a concrete syntactic extension to Racket that combines the
+            convenience of “here-documents” and string interpolation, while
+            maintaining the benefits of S-expressions.  The idea behind the syntax
+            is based on the Nuprl quotations, which result in a language that is
+            easier to use than quasi-quotations.  The syntax was named “Scribble”,
+            and later evolved into Racket's documentation system, making one of
+            the earlier cases of using Racket as a real language framework, where
+            a single program can be written multiple languages that are different
+            even at the concrete syntax level.}]}
+   @oo["2005–2006" "2005-01-01::2006-12-31"
+       "Lazy Racket"]{
+     @V:[@:{implemented the lazy dialect of Racket}
+         @:{Implemented the Lazy Racket language.  It is a language that is
+            identical to Racket except for its lazy execution semantics.  It was
+            developed for the PL course, but the result is a powerful ability to
+            mix lazy and strict code in a single language, using Racket's module
+            system.  This is in addition to other languages developed for the
+            course.}]}
+   @oo["2004–2007" "2004-01-01::2007-12-31"
+       "Handin Server+Client"]{
+     @V:[@:{along with other teaching-related software}
+         @:{Extended the Racket Handin server and client (originally developed by
+            Matthew Flatt) considerably, making it usable in courses with widely
+            varying demands.  In addition, designed a completely automated system
+            to deal with running the PL course, including website publishing and
+            on-line content (class notes, homework handins, etc.), electronic
+            grading, secure grades publishing with statistics and graphs,
+            class-participation tool, a kiosk-mode client for taking exams, and
+            more.}]}
+   @oo["2003–2004" "2003-01-01::2004-12-31"
+       "Foreign Function Interface for Racket" #:short "Racket FFI"]{
+     @V:[@:{designed and implemented}
+         @:{Designed and implemented Racket's foreign function interface for
+            Racket, replacing a more traditional C-based approach where Racket
+            code replaces the role of C.}]}
+   @oo[#:if L? "2003–2014" "2003-09-01::2014-07-01"
+        "PLT / Racket Infrastructure" #:short "Racket Infrastructure"]{
+     @V:[@:{development & maintenance}
+         @:{Designed and implemented the build process for making nightly builds
+            of Racket as well as official distributions, revised the web-content
+            framework using the new Scribble-based syntax as a markup language,
+            was in charge of moving the Racket codebase from CVS to Subversion
+            first, and to git later.}]}
+   @oo[#:if L? "1999–2003" "1999-01-01::2003-07-31"
+       @V:[@:{Reflection for the Nuprl theorem prover}
+           @:{Reflection for Nuprl}]]{
+     @L:{Implemented reflection for the Nuprl theorem prover.}}
+   @oo[#:if L? "2001" "2001-01-01::2001-12-01"
+       @V:[@:{Web-server implementation in Scheme, with dynamic code execution}
+           @:{Web-server}]]{
+     @L:{Wrote a complete web-server in Scheme, with the purpose of being very
+         flexible and for making an on-line picture collection.}}
+   @oo[#:if L? "1999" "1999-01-01::1999-12-31"
+       "Picture collection management" #:short "Picture collection"]{
+     @:{Designed and implemented a set of tools for managing a picture
+        collection, as part of a photography project (for a minor in art at
+        Cornell).}}
+   @oo[#:if L? "1999" "1999-01-01::1999-12-31"
+       "HTML generation"]{
+     @V:[@:{(precursor to Scribble)}
+         @:{Wrote a system to easily generate HTML code in an easily extensible
+            way, relying on such features as self-quoting code and keyword
+            argument.  This system was used for several years by a few academic
+            and commercial sites.  Years later it evolved into the Scribble
+            syntax.}]}
+   @oo["1998" "1998-01-01::1998-12-31"
+       "Swindle"]{
+     @V:[@:{MOP-based object system, used in several universities}
+         @:{Implemented Swindle: an extension language on top of PLT-Scheme/Racket
+            for CS212 in the Cornell CS department.  Swindle was in active use at
+            several universities for many years, and still is in use in some.}]}
+   @oo["1997" "1996-09-01::1997-12-31"
+       "Emacs calculator"]{
+     @V:[@:{part of the standard Emacs distribution}
+         @:{Implemented an interactive calculator package which is now a standard
+            part of Emacs.}]}
+   @oo[#:if L? "1995–1996" "1995-01-01::1996-12-31"
+       "Booms"]{
+     @V:[@:{a visual language for music composition}
+         @:{A visual language environment for creative editing, mainly intended
+            for music composition.  Implemented in Allegro Common Lisp for
+            Windows.}]}
+   @oo[#:if L? "1994–1996" "1995-01-01::1996-12-31"
+       "Multeam"]{
+     @V:[@:{a Usenet-like system for media content}
+         @:{A Usenet-like system for managing media content which was developed at
+            Gefen-Dekel Technologies (part of Dalet Digital Media Systems).  The
+            original project was discontinued but served as a basis for the “Dalet
+            Web Publisher” which was eventually integrated in Dalet's main
+            application—DaletPlus, and later Dalet Galaxy.}]}))
+
+(apply section*! "Notable Earlier Projects" #:sec-dates '([side up])
+  earlier-projects)
+
+;; ---->> Personal ------------------------------------------------------------
 
 (section*! "Personal" #:itemize (F: *: cvitemize:) #:if L?
   @:{Citizen of Israel, permanent US residence since April 2006.}
   @:{Photography: A minor in Art at Cornell, mostly digital photography.}
   @:{Music: I love electronic music and experiment with making some as well as
      hacking on my own music player (implemented as a web app).})
-
-(part! (tex-suffix))
-
-)
-
-(define all-authors
-  '("Eli Barzilay"
-    "Mark Hamilton"
-    "Matthias Felleisen" "Matthew Flatt" "Robby Findler" "John Clements"
-    "Ryan Culpepper" "Stephen Chang"
-    "Dmitry Orlovsky"
-    "Robert Constable" "Stuart Allen" "Jason Hickey"
-    "Mira Balaban" "Michael Elhadad"))
-(define (pub title short authors date D where)
-  (define (auth a)
-    (define full (findf (λ(full) (string-prefix? full a)) all-authors))
-    (V: (regexp-replace #rx"^.* " full "") full))
-  (let* ([et-al?  (regexp-match? #px"\\.{3}$" authors)]
-         [authors (if et-al? (regexp-replace #rx" *\\.*$" authors "") authors)]
-         [authors (regexp-split #rx" *, *" authors)]
-         [authors (add-between (map auth authors) '(", ") #:splice? #t
-                               #:after-last (if et-al? '(" et al") '()))]
-         [title*  @it{@title}])
-    (o date #:dname title #:dinfo `([D ,D] [short ,short]) #:nobr S?
-       (F: "" title*)
-       (F: (V: @:{@W{@|title*|@";" @|authors|@";" @date}}
-               @:{@W{@title*,@\\}
-                  @W{@authors,@\\}
-                  @W{@where, @|date|.}})
-           @:{@(V:"• " @:{\vspace{-7pt}@"\n"})@;
-              @|authors|@\\
-              @where}))))
-
-(define (tex-prefix)
-  @T:{\documentclass[11pt, letterpaper]{awesome-cv}
-      \geometry{left=1.4cm, top=.8cm, right=1.4cm, bottom=1.8cm, footskip=.5cm}
-      \fontdir[fonts/]
-      \setmonofont{Consolas}
-      \definecolor{awesome-mine}{HTML}{5500CC}
-      \definecolor{darklink}{HTML}{4400AA}
-      \colorlet{awesome}{awesome-mine}
-      \setbool{acvSectionColorHighlight}{true}
-      \hypersetup{colorlinks=true,linkcolor=darklink,urlcolor=darklink,citecolor=darklink}
-      \renewcommand{\acvHeaderSocialSep}{\quad—\bullet—\quad}
-      \name{@(regexp-replace #rx" ([^ ]+$)" name "}{\\1")}
-      \title{@title}
-      \address{@address}
-      \mobile{@phone}
-      \phone{@phone2}
-      \email{@email}
-      \homepage{@(regexp-replace #rx"/$" web "")}
-      \github{@github}
-      \linkedin{@linkedin}
-      \begin{document}
-      \makecvheader[C]
-      \makecvfooter{}{@|name|~~~·~~~@|title|}{\thepage}
-      \vskip 0mm})
-(define (tex-suffix)
-  @T:{\end{document}})
-
-(main)
