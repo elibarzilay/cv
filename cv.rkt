@@ -35,18 +35,18 @@
         quality is taken seriously and tradeoffs are handled deliberately.}
      @||
      @V:[@W{Senior/Principal backend developer with 20+ years of experience
-            building and evolving backend systems in both startups and large
-            organizations. I work on new systems as well as existing codebases,
-            focusing on reliability, clear structure, and engineering practices
-            that support long-term maintainability.
+            designing and evolving backend systems across startups and large
+            organizations. I work on new systems and existing codebases, with
+            an emphasis on careful evolution, clear structure, and engineering
+            practices that support long-term maintainability.
             @||
-            My background in programming languages shapes a careful, methodical
-            approach to design and refactoring, where incremental technical
-            steps accumulate into substantial improvements over time. In senior
-            roles, I tend to work close to the core of systems—APIs, build and
-            deployment pipelines, and developer tooling—while influencing both
-            structural and cultural engineering practices and mentoring
-            engineers through shared technical work.}
+            My background in programming languages informs a disciplined
+            approach to design and refactoring, where incremental changes are
+            used to manage risk while accumulating substantial structural
+            improvement over time. In senior roles, I tend to work close to the
+            core of systems—APIs, build and deployment pipelines, and developer
+            tooling—while influencing both technical direction and engineering
+            culture through hands-on work.}
          @W{Senior/Principal backend and infrastructure developer with over 20
             years of experience designing and building backend systems across
             startups and large organizations. I have worked extensively on
@@ -55,14 +55,18 @@
             the ground up.
             @||
             My academic background in programming languages informs a
-            disciplined approach to software design, whether starting fresh or
-            improving an existing codebase. I tend to work incrementally at the
-            code level to avoid unnecessary risk, while aiming for substantial
-            structural improvement in the resulting system.
+            disciplined approach to software design, whether improving an
+            existing codebase or starting fresh. In the former case, I work
+            incrementally to avoid unnecessary risk, letting old and new code
+            exist side by side, shifting usage gradually, and removing old code
+            once stability is clear. When a redesign is justified, I start from
+            a clean design and re-implement by breaking apart the existing
+            system and reusing what already works, resulting in mostly existing
+            code reorganized around a better design spine.
             @||
             I see senior and principal roles as having influence beyond
             individual contributions: shaping expectations around code quality,
-            review discipline, and ownership, and helping counterbalance
+            review discipline, and ownership, as well as counterbalancing
             feature pressure with technical judgment. I usually do this through
             hands-on work—designing core components, writing code, and
             mentoring engineers through day-to-day collaboration—while
@@ -73,26 +77,28 @@
 
 (part! (sec++))
 (section! "Preferences"
-  @V:[@W{I am at my best when I'm building new systems or introducing new tools
-         and structure that help codebases evolve in a clean and controlled
-         way. I value explicit structure and clarity in code.
+  @V:[@W{I do my strongest work when building new systems or introducing
+         structure and tooling that helps codebases evolve in a controlled,
+         understandable way.
          @||
-         I am looking for a remote role, but I do value direct conversation and
-         an occasional face-to-face as things that significantly improve
-         technical outcomes.}
-      @W{I do my strongest work when I'm involved in building new systems or
-         adding new structure and tooling that helps existing codebases evolve
-         in a robust, understandable way. This includes greenfield work as well
-         as foundational improvements that shape how a system grows over time.
+         I am seeking a remote role, but I value direct collaboration and
+         shared context, including regular conversation and occasional
+         in-person interaction.}
+      @W{I do my strongest work when building new systems or introducing new
+         structure and tooling that helps existing codebases evolve cleanly
+         over time. This includes both greenfield work and foundational
+         improvements that shape how a system grows.
          @||
-         I favor approaches and tools that make structure explicit and change
-         easier to reason about, while remaining pragmatic about using whatever
-         technologies a given project requires. In industry work, this has
-         often meant JavaScript and TypeScript, which I've found to support
-         this balance well for large, long-lived systems.
+         I favor languages and tools that support good abstractions and
+         encourage clear, disciplined code. In industry work, this has often
+         meant JavaScript and TypeScript, which I've found to be friendly to
+         large, long-lived systems and to more functional styles of design.
+         While I don't yet have industry experience with Rust, I've spent time
+         learning and working with it and see it as bringing much of
+         TypeScript's spirit into a more system-level setting.
          @||
          I am seeking a remote role, but I place real value on human
-         collaboration and shared context. In find that technical work greatly
+         collaboration and shared context. I find that technical work greatly
          benefits from richer communication, including regular calls and
          occasional in-person interaction.}])
 (part! (sec--))
@@ -118,12 +124,12 @@
         @S:{Built automation pipelines that raised code quality and reduced
             integration errors and service failures}
         @L:{I also served as a "stabilizing force" for a hectic environment.
-            The recent move has led to quality problems, and constant outages.
-            I worked towards improving this and help move things in the desired
-            direction while improving stability. In addition to the work that
-            I did, this also involved developer education: both on technical
-            subjects that many find hard (eg, bash scripting), and on a more
-            abstract level (eg, proper code ownership)}
+            The acquisition and code move has led to quality problems, and
+            constant outages. I worked towards improving this and help move
+            things in the desired direction while improving stability. In
+            addition to the work that I did, this also involved developer
+            education: both on technical subjects that many find hard (eg, bash
+            scripting), and on a more abstract level (eg, proper code ownership)}
         @S:{Delivered core backend APIs, services, and containerized
             deployments on AWS, collaborating across multiple teams and
             organizations within the company}
@@ -144,14 +150,17 @@
         @L:{Following a decision to switch to a more greenfield-style work, I
             joined a startup, Sundae, as a Principal Software Developer}
         @S:{Designed and delivered new APIs and special projects, strengthening
-            system robustness}
+            system robustness, including a design & implementation of an
+            authentication scheme}
         @L:{During this time my work was mainly focused on improving the very
             young codebase, as well as implementing new APIs.  The former was
             mainly making the code robust by improving the TypeScript type
-            declarations, and revamping the overall design of the system. Also
-            included were various "special projects"}
-        @S:{Role ended when company scaled back engineering due to housing market
-            collapse}
+            declarations, and revamping the overall design of the system. The
+            latter included design and implementation work, including a
+            JWT-based authentication scheme. Also included were various "special
+            projects"}
+        @S:{Role ended when the company scaled back engineering due to a
+            faltering housing market}
         @L:{I greatly enjoyed my time at Sundae which went very well, affirming
             my decision to leave Microsoft.  However, the faltering housing
             market in June 2022 made the company drop most of its software
@@ -166,7 +175,8 @@
      #:md-pfx "D: "]{
     @L:{@M:["\n"]@;
         In 2014 I decided to go back to industry work.  After a few short projects
-        I joined Microsoft as a Senior Software Developer in late 2015.
+        I joined Microsoft as a Senior Software Developer in late 2015, and worked
+        in three different products teams.
         @"\n"}@;
     @sublist[
       @oo["October 2019 – January 2022" "2019-10-01::2022-01-31"
@@ -316,8 +326,8 @@
 (define research-interests
   @splice{Programming Languages (design and implementation),
           Formal Languages, Meta Programming, Reflection.})
-(section! "Research Interests"
-  (@L: research-interests))
+(section! "Research Interests" #:if L?
+  research-interests)
 
 ;; ---->> Education -----------------------------------------------------------
 
@@ -357,6 +367,7 @@
 ;; ---->> Academic Experience -------------------------------------------------
 
 (section*! "Academic Experience" #:if S?
+  @:{Research Interests: @research-interests}
   @(set! oo (λ (date title . xs)
               (o #:date date #:title title
                  #:md-title-sfx " (D):" #:tex-title-sfx ":" #:tex-nobr #t
@@ -365,7 +376,7 @@
     Programming languages, theorem proving, and computer
     music@";" core member of the PLT Scheme/Racket project}
   @oo["1994–present" "Lecturer"]{
-    primarily Programming Languages@";"
+    Programming Languages@";"
     currently adjunct faculty at Northeastern})
 
 ;; ---->> Teaching Experience -------------------------------------------------
@@ -436,8 +447,8 @@
 ;; ---->> Research Experience -------------------------------------------------
 
 (section*! "Research Experience" #:sec-dates '([side down]) #:if L?
-  #:pfx @S:{Research Interests: @research-interests
-            @||}
+  ;; #:pfx @S:{Research Interests: @research-interests
+  ;;           @||}
   @(set! oo (curry o #:md-pfx "D: " #:tex-nobr #t))
   @oo[#:date "2003–2014" #:datespec "2003-09-01::2014-07-01" #:loc "Northeastern"
       #:title @:{Researcher, Programming Research Laboratory,}
