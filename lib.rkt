@@ -32,7 +32,8 @@
 (provide (except-out (all-from-out racket) #%module-begin)
          (all-from-out scribble/text)
          (rename-out [mod-beg #%module-begin])
-         ->string : url *: cventries: cvitemize: W newlines:
+         ->string is-val? prop-ref
+         : url *: cventries: cvitemize: W newlines:
          header section! section*! part! sec++ sec--
          \\ it em o
          ~block ~splice)
@@ -343,15 +344,17 @@
   (when bool
     (define (dsubst str)
       (and str date (regexp-replace #px"\\bD\\b" (->string str) date)))
-    (list (and dname date (λ() (date-info 'item! dname date datespec short)))
-          (F: @~splice{
-                @(: (dsubst mpfx) title (dsubst mtsfx))
-                @text}
-              @~splice{
-                \cvplain{@date}{@loc}{@|title|@ttsfx}
-                @(and (not tnobr) "\n")@;
-                @text
-                @||}))))
+    (define r
+      (list (and dname date (λ() (date-info 'item! dname date datespec short)))
+            (F: @~splice{
+                  @(: (dsubst mpfx) title (dsubst mtsfx))
+                  @text}
+                @~splice{
+                  \cvplain{@date}{@loc}{@|title|@ttsfx}
+                  @(and (not tnobr) "\n")@;
+                  @text
+                  @||})))
+    (with-props r 'datespec datespec)))
 
 ;; ---->> TeX customizastion --------------------------------------------------
 

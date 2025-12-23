@@ -568,8 +568,8 @@
   (list
    @oo["2014–2015" "2014-05-01::2015-10-01"
        "Gefen-Dekel"]{
-     @V:[@:{desktop app framework (Chromium + CEF);
-            taught React for company-wide migration}
+     @V:[@:{desktop app (Chromium+CEF);
+            spearhead company-wide React adoption}
          @:{Helped embedding Chromium (via CEF) into Dalet's desktop application,
             later followed up with learning about how React can be used in a
             browser-based editor, and eventually ran a two day tutorial on React,
@@ -587,9 +587,9 @@
             branch of Dalet Digital Media Systems. Developed multimedia applications
             for Windows, aimed mainly at radio station software and advertisement
             management.}]}
-   @oo[#:if S? "1993–1994" #f "Other early roles"]{
-     @:{Prolog-based staff scheduling system (shifts
-        for hospitals, schools, etc)@";" Unix system administration}}
+   @oo[#:if S? "1993–1994" "1993-08-01::1994-12-31" "Other early roles"]{
+     @:{Prolog-based staff scheduling system;
+        Unix system administration}}
    @oo[#:if L? "1994" "1994-05-01::1994-12-31"
        "Shibutzit"]{
      @V:[@:{Prolog-based application for shift allocations}
@@ -602,7 +602,7 @@
             system administration group for the Computer Science department in Ben-Gurion
             University.}]}))
 
-(apply section*! "Earlier Experience" #:sec-dates '([side up])
+(apply section*! "Earlier Experience" #:sec-dates '([side up]) #:if L?
   earlier-experience)
 
 ;; ---->> Earlier Projects ----------------------------------------------------
@@ -611,9 +611,7 @@
   (list
    @oo["2008–2010" "2008-01-01::2010-12-31"
        "The Scribble Reader" #:short "Scribble"]{
-     @V:[@:{designed and implemented the syntax for
-            text-rich code (docs, HTML, etc.), a core contribution that later led to
-            the Scribble documentation system and related textual tools in Racket}
+     @V:[@:{syntax for text-rich code, leading to Racket's documentation system}
          @:{Designed a concrete syntactic extension to Racket that combines the
             convenience of “here-documents” and string interpolation, while
             maintaining the benefits of S-expressions.  The idea behind the syntax
@@ -705,8 +703,16 @@
             Web Publisher” which was eventually integrated in Dalet's main
             application—DaletPlus, and later Dalet Galaxy.}]}))
 
-(apply section*! "Notable Earlier Projects" #:sec-dates '([side up])
+(apply section*! "Notable Earlier Projects" #:sec-dates '([side up]) #:if L?
   earlier-projects)
+
+;; ---->> Earlier Experience & Projects ---------------------------------------
+;; A combined version of both of the above
+
+(apply section*! "Earlier Experience & Projects" #:sec-dates '([side up]) #:if S?
+  (let* ([xs (append earlier-experience earlier-projects)]
+         [xs (filter is-val? xs)])
+    (sort xs (λ(a b) (string>? (prop-ref a 'datespec) (prop-ref b 'datespec))))))
 
 ;; ---->> Personal ------------------------------------------------------------
 
