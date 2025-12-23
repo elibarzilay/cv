@@ -240,6 +240,75 @@
         @:{Languages: TypeScript, JavaScript, Python, Bash, Powershell, Scala,
            Java, R, ARM Templates, Lisp(s)}]})
 
+;; ---->> Projects ------------------------------------------------------------
+
+(define (quick-entry date D title0 #:short [sh #f] #:if [bool #t] . xs0)
+  (define title (->string title0))
+  (define xs (or (apply : xs0) '()))
+  (o #:if bool #:date date #:datespec D
+     #:title title
+     #:md-pfx @L:{D: }
+     #:md-title-sfx (V: " (D):" "\n")
+     #:tex-title-sfx @:{:}
+     #:tex-nobr #t
+     #:dname title #:short sh
+     xs))
+(set! oo quick-entry)
+
+(section*! "Notable Projects" #:sec-dates '([side up])
+  #:pfx @:{A selection of projects, including both personal work and projects
+           where I played a major role.}
+  @oo["September 2025 – Present" "2025-09-01::NOW"
+      @url{API Server || github.com/elibarzilay/api-server}]{
+    @V:[@:{A feature-rich Hono-based API server}
+        @:{A feature-rich Hono-based API server that I built as a personal
+           project to explore and for personal use. Includes a lot of built-in
+           functionality, like custom+oauth authentication, users and groups,
+           efficient Sqlite-based key-value storage, and much more.}]}
+  @oo["May 2023 – March 2024" "2023-05-01::2024-03-31"
+      @url{El Turco || elturco.diemutstrebe.com/}]{
+    @V:[@:{An interactive AI-driven art installation}
+        @:{Bootstrapped El Turco: an interactive AI project by @url{Diemut||https://www.diemutstrebe.com/}.
+           This is a big project that includes: ChatGPT API for conversations,
+           Unreal Engine for animation, Azure text to speech, and its core is a
+           Racket program that orchestrates it all. My part was in the overall
+           design and most of the implementation of the core orchestrator code.
+           I also built the project's website.}]}
+  @oo["June 2020 – September 2022" "2020-06-01::2022-09-30"
+      @url{DT Mergebot || github.com/DefinitelyTyped/dt-mergebot}]{
+    @V:[@:{The DefinitelyTyped mergebot}
+        @:{Implemented most of the DefinitelyTyped mergebot, which enables
+           community maintenance of ~10k type packages.}]}
+  @oo["February 2020 – Present" "2020-02-27::NOW"
+      @url{Music Player || github.com/elibarzilay/player}]{
+    @V:[@:{A web-based music player built for personal use}
+        @:{A web-based music player that I implemented in JavaScript/HTML/CSS;
+           built to learn, for fun, and because I couldn't find a music player
+           that does quite everything I wanted. Includes features like
+           folder-based navigation, intuitive playlist management, and some
+           nice visualizations.}]}
+  @oo["January 2016 – April 2018" "2017-01-01::2018-04-30"
+      @url{SynapseML || github.com/microsoft/SynapseML}]{
+    @V:[@:{An open-source distributed machine learning library}
+        @:{An open-source library that simplifies building massively scalable
+           machine learning pipelines on Apache Spark. I led the project's
+           developer infrastructure from its inception, including migration from
+           Azure DevOps to GitHub, build and release automation, clean repository
+           organization, and contribution workflows, fostering external
+           contributions and long-term adoption.}]}
+  @oo["2016 – 2023" "2016-01-01::2023-10-31"
+      "Docker DevEnv"]{
+    @V:[@:{A self-contained, Docker-based development environment implemented
+           as a single Bash script}
+        @:{A self-contained, Docker-based development environment implemented
+           as a single Bash script.  The script builds and launches a complete
+           developer workspace — editors, browsers, and tooling — independent
+           of the host machine, while mirroring the user's local environment
+           (home directory, username, UID/GID). The system predates modern
+           dev-container specifications; it emphasizes portability via minimal
+           dependencies. Uses low-level Docker functionality to build and use
+           the image.}]})
+
 ;; ---->> Academic ------------------------------------------------------------
 
 (part! (L: (header "Academic") (sec++)))
@@ -551,18 +620,7 @@
 
 ;; ---->> Earlier Experience --------------------------------------------------
 
-(set! oo
-  (λ(date D title #:short [sh #f] #:if [bool #t] . xs)
-    (let* ([title (->string title)]
-           [xs (or (apply : xs) '())])
-      (o #:if bool #:date date #:datespec D
-         #:title title
-         #:md-pfx @L:{D: }
-         #:md-title-sfx (V: " (D):" "\n")
-         #:tex-title-sfx @:{:}
-         #:tex-nobr #t
-         #:dname title #:short sh
-         xs))))
+(set! oo quick-entry)
 
 (define earlier-experience
   (list

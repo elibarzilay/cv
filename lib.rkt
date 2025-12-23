@@ -444,7 +444,7 @@
 
 (define (tex-writer str p [start 0] [end (string-length str)])
   ;; \n\n\n doesn't really work, since this works on written fragments
-  (define tex-rx #rx"([&#])|(\n\n\n+)")
+  (define tex-rx #rx"([&#_])|(\n\n\n+)")
   (let loop ([start start])
     (define m (and (< start end)
                    (regexp-match-positions tex-rx str start end p)))
