@@ -240,15 +240,45 @@
                 backed by an on-demand service}
             @S:{Delivered TypeScript-based UI components for ML workflows}
             @L:{Mostly done in TypeScript@";" also involved Visual Studio, TFS, and
-                micro-services}]}]}
-  @o[#:if L? #:date #f
-     #:title @:{Used numerous technologies (abridged list)}]{
-    @*:[@:{Platforms: Linux, Windows, Hyper-V, MSFT Azure, AWS,
-           GitHub & GitLab (incl. API, Automation, DevOps, etc), GraphQL,
-           Docker}
-        @:{Build/code management: Git, Bash, Docker}
-        @:{Languages: TypeScript, JavaScript, Python, Bash, Powershell, Scala,
-           Java, R, ARM Templates, Lisp(s)}]})
+                micro-services}]}]})
+
+;; ---->> Toolbelt ------------------------------------------------------------
+
+@section!["Toolbelt"]{
+  @W{This section summarizes the tools and environments I most often reach for
+     in practice.}
+  @||
+  @V:[@W{My default working environment is TypeScript/JavaScript for backend
+         systems and tooling, paired with extensive Linux use and bash-based
+         automation, containers (Docker/Kubernetes as appropriate), and cloud
+         infrastructure on Azure/AWS. I invest heavily in automation and
+         developer productivity — clean repos, CI/CD, and GitHub/GitLab
+         workflows and APIs — and I'm comfortable choosing different languages
+         or tools when the problem calls for it. The common thread is pragmatic
+         system design, maintainability, and getting real systems shipped and
+         kept healthy.}
+      @W{When building backend systems, platforms, or developer tooling, I tend
+         to reach first for TypeScript/JavaScript: it supports disciplined
+         design, incremental refactoring, and long-lived codebases without
+         getting in the way. I've used it for everything from large production
+         services to compilers, language tooling, and infrastructure
+         automation. I'm equally comfortable stepping outside that center of
+         gravity when the system benefits from it — for example Scala in
+         data-processing contexts, or lower-level and more explicitly
+         structured languages when performance or control matter. My background
+         in programming languages means that moving between languages and
+         paradigms is routine rather than exceptional.
+         @||
+         Operationally, I enjoy working close to the system itself: Linux-first
+         environments and bash-based automation, containers (Docker, and
+         Kubernetes when orchestration is warranted), and pragmatic cloud
+         infrastructure on Azure and AWS. I spend a lot of time on the “boring
+         but important” parts — repository hygiene, build and release
+         automation, CI/CD, and internal tooling — using Git, GitHub/GitLab
+         APIs and workflows, and custom automation where it pays off. I'm not
+         attached to a particular stack so much as to clear abstractions,
+         debuggability, and systems that remain pleasant to work on as they
+         scale.}]}
 
 ;; ---->> Projects ------------------------------------------------------------
 
