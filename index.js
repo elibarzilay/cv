@@ -119,8 +119,8 @@ const renderTimeline = () => {
   const chart = anychart.timeline();
   chart.title().enabled(false);
   chart.background({ fill: "#222 0.2" });
-  chart.axis().height(24).fill("#cfc 0.2").stroke("#224 0.5", 5)
-    .ticks().stroke("#224 0.5", 2);
+  chart.axis().height(24).fill("#cfc 0.2").stroke("#575", 2)
+    .ticks().stroke("#575", 2);
   chart.axis().labels().fontSize(10);
   //
   const NOW = (new Date).toISOString();
@@ -131,23 +131,25 @@ const renderTimeline = () => {
       throw Error(`conflicting ranges/moments in ${sec}`);
     const type = entries[0].DD.length === 1 ? "moment" : "range";
     const isMoment = type === "moment";
-    for (const x of entries) {
-      x.section = sec;
-      if (isMoment) x.x = x.D, x.y = x.name;
-      else [x.start, x.end] = x.DD;
-      if (!x.short) x.short = x.name;
+    for (const e of entries) {
+      e.section = sec;
+      if (isMoment) e.x = e.D, e.y = e.name;
+      else [e.start, e.end] = e.DD;
+      if (!e.short) e.short = e.name;
     }
     const r = chart[type]([...entries]);
     r.direction(side);
     r.labels().useHtml(true).format("{%short}")
-     .fontFamily("Tahoma").fontWeight(100).fontSize(isMoment ? 7 : 10)
+     .fontFamily("Verdana, Arial, sans-serif")
+     .fontWeight(100).fontSize(isMoment ? 7 : 9).letterSpacing(-0.3)
      .fontColor("#fff")
-     .padding(2);
-    r.height(14);
+     .padding(1);
+    r.height(12);
     r.tooltip().useHtml(true).fontColor("#fff")
      .titleFormat("{%name}").format(`{%datestr} <i>({%section})</i>`);
-    const color = side === "up" ? "#48c"
-                : isMoment ? "#ca3" : "#c84";
+    const color =
+      side === "up" ? isMoment ? "#3ac" : "#48c"
+                    : isMoment ? "#ca3" : "#c84";
     const colors = [2,4,6,8].map(o => `${color} 0.${o}`);
     const setColors = (x, i) =>
       x.fill(colors[i+1]).stroke(colors[i], 2, null, "round");
@@ -157,9 +159,9 @@ const renderTimeline = () => {
     if (isMoment) {
       r.labels().width("fit-content");
       r.markers().type("circle");
-      setColors(r.normal()  .markers(), 0).size(6);
-      setColors(r.hovered() .markers(), 1).size(7);
-      setColors(r.selected().markers(), 2).size(8);
+      setColors(r.normal()  .markers(), 0).size(4);
+      setColors(r.hovered() .markers(), 1).size(5);
+      setColors(r.selected().markers(), 2).size(6);
       setColors(r.labels().background(), 0);
     }
   });
@@ -182,13 +184,27 @@ const renderTimeline = () => {
   //
   { const sc = chart.scroller();
     sc.enabled(true);
-    sc.height(10).fill("#112 0.33").selectedFill("#448 0.5");
+    sc.height(8).fill("#112 0.33").selectedFill("#448 0.5");
     sc.thumbs().autoHide(true);
     sc.thumbs().normal() .fill("#448 0.33");
     sc.thumbs().hovered().fill("#88F 1.0");
   }
   //
-  chart.container("timeline").draw();
+  setTimeout(() => {
+    let x = "a[href='https://www.anychart.com/?utm_source=trial']";
+    x = $(x)?.parentElement?.id;
+    const s = $("style#main-style")?.sheet;
+    if (!s || !x) return;
+    const css1 = `#${x} { bottom: 25px; opacity: 0.15; &:hover { opacity: 0.5; } }`;
+    const css2 = css1.replace(/(?=\}$)/, "transition: opacity 0.3s ease-in-out;");
+    const r = s.cssRules[s.insertRule(css1, s.cssRules.length)];
+    setTimeout(() => r.cssText = css2, 10);
+  }, 100);
+  //
+  chart.height(190);
+  chart.container("timeline");
+  chart.draw();
+  chart.scroll(200);
 };
 
 inits.push(renderTimeline);
@@ -250,7 +266,7 @@ const versionSwitcher = () => {
     if (shown === "long" && localStorage.longWarning !== "yes") {
       // show long version warning once, but allow a few flicks to read it
       versionSwitcher.timer ??= setTimeout(() => localStorage.longWarning = "yes", 10_000);
-      longVerPopup("Note: this is the long version,<br>which is too detailed for most uses.",
+      longVerPopup("Note: this is a detailed long version.",
                    "#263", 2000);
     }
   });

@@ -10,17 +10,16 @@ long
 ------------------------------------>
 <title>Eli Barzilay: Curriculum Vitae</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-  <!--#include file="lib/css/anychart-ui.min.css" -->
-  <!--#include file="lib/css/anychart-font.min.css" -->
+<style id="main-style">
+  <!--#include file="lib/anychart/css/anychart-ui.min.css" -->
   <!--#include file="index.css" -->
 </style>
+<link href="/lib/anychart/fonts/css/anychart-font.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Fira Sans" rel="stylesheet">
 <script>
-  <!--#include file="lib/js/anychart-core.min.js" -->
-  <!--#include file="lib/js/anychart-timeline.min.js" -->
-  <!--#include file="lib/js/anychart-exports.min.js" -->
-  <!--#include file="lib/js/anychart-ui.min.js" -->
+  <!--#include file="lib/anychart/js/anychart-base.min.js" -->
+  <!--#include file="lib/anychart/js/anychart-timeline.min.js" -->
+  <!--#include file="lib/anychart/js/anychart-ui.min.js" -->
   <!--#include file="build/dates.js" -->
   <!--#include file="index.js" -->
 </script></head>

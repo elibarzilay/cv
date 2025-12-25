@@ -42,7 +42,7 @@ p:first-child { margin-bottom: 0.5ex; }
 
 body > div { flex-shrink: 0; width: 100%; margin: auto; max-width: 100%; }
 
-#timeline { height: 206px; margin-bottom: -0.5ex; }
+#timeline { height: 192px; margin-bottom: -0.5ex; }
 #text-row {
   background: #111; flex: auto; overflow-y: auto;
   font-family: Fira Sans, Arial, sans-serif;
@@ -204,11 +204,6 @@ body::-webkit-scrollbar-thumb,
     &:before { top: -11px; right: 10px; border-width: 0 10px 10px; }
     &:after  { top:  -8px; right: 12px; border-width: 0  8px  8px; }
   }
-}
-
-.anychart-credits {
-  bottom: 25px; opacity: 0.15; transition: all 0.3s ease-in-out;
-  &:hover { opacity: 0.5; }
 }
 
 .hide-if-narrow {
