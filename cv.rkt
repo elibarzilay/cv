@@ -34,15 +34,16 @@
   @:{@W{My work focuses on building and evolving systems where technical
         quality is taken seriously and trade-offs are handled deliberately.}
      @||
-     @V:[@W{Senior/Principal backend + infrastructure developer with 20+ years
-            of experience designing and evolving backend systems across
+     @V:[@W{I am a senior/principal backend + infrastructure developer with 20+
+            years of experience designing and evolving backend systems across
             startups and large organizations. I work on new systems and
             existing codebases, with an emphasis on careful evolution, clear
             structure, and engineering practices that support long-term
             maintainability.
             @||
             I prioritize technical correctness and long-term system behavior
-            over short-term delivery of partially validated designs.
+            over short-term delivery of partially validated designs. Above all,
+            I am a programmer.
             @||
             My background in programming languages informs a disciplined
             approach to design and refactoring, where incremental changes are
@@ -51,15 +52,16 @@
             core of systems—APIs, build and deployment pipelines, and developer
             tooling—while influencing both technical direction and engineering
             culture through hands-on work.}
-         @W{Senior/Principal backend and infrastructure developer with over 20
-            years of experience designing and building backend systems across
-            startups and large organizations. I have worked extensively on
-            stabilizing and modernizing existing platforms, but I also enjoy
+         @W{I am a senior/principal backend and infrastructure developer with
+            over 20 years of experience designing and building backend systems
+            across startups and large organizations. I have worked extensively
+            on stabilizing and modernizing existing platforms, but I also enjoy
             and seek out opportunities to design and implement new systems from
             the ground up.
             @||
             I prioritize technical correctness and long-term system behavior
-            over short-term delivery of partially validated designs.
+            over short-term delivery of partially validated designs. Above all,
+            I am a programmer.
             @||
             My academic background in programming languages informs a
             disciplined approach to software design, whether improving an
@@ -76,21 +78,20 @@
             review discipline, and ownership, as well as counterbalancing
             feature pressure with technical judgment. I usually do this through
             hands-on work—designing core components, writing code, and
-            mentoring engineers through day-to-day collaboration—while
-            contributing to an engineering culture that values correctness,
-            clarity, and sustainability.}]}}
+            mentoring engineers in day-to-day collaboration—while contributing
+            to an engineering culture that values correctness, clarity, and
+            sustainability.}]}}
 
 ;; ---->> Preferences ---------------------------------------------------------
 
 (part! (sec++))
 @section!["Preferences"]{
-  @V:[@W{I do my strongest work when building new systems or introducing
-         structure and tooling that help codebases evolve in a controlled,
-         understandable way.
-         @||
-         I am seeking a remote role, but I value direct collaboration and
-         shared context, including regular conversation and occasional
-         in-person interaction.}
+  @V:[@W{I do my strongest work when building new systems or introducing new
+         structure and tooling that help existing codebases evolve in a
+         controlled, understandable way through direct, hands-on coding. I am
+         seeking a remote role, while placing real value on direct
+         collaboration and shared context, including regular conversation and
+         occasional in-person interaction.}
       @W{I do my strongest work when building new systems or introducing new
          structure and tooling that help existing codebases evolve cleanly over
          time. This includes both greenfield work and foundational improvements
