@@ -222,8 +222,13 @@
 
 ;; ---->> TeX envs ------------------------------------------------------------
 
-(define (cventries: . xs)
-  (apply newlines: `("\\begin{cvplains}" ,@xs "\\end{cvplains}")))
+(define (cventries: . xs) ; slightly compressed in short mode
+  (define neg-space (if L? '() '("\\vspace{-0.5mm}")))
+  (apply newlines: (add-between
+                    xs neg-space
+                    #:splice? #t
+                    #:before-first `("\\begin{cvplains}" ,@neg-space)
+                    #:after-last '("\\end{cvplains}"))))
 
 (define (cvitemize: . xs)
   (apply newlines: `("\\begin{cvplains}" ,(apply *: xs) "\\end{cvplains}")))
@@ -300,7 +305,7 @@
              [else (bad)])@;
          {@title}@"\n"}))
 
-(define (section! title #:sec-dates [sec-dates #f] #:if [bool #t] . text)
+(define (section! #:sec-dates [sec-dates #f] #:if [bool #t] title . text)
   (define xs (list->: (map force text)))
   (when (and bool (pair? xs))
     (part! (with-props
@@ -309,9 +314,11 @@
                    @(list (λ() (date-info 'section! title sec-dates)) xs)}
              'section? #t))))
 
-(define (section*! #:pfx [pfx #f] #:itemize [itemize (F: *: cventries:)] title
+(define (section*! #:pfx [pfx #f]
+                   #:tex-itemize [titemize cventries:]
+                   #:itemize [itemize (F: *: titemize)]
                    #:sec-dates [sec-dates #f] #:if [bool #t]
-                   . text)
+                   title . text)
   (define xs (list->: (map force text)))
   (when (pair? xs)
     (define is (apply itemize xs))
@@ -360,7 +367,12 @@
 
 (define (tex-prefix)
   @T:{\documentclass[11pt, letterpaper]{awesome-cv}
-      \geometry{left=1.4cm, top=.8cm, right=1.4cm, bottom=1.8cm, footskip=.5cm}
+      \geometry{left=1.2cm, top=.75cm, right=1.2cm, bottom=1cm, footskip=0.2cm}
+      @S:{\setlength{\parskip}{0.3em}
+          \setlist[itemize]{topsep=0pt, itemsep=1pt, parsep=0pt, partopsep=0pt}
+          \renewcommand{\acvSectionTopSkip}{2mm}
+          \renewcommand{\acvSectionContentTopSkip}{1.5mm}
+          @||}@;
       \fontdir[fonts/]
       \setmonofont{Consolas}
       \definecolor{awesome-mine}{HTML}{5500CC}
