@@ -19,26 +19,30 @@
 
 ;; ---->> Toplevel ------------------------------------------------------------
 
-(section! #:if M? @:{@|name|: @title}
+@section![@:{@|name|: @title} #:if M?]{
   @V:[@:{@url[email] • @url[web] • @url{@phone} • @address}
       @*:[@:{Email:   @url[email]}
           @:{Web:     @url[web]}
           @:{Phone:   @:{@url{@phone} / @url{@phone2}}}
-          @:{Address: @address}]])
+          @:{Address: @address}]]}
 
 (part! (sec++))
 
 ;; ---->> Overview ------------------------------------------------------------
 
-(section! "Overview"
+@section!["Overview"]{
   @:{@W{My work focuses on building and evolving systems where technical
-        quality is taken seriously and tradeoffs are handled deliberately.}
+        quality is taken seriously and trade-offs are handled deliberately.}
      @||
-     @V:[@W{Senior/Principal backend developer with 20+ years of experience
-            designing and evolving backend systems across startups and large
-            organizations. I work on new systems and existing codebases, with
-            an emphasis on careful evolution, clear structure, and engineering
-            practices that support long-term maintainability.
+     @V:[@W{Senior/Principal backend + infrastructure developer with 20+ years
+            of experience designing and evolving backend systems across
+            startups and large organizations. I work on new systems and
+            existing codebases, with an emphasis on careful evolution, clear
+            structure, and engineering practices that support long-term
+            maintainability.
+            @||
+            I prioritize technical correctness and long-term system behavior
+            over short-term delivery of partially validated designs.
             @||
             My background in programming languages informs a disciplined
             approach to design and refactoring, where incremental changes are
@@ -53,6 +57,9 @@
             stabilizing and modernizing existing platforms, but I also enjoy
             and seek out opportunities to design and implement new systems from
             the ground up.
+            @||
+            I prioritize technical correctness and long-term system behavior
+            over short-term delivery of partially validated designs.
             @||
             My academic background in programming languages informs a
             disciplined approach to software design, whether improving an
@@ -71,23 +78,23 @@
             hands-on work—designing core components, writing code, and
             mentoring engineers through day-to-day collaboration—while
             contributing to an engineering culture that values correctness,
-            clarity, and sustainability.}]})
+            clarity, and sustainability.}]}}
 
 ;; ---->> Preferences ---------------------------------------------------------
 
 (part! (sec++))
-(section! "Preferences"
+@section!["Preferences"]{
   @V:[@W{I do my strongest work when building new systems or introducing
-         structure and tooling that helps codebases evolve in a controlled,
+         structure and tooling that help codebases evolve in a controlled,
          understandable way.
          @||
          I am seeking a remote role, but I value direct collaboration and
          shared context, including regular conversation and occasional
          in-person interaction.}
       @W{I do my strongest work when building new systems or introducing new
-         structure and tooling that helps existing codebases evolve cleanly
-         over time. This includes both greenfield work and foundational
-         improvements that shape how a system grows.
+         structure and tooling that help existing codebases evolve cleanly over
+         time. This includes both greenfield work and foundational improvements
+         that shape how a system grows.
          @||
          I favor languages and tools that support good abstractions and
          encourage clear, disciplined code. In industry work, this has often
@@ -100,7 +107,7 @@
          I am seeking a remote role, but I place real value on human
          collaboration and shared context. I find that technical work greatly
          benefits from richer communication, including regular calls and
-         occasional in-person interaction.}])
+         occasional in-person interaction.}]}
 (part! (sec--))
 
 ;; ---->> Industry Experience -------------------------------------------------
@@ -115,21 +122,22 @@
     @*:[@L:{Looking for a new startup-style place, I was pulled into a GoDaddy
             group which was a recent acquisition of a startup (Poynt) making for
             a startup-like work environment}
-        @S:{Led modernization and migration of a large multi-repository payments
+        @S:{Drove modernization and migration of a large multi-repository payments
             platform post-acquisition (Poynt), improving stability, reliability,
             and developer productivity}
         @L:{My focus was on migration and modernization of a huge project with
-            many repositories, which was mostly maintained in on-premise GHE
-            with an outdated Jenkins, to a modern GHEC and using GH Workflows}
+            many repositories, which was mostly maintained in on-premises GHE
+            with an outdated Jenkins, to modern GHEC using GitHub Workflows}
         @S:{Built automation pipelines that raised code quality and reduced
             integration errors and service failures}
-        @L:{I also served as a "stabilizing force" for a hectic environment.
-            The acquisition and code move has led to quality problems, and
-            constant outages. I worked towards improving this and help move
-            things in the desired direction while improving stability. In
-            addition to the work that I did, this also involved developer
-            education: both on technical subjects that many find hard (eg, bash
-            scripting), and on a more abstract level (eg, proper code ownership)}
+        @L:{I also served as a stabilizing force for a hectic environment. The
+            acquisition and code move has led to quality problems, integration
+            problems, and constant outages. I worked towards improving this and
+            deliberately shifting the system toward a more stable and
+            predictable operating regime. In addition to the work that I did,
+            this also involved developer education on concrete technical
+            subjects (e.g., bash scripting) and on structural topics such as
+            proper code ownership and responsibility boundaries}
         @S:{Delivered core backend APIs, services, and containerized
             deployments on AWS, collaborating across multiple teams and
             organizations within the company}
@@ -142,7 +150,11 @@
             jenkins pipeline pushing to a PM2-managed server nodes to a modern
             image-based deployment tool). The nature of my work was always heavy
             on cross team impact (code quality for several teams) as well as
-            cross-org (mainly with the central engineering division)}]}
+            cross-org (mainly with the central engineering division)}
+        @S:{Identified latent failure modes early and prevented costly
+            downstream rewrites}
+        @L:{Identified latent failure modes early in migration and automation
+            paths, preventing repeated outages and costly downstream rework}]}
   @o[#:date "February 2022 – June 2022" #:datespec "2022-02-28::2022-06-17"
      #:title @:{Sundae, Principal Software Developer}
      #:md-pfx "D: "]{
@@ -150,15 +162,15 @@
         @L:{Following a decision to switch to a more greenfield-style work, I
             joined a startup, Sundae, as a Principal Software Developer}
         @S:{Designed and delivered new APIs and special projects, strengthening
-            system robustness, including a design & implementation of an
-            authentication scheme}
-        @L:{During this time my work was mainly focused on improving the very
-            young codebase, as well as implementing new APIs.  The former was
-            mainly making the code robust by improving the TypeScript type
+            system robustness, including the design and implementation of an
+            authentication scheme with correctness and security constraints}
+        @L:{During this time, my work was mainly focused on improving the very
+            young codebase and implementing new APIs.  The former was mainly
+            making the code robust by improving the TypeScript type
             declarations, and revamping the overall design of the system. The
             latter included design and implementation work, including a
-            JWT-based authentication scheme. Also included were various "special
-            projects"}
+            JWT-based authentication scheme with correctness and security
+            constraints. Also included were various focused "special projects"}
         @S:{Role ended when the company scaled back engineering due to a
             faltering housing market}
         @L:{I greatly enjoyed my time at Sundae which went very well, affirming
@@ -183,8 +195,9 @@
           @url{TypeScript || www.typescriptlang.org/}]{
         @*:[@S:{Maintained and extended core TypeScript tooling: language server,
                 VS Code integration, build pipeline, and DefinitelyTyped ecosystem}
-            @L:{Day-to-day work on bugs in TS and related systems (language server,
-                vscode, builds, DefinitelyTyped maintenance)}
+            @L:{Day-to-day work on bugs and structural issues in TS and related
+                systems (language server, vscode, builds, DefinitelyTyped
+                maintenance)}
             @S:{Built a tracing profiler that improved performance visibility and
                 debugging for large projects}
             @L:{Implemented TypeScript's tracing profiler (with Andrew Casey), which
@@ -193,7 +206,7 @@
                 for a repo with ~10k type packages and the wider TS community}
             @L:{@W{Implementation of DefinitelyTyped's
                    @url{mergebot || github.com/DefinitelyTyped/dt-mergebot}: a
-                   github bot that enables self-maintenance, managing the huge
+                   GitHub bot that enables self-maintenance, managing the huge
                    load of incoming PRs (hundreds per week)}}
             @S:{Drove conversion of the TypeScript compiler to ES modules,
                 aligning it with modern JavaScript standards}
@@ -223,20 +236,21 @@
                 for a public project (e.g., maintaining a VSTS build, publish
                 artifacts and documentation, PR builds, code style and clean git
                 history)}
-            @S:{Managed releases and supervised PRs across internal and external
-                contributors, ensuring code quality and community adoption}
-            @L:{Also served as a PR coordinator and release manager for the project,
-                including all public artifacts (jars, spark packages, python
-                packages, docker images, etc)}
+            @S:{Owned release process and enforced PR quality gates across internal
+                and external contributors, ensuring code quality and community
+                adoption}
+            @L:{Defined and enforced release and contribution discipline for all
+                public artifacts (jars, Spark packages, Python packages, Docker
+                images, etc.}
             @L:{Helped the rest of the team to get more comfortable with functional
                 programming (in Scala), replace imperative idioms by functional
                 ones, and learn about more advanced functional programming patterns}
-            @L:{The project was later renamed “SynapseML”}]}
+            @L:{The project was later renamed "SynapseML"}]}
       @oo["December 2015 – March 2018" "2015-12-01::2018-03-01"
           @:{Azure Machine Learning Studio@L:{ (Boston)}} #:short "AzureML Studio"]{
         @*:[@S:{Built scalable frontend visualizations, including an infinite
                 grid scroller with dynamic data fetching}
-            @L:{Front-end visualizations, mainly table view of infinite matrix,
+            @L:{Frontend visualizations, mainly table view of infinite matrix,
                 backed by an on-demand service}
             @S:{Delivered TypeScript-based UI components for ML workflows}
             @L:{Mostly done in TypeScript@";" also involved Visual Studio, TFS, and
@@ -258,7 +272,7 @@
          system design, maintainability, and getting real systems shipped and
          kept healthy.}
       @W{When building backend systems, platforms, or developer tooling, I tend
-         to reach first for TypeScript/JavaScript: it supports disciplined
+         to reach first for TypeScript/JavaScript: they support disciplined
          design, incremental refactoring, and long-lived codebases without
          getting in the way. I've used it for everything from large production
          services to compilers, language tooling, and infrastructure
@@ -272,8 +286,8 @@
          Operationally, I enjoy working close to the system itself: Linux-first
          environments and bash-based automation, containers (Docker, and
          Kubernetes when orchestration is warranted), and pragmatic cloud
-         infrastructure on Azure and AWS. I spend a lot of time on the “boring
-         but important” parts — repository hygiene, build and release
+         infrastructure on Azure and AWS. I spend a lot of time on the "boring
+         but important" parts — repository hygiene, build and release
          automation, CI/CD, and internal tooling — using Git, GitHub/GitLab
          APIs and workflows, and custom automation where it pays off. I'm not
          attached to a particular stack so much as to clear abstractions,
@@ -282,17 +296,15 @@
 
 ;; ---->> Projects ------------------------------------------------------------
 
-(define (quick-entry date D title0 #:short [sh #f] #:if [bool #t] . xs0)
-  (define title (->string title0))
-  (define xs (or (apply : xs0) '()))
-  (o #:if bool #:date date #:datespec D
-     #:title title
-     #:md-pfx @L:{D: }
-     #:md-title-sfx (V: " (D):" "\n")
-     #:tex-title-sfx @:{:}
-     #:tex-nobr #t
-     #:dname title #:short sh
-     xs))
+(define (quick-entry date D title #:short [sh #f] #:if [bool #t] . xs)
+  (and bool (o #:if bool #:date date #:datespec D
+               #:title title
+               #:md-pfx @L:{D: }
+               #:md-title-sfx (V: " (D):" "\n")
+               #:tex-title-sfx @:{:}
+               #:tex-nobr #t
+               #:dname title #:short sh
+               (or (apply : xs) '()))))
 (set! oo quick-entry)
 
 (section*! "Notable Projects" #:sec-dates '([side up])
@@ -303,8 +315,8 @@
     @V:[@:{A feature-rich Hono-based API server}
         @:{A feature-rich Hono-based API server that I built as a personal
            project to explore and for personal use. Includes a lot of built-in
-           functionality, like custom+oauth authentication, users and groups,
-           efficient Sqlite-based key-value storage, and much more.}]}
+           functionality, like custom + OAuth authentication, users and groups,
+           efficient SQLite-based key-value storage, and much more.}]}
   @oo["May 2023 – March 2024" "2023-05-01::2024-03-31"
       @url{El Turco || elturco.diemutstrebe.com/}]{
     @V:[@:{An interactive AI-driven art installation}
@@ -355,9 +367,9 @@
 
 (define research-interests
   @splice{Programming Languages (design and implementation),
-          Formal Languages, Meta Programming, Reflection.})
-(section! "Research Interests" #:if L?
-  research-interests)
+          Formal Languages, Metaprogramming, Reflection.})
+@section!["Research Interests" #:if L?]{
+  @research-interests}
 
 ;; ---->> Education -----------------------------------------------------------
 
@@ -380,7 +392,7 @@
         "Cornell University, New York, NY, USA"))
 (define bgu
   (list "BGU, Israel"
-        "Ben-Gurion Univ, Israel"
+        "Ben-Gurion Univ., Israel"
         "Ben-Gurion University of the Negev, Be'er-Sheva, Israel"))
 
 (section*! "Education" #:sec-dates '([side down])
@@ -487,8 +499,8 @@
     Northeastern University, working with Prof. Matthias Felleisen
     @||
     Member of the small core development team behind Racket (formerly PLT
-    Scheme), contributing to its growth into a large-scale “language
-    greenhouse.” Designed and implemented several core language features,
+    Scheme), contributing to its growth into a large-scale "language
+    greenhouse". Designed and implemented several core language features,
     including:
     @||
     @*:[@:{A libffi-based dynamic foreign function interface, replacing earlier
@@ -536,7 +548,7 @@
 
 ;; ---->> Dissertation --------------------------------------------------------
 
-(section! "Ph.D. Dissertation" #:if L?
+@section!["Ph.D. Dissertation" #:if L?]{
   @o[#:date "1997–2003" #:loc "Cornell"
      #:title @it{Implementing Reflection in Nuprl}]{
     @||
@@ -552,7 +564,7 @@
     This required specifying semantics for quoted syntax with bindings and
     introducing new logical rules in Nuprl. The results influenced later
     reflection work in MetaPRL and, years later, inspired textual language
-    mechanisms in Racket, most notably Scribble.})
+    mechanisms in Racket, most notably Scribble.}}
 
 ;; ---->> Publications --------------------------------------------------------
 
@@ -667,11 +679,11 @@
   (list
    @oo["2014–2015" "2014-05-01::2015-10-01"
        "Gefen-Dekel"]{
-     @V:[@:{desktop app (Chromium+CEF);
-            spearhead company-wide React adoption}
+     @V:[@:{desktop app (Chromium + CEF);
+            spearheaded company-wide React adoption}
          @:{Helped embedding Chromium (via CEF) into Dalet's desktop application,
             later followed up with learning about how React can be used in a
-            browser-based editor, and eventually ran a two day tutorial on React,
+            browser-based editor, and eventually ran a two-day tutorial on React,
             to help transition the company codebase.}]}
    @oo["2003–2014" "2003-09-01::2014-07-01"
        "Systems / Infrastructure" #:short "Sys/Infra @ PLT"]{
@@ -712,10 +724,10 @@
        "The Scribble Reader" #:short "Scribble"]{
      @V:[@:{syntax for text-rich code, leading to Racket's documentation system}
          @:{Designed a concrete syntactic extension to Racket that combines the
-            convenience of “here-documents” and string interpolation, while
+            convenience of "here-documents" and string interpolation, while
             maintaining the benefits of S-expressions.  The idea behind the syntax
             is based on the Nuprl quotations, which result in a language that is
-            easier to use than quasi-quotations.  The syntax was named “Scribble”,
+            easier to use than quasi-quotations.  The syntax was named "Scribble",
             and later evolved into Racket's documentation system, making one of
             the earlier cases of using Racket as a real language framework, where
             a single program can be written multiple languages that are different
@@ -798,8 +810,8 @@
      @V:[@:{a Usenet-like system for media content}
          @:{A Usenet-like system for managing media content which was developed at
             Gefen-Dekel Technologies (part of Dalet Digital Media Systems).  The
-            original project was discontinued but served as a basis for the “Dalet
-            Web Publisher” which was eventually integrated in Dalet's main
+            original project was discontinued but served as a basis for the "Dalet
+            Web Publisher" which was eventually integrated in Dalet's main
             application—DaletPlus, and later Dalet Galaxy.}]}))
 
 (apply section*! "Notable Earlier Projects" #:sec-dates '([side up]) #:if L?

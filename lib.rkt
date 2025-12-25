@@ -380,7 +380,7 @@
       \linkedin{@meta-ref[linkedin]}
       \begin{document}
       \makecvheader[C]
-      \makecvfooter{}{@meta-ref[name]~~~·~~~@meta-ref[title]}{\thepage}
+      \makecvfooter{}{@meta-ref[name]~~~—·—~~~@meta-ref[title]}{\thepage}
       \vskip 0mm})
 
 (define (tex-suffix)
